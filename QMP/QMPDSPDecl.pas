@@ -15,8 +15,8 @@ type
     bits: LongWord;
     channels: LongWord;
     rates: LongWord;
-    markerstart: LongWord;
-    markerend: LongWord;
+    start: LongWord;
+    finish: LongWord;
   end;
 
 type
