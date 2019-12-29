@@ -18,9 +18,9 @@ begin
         Result.version := $012D;
         Result.description := 'Quinnware SuperEqu v3.51';
         Result.toModule.Init := equInit;
-        Result.toModule.EQUpdate := equEQUpdate;
+        Result.toModule.Update := equUpdate;
         Result.toModule.Shutdown := equShutdown;
-        Result.toModule.ModifyAudio := equProcess;
+        Result.toModule.Modify := equProcess;
       end;
     end;
     else begin
@@ -28,9 +28,9 @@ begin
         Result.version := $0000;
         Result.description := nil;
         Result.toModule.Init := nil;
-        Result.toModule.EQUpdate := nil;
+        Result.toModule.Update := nil;
         Result.toModule.Shutdown := nil;
-        Result.toModule.ModifyAudio := nil;
+        Result.toModule.Modify := nil;
       end;
       Dispose(Result);
     end;
