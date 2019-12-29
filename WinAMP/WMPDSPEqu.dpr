@@ -20,7 +20,7 @@ begin
         Result.Init := equInit;
         Result.Quit := equQuit;
         Result.Config := equConfig;
-        Result.ModifySamples := equProcess;
+        Result.Modify := equProcess;
       end;
     end;
     else begin
@@ -30,7 +30,7 @@ begin
         Result.Init := nil;
         Result.Quit := nil;
         Result.Config := nil;
-        Result.ModifySamples := nil;
+        Result.Modify := nil;
       end;
       Dispose(Result);
     end;
