@@ -5,6 +5,7 @@ interface
 
 uses
   BQFilter,
+  QMPDSPDecl,
   QMPDSPPlug;
 
 type
@@ -17,7 +18,7 @@ type
   public
     constructor Create(); override;
     destructor Destroy(); override;
-    procedure Process(); override;
+    procedure Process(const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord); override;
   end;
 
 var
@@ -54,23 +55,24 @@ begin
   inherited Destroy();
 end;
 
-procedure TQMPDSPEqz.Process();
+procedure TQMPDSPEqz.Process(const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord);
 var
   k: LongWord;
   i: LongWord;
   x: LongWord;
 begin
-  for k := 0 to self.Data.nch - 1 do begin
+  inherited Process(Data, Samples, Bits, Channels, Rates);
+  for k := 0 to Channels - 1 do begin
     for i := 0 to Length(self.feqz[k]) - 1 do begin
       self.feqz[k, i].Gain := Power(10, ((self.Info.preamp + self.Info.bands[i]) / 10) / 20);
       self.feqz[k, i].Band := btOctave;
       self.feqz[k, i].Filter := ftEqu;
       self.feqz[k, i].Enabled := self.Info.enabled;
       self.feqz[k, i].Width := 1.0;
-      self.feqz[k, i].Frequency := 35 * Power(2, self.feqz[k, i].Width * i);
-      self.feqz[k, i].SampleRate := self.Data.srate;
-      for x := 0 to self.Data.samples - 1 do begin
-        self.Samples[k, x] := self.feqz[k, i].Process(self.Samples[k, x]);
+      self.feqz[k, i].Freq := 35 * Power(2, self.feqz[k, i].Width * i);
+      self.feqz[k, i].Rate := Rates;
+      for x := 0 to Samples - 1 do begin
+        self.Samples[x, k] := self.feqz[k, i].Process(self.Samples[x, k]);
       end;
     end;
   end;
