@@ -12,11 +12,11 @@ type
     data: Pointer;
     length: Integer;
     samples: LongWord;
-    bps: LongWord;
-    nch: LongWord;
-    srate: LongWord;
-    markerstart: LongWord;
-    markerend: LongWord;
+    bits: LongWord;
+    channels: LongWord;
+    rates: LongWord;
+    start: LongWord;
+    finish: LongWord;
   end;
 
 type
@@ -32,13 +32,13 @@ type
   PWMPDSPModule = ^TWMPDSPModule;
   TWMPDSPModule = record
     description: PChar;
-    hwndParent: LongWord;
+    parent: LongWord;
     instance: LongWord;
     Config: procedure(const tmod: PWMPDSPModule); cdecl;
     Init: function(const tmod: PWMPDSPModule): Integer; cdecl;
-    ModifySamples: function(const tmod: PWMPDSPModule; const data: Pointer; const samples, bps, nch, srate: Integer): Integer; cdecl;
+    Modify: function(const tmod: PWMPDSPModule; const data: Pointer; const samples: Integer; const bits: Integer; const channels: Integer; const rates: Integer): Integer; cdecl;
     Quit: procedure(const tmod: PWMPDSPModule); cdecl;
-    userData: Pointer;
+    data: Pointer;
   end;
 
 type
