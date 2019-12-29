@@ -105,7 +105,7 @@ begin
   if(((Sender as TCheckBox).Tag = 99)) then begin
     DSPEqz.Info.enabled := (Sender as TCheckBox).Checked;
     (Sender as TCheckBox).Hint := Format('Enabled: %s', [BoolToStr(DSPEqz.Info.enabled, True)]);
-  end                                 else begin
+  end                                  else begin
     DSPEqz.Info.enabled := (Sender as TCheckBox).Checked;
     (Sender as TCheckBox).Hint := Format('Enabled: %s', [BoolToStr(DSPEqz.Info.enabled, True)]);
   end;
