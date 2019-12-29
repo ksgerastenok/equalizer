@@ -26,10 +26,10 @@ type
     procedure setGain(const Value: Double);
     function getWidth(): Double;
     procedure setWidth(const Value: Double);
-    function getFrequency(): Double;
-    procedure setFrequency(const Value: Double);
-    function getSampleRate(): Double;
-    procedure setSampleRate(const Value: Double);
+    function getFreq(): Double;
+    procedure setFreq(const Value: Double);
+    function getRate(): Double;
+    procedure setRate(const Value: Double);
     procedure Configure();
     procedure Calculate();
   public
@@ -41,8 +41,8 @@ type
     property Enabled: Boolean read getEnabled write setEnabled;
     property Gain: Double read getGain write setGain;
     property Width: Double read getWidth write setWidth;
-    property Frequency: Double read getFrequency write setFrequency;
-    property SampleRate: Double read getSampleRate write setSampleRate;
+    property Freq: Double read getFreq write setFreq;
+    property Rate: Double read getRate write setRate;
   end;
 
 implementation
@@ -331,12 +331,12 @@ begin
   end;
 end;
 
-function TBQFilter.getFrequency(): Double;
+function TBQFilter.getFreq(): Double;
 begin
   Result := self.fcfg[0, 0, 1];
 end;
 
-procedure TBQFilter.setFrequency(const Value: Double);
+procedure TBQFilter.setFreq(const Value: Double);
 begin
   if((not(self.fcfg[0, 0, 1] = Value))) then begin
     self.fcfg[0, 0, 1] := Value;
@@ -345,12 +345,12 @@ begin
   end;
 end;
 
-function TBQFilter.getSampleRate(): Double;
+function TBQFilter.getRate(): Double;
 begin
   Result := self.fcfg[0, 0, 2];
 end;
 
-procedure TBQFilter.setSampleRate(const Value: Double);
+procedure TBQFilter.setRate(const Value: Double);
 begin
   if((not(self.fcfg[0, 0, 2] = Value))) then begin
     self.fcfg[0, 0, 2] := Value;
