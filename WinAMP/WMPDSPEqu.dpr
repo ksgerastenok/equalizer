@@ -2,7 +2,6 @@ library
   WMPDSPEqu;
 
 uses
-  XPMan,
   WMPDSPMod,
   WMPDSPDecl;
 
@@ -16,7 +15,7 @@ begin
       New(Result);
       if((not(Result = nil))) then begin
         Result.instance := 0;
-        Result.description := 'SuperEqu';
+        Result.description := 'Equalizer';
         Result.Init := equInit;
         Result.Quit := equQuit;
         Result.Config := equConfig;
