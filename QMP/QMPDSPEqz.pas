@@ -37,7 +37,7 @@ begin
   inherited Create();
   for k := 0 to Length(self.feqz) - 1 do begin
     for i := 0 to Length(self.feqz[k]) - 1 do begin
-      self.feqz[k, i] := TBQFilter.Create();
+      self.feqz[k, i] := TBQFilter.Create(ftEqu, btOctave, gtDb);
     end;
   end;
 end;
@@ -64,13 +64,11 @@ begin
   inherited Process(Data, Samples, Bits, Channels, Rates);
   for k := 0 to Channels - 1 do begin
     for i := 0 to Length(self.feqz[k]) - 1 do begin
-      self.feqz[k, i].Gain := Power(10, ((self.Info.preamp + self.Info.bands[i]) / 10) / 20);
-      self.feqz[k, i].Band := btOctave;
-      self.feqz[k, i].Filter := ftEqu;
-      self.feqz[k, i].Enabled := self.Info.enabled;
-      self.feqz[k, i].Width := 1.0;
-      self.feqz[k, i].Freq := 35 * Power(2, self.feqz[k, i].Width * i);
+      self.feqz[k, i].Amp := (self.Info.preamp + self.Info.bands[i]) / 10;
+      self.feqz[k, i].Freq := 35 * Power(2, 1.0 * i);
       self.feqz[k, i].Rate := Rates;
+      self.feqz[k, i].Width := 1.0;
+      self.feqz[k, i].Enabled := self.Info.enabled;
       for x := 0 to Samples - 1 do begin
         self.Samples[x, k] := self.feqz[k, i].Process(self.Samples[x, k]);
       end;
