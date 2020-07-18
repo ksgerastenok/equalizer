@@ -2,7 +2,6 @@ library
   QMPDSPEqu;
 
 uses
-  XPMan,
   QMPDSPMod,
   QMPDSPDecl;
 
@@ -16,7 +15,7 @@ begin
       New(Result);
       if((not(Result = nil))) then begin
         Result.version := $012D;
-        Result.description := 'Quinnware SuperEqu v3.51';
+        Result.description := 'Quinnware Equalizer v3.51';
         Result.toModule.Init := equInit;
         Result.toModule.Update := equUpdate;
         Result.toModule.Shutdown := equShutdown;
