@@ -80,6 +80,17 @@ end;
 function TBQFilter.Process(const input: Double): Double;
 begin
   try
+    case(self.fgain) of
+      gtDb: begin
+        self.ffactor := Sqrt(Power(10, self.famp / 20));
+      end;
+      gtAmp: begin
+        self.ffactor := Sqrt(self.famp);
+      end;
+      else begin
+        self.ffactor := 0;
+      end;
+    end;
     case(self.fband) of
       btQ: begin
         self.falpha := (Sin(2 * Pi * self.ffreq / self.frate) / 2) * (1 / self.fwidth);
@@ -95,17 +106,6 @@ begin
       end;
       else begin
         self.falpha := 0;
-      end;
-    end;
-    case(self.fgain) of
-      gtDb: begin
-        self.ffactor := Sqrt(Power(10, self.famp / 20));
-      end;
-      gtAmp: begin
-        self.ffactor := Sqrt(self.famp);
-      end;
-      else begin
-        self.ffactor := 0;
       end;
     end;
     case(self.ffilter) of
