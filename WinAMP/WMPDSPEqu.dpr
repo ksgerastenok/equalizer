@@ -11,7 +11,7 @@ uses
 function equInit(const tmod: PWMPDSPModule): Integer; cdecl;
 begin
   DSPEqz := TWMPDSPEqz.Create();
-  CFGForm := TWMPDSPForm.Create(nil);
+  CFGForm := TWMPDSPForm.Create();
   Result := 0;
 end;
 
