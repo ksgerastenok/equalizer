@@ -1,6 +1,6 @@
 object WMPDSPForm: TWMPDSPForm
-  Left = 250
-  Top = 135
+  Left = 215
+  Top = 121
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Equalizer'
@@ -13,7 +13,7 @@ object WMPDSPForm: TWMPDSPForm
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
-  Position = poDefault
+  Position = poMainFormCenter
   ShowHint = True
   OnShow = FormMainProcess
   PixelsPerInch = 96
@@ -36,7 +36,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand02: TTrackBar
     Tag = 2
@@ -54,7 +54,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand00: TTrackBar
     Left = 70
@@ -71,7 +71,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand01: TTrackBar
     Tag = 1
@@ -89,7 +89,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand03: TTrackBar
     Tag = 3
@@ -107,7 +107,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand04: TTrackBar
     Tag = 4
@@ -125,7 +125,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand05: TTrackBar
     Tag = 5
@@ -143,7 +143,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand06: TTrackBar
     Tag = 6
@@ -161,7 +161,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand07: TTrackBar
     Tag = 7
@@ -179,7 +179,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand08: TTrackBar
     Tag = 8
@@ -197,7 +197,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand09: TTrackBar
     Tag = 9
@@ -215,7 +215,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object stLowValue: TStaticText
     Tag = 31
@@ -349,7 +349,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand11: TTrackBar
     Tag = 11
@@ -367,7 +367,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand12: TTrackBar
     Tag = 12
@@ -385,7 +385,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand13: TTrackBar
     Tag = 13
@@ -403,7 +403,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand14: TTrackBar
     Tag = 14
@@ -421,7 +421,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand15: TTrackBar
     Tag = 15
@@ -439,7 +439,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object tbBand16: TTrackBar
     Tag = 16
@@ -457,7 +457,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object stBand10: TStaticText
     Tag = 10
@@ -538,7 +538,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object stBand17: TStaticText
     Tag = 17
@@ -556,7 +556,7 @@ object WMPDSPForm: TWMPDSPForm
     Height = 17
     Caption = 'Enabled'
     TabOrder = 20
-    OnClick = CheckBoxProcess
+    OnClick = ControlsProcess
   end
   object tbBand18: TTrackBar
     Tag = 18
@@ -574,7 +574,7 @@ object WMPDSPForm: TWMPDSPForm
     ThumbLength = 15
     TickMarks = tmBoth
     TickStyle = tsNone
-    OnChange = TrackBarProcess
+    OnChange = ControlsProcess
   end
   object stBand18: TStaticText
     Tag = 18
