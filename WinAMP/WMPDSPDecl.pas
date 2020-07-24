@@ -5,7 +5,7 @@ interface
 
 uses
   MMSystem;
-
+  
 type
   PWriteData = ^TWriteData;
   TWriteData = record
@@ -31,7 +31,7 @@ type
 type
   PWMPDSPModule = ^TWMPDSPModule;
   TWMPDSPModule = record
-    description: PChar;
+    description: PAnsiChar;
     parent: LongWord;
     instance: LongWord;
     Config: procedure(const tmod: PWMPDSPModule); cdecl;
@@ -45,7 +45,7 @@ type
   PWMPDSPHeader = ^TWMPDSPHeader;
   TWMPDSPHeader = record
     version: Integer;
-    description: PChar;
+    description: PAnsiChar;
     getModule: function(const which: Integer): PWMPDSPModule; cdecl;
   end;
 
