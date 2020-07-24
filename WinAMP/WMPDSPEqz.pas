@@ -52,7 +52,7 @@ begin
     System.Close(f);
   except
     self.Info.preamp := 0;
-    self.Info.enabled := false;
+    self.Info.enabled := False;
     for i := 0 to Length(self.Info.bands) - 1 do begin
       self.Info.bands[i] := 0;
     end;
@@ -72,7 +72,7 @@ begin
     System.Close(f);
   except
     self.Info.preamp := 0;
-    self.Info.enabled := false;
+    self.Info.enabled := False;
     for i := 0 to Length(self.Info.bands) - 1 do begin
       self.Info.bands[i] := 0;
     end;
