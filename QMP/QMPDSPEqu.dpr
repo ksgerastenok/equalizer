@@ -2,10 +2,40 @@ library
   QMPDSPEqu;
 
 uses
-  QMPDSPMod,
+  QMPDSPEqz,
   QMPDSPDecl;
 
 {$R *.res}
+
+function equInit(const flags: Integer): Integer; cdecl;
+begin
+  DSPEqz := TQMPDSPEqz.Create();
+  Result := 1;
+end;
+
+procedure equShutdown(const flags: Integer); cdecl;
+begin
+  DSPEqz.Destroy();
+end;
+
+function equUpdate(const info: PEQInfo; const flags: Integer): Integer; cdecl;
+begin
+  DSPEqz.Info.bands := info.bands;
+  DSPEqz.Info.preamp := info.preamp;
+  DSPEqz.Info.enabled := info.enabled;
+  Result := 1;
+end;
+
+function equProcess(const data: PWriteData; const latency: PInteger; const flags: Integer): Integer; cdecl;
+begin
+  DSPEqz.Data.data := data.data;
+  DSPEqz.Data.bits := data.bits;
+  DSPEqz.Data.rates := data.rates;
+  DSPEqz.Data.samples := data.samples;
+  DSPEqz.Data.channels := data.channels;
+  DSPEqz.Process();
+  Result := 1;
+end;
 
 function getModule(const which: Integer): PQMPDSPPlugin; cdecl;
 begin
