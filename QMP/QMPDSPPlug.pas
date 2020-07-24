@@ -9,17 +9,16 @@ uses
 type
   TQMPDSPPlug = class(TObject)
   private
-    finfo: PEQInfo;
     fdata: PWriteData;
-    function getInfo(): PEQInfo;
+    function getData(): PWriteData;
     function getSamples(const Sample: LongWord; const Channel: LongWord): Double;
     procedure setSamples(const Sample: LongWord; const Channel: LongWord; const Value: Double);
   public
     constructor Create(); virtual;
     destructor Destroy(); override;
-    procedure Process(const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord); virtual;
-    property Info: PEQInfo read getInfo;
-    property Samples[const Sample: LongWord; const Channel: LongWord]: Double read getSamples write setSamples;
+    procedure Process(); virtual; abstract;
+    property Data: PWriteData read getData;
+    property Samples[const Sample: LongWord; const Channel: LongWord]: Double read getSamples write setSamples;    
   end;
 
 implementation
@@ -27,29 +26,18 @@ implementation
 constructor TQMPDSPPlug.Create();
 begin
   inherited Create();
-  New(self.finfo);
   New(self.fdata);
 end;
 
 destructor TQMPDSPPlug.Destroy();
 begin
   Dispose(self.fdata);
-  Dispose(self.finfo);
   inherited Destroy();
 end;
 
-procedure TQMPDSPPlug.Process(const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord);
+function TQMPDSPPlug.getData(): PWriteData;
 begin
-  self.fdata.data := Data;
-  self.fdata.bits := Bits;
-  self.fdata.rates := Rates;
-  self.fdata.samples := Samples;
-  self.fdata.channels := Channels;
-end;
-
-function TQMPDSPPlug.getInfo(): PEQInfo;
-begin
-  Result := self.finfo;
+  Result := self.fdata;
 end;
 
 function TQMPDSPPlug.getSamples(const Sample: LongWord; const Channel: LongWord): Double;
