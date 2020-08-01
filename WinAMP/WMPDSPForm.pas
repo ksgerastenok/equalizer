@@ -83,18 +83,20 @@ begin
   if((Sender is TCheckBox)) then begin
     if(((Sender as TCheckBox).Tag = 99)) then begin
       (Sender as TCheckBox).Checked := DSPMod.Info.enabled;
+      (Sender as TCheckBox).Hint := Format('Enabled: %s', [BoolToStr((Sender as TCheckBox).Checked, True)]);
     end                                  else begin
       (Sender as TCheckBox).Checked := DSPMod.Info.enabled;
+      (Sender as TCheckBox).Hint := Format('Enabled: %s', [BoolToStr((Sender as TCheckBox).Checked, True)]);
     end;
-    (Sender as TCheckBox).Hint := Format('Enabled: %s', [BoolToStr((Sender as TCheckBox).Checked, True)]);
   end;
   if((Sender is TTrackBar)) then begin
     if(((Sender as TTrackBar).Tag = 99)) then begin
       (Sender as TTrackBar).Position := (Sender as TTrackBar).Max - DSPMod.Info.preamp                           + (Sender as TTrackBar).Min;
+      (Sender as TTrackBar).Hint := Format('Gain: %s dB', [FloatToStr(((Sender as TTrackBar).Max - (Sender as TTrackBar).Position + (Sender as TTrackBar).Min) / 10)]);
     end                                  else begin
       (Sender as TTrackBar).Position := (Sender as TTrackBar).Max - DSPMod.Info.bands[(Sender as TTrackBar).Tag] + (Sender as TTrackBar).Min;
+      (Sender as TTrackBar).Hint := Format('Gain: %s dB', [FloatToStr(((Sender as TTrackBar).Max - (Sender as TTrackBar).Position + (Sender as TTrackBar).Min) / 10)]);
     end;
-    (Sender as TTrackBar).Hint := Format('Gain: %s dB', [FloatToStr(((Sender as TTrackBar).Max - (Sender as TTrackBar).Position + (Sender as TTrackBar).Min) / 10)]);
   end;
 end;
 
@@ -104,18 +106,20 @@ begin
   if((Sender is TCheckBox)) then begin
     if(((Sender as TCheckBox).Tag = 99)) then begin
       DSPMod.Info.enabled := (Sender as TCheckBox).Checked;
+      (Sender as TCheckBox).Hint := Format('Enabled: %s', [BoolToStr((Sender as TCheckBox).Checked, True)]);
     end                                  else begin
       DSPMod.Info.enabled := (Sender as TCheckBox).Checked;
+      (Sender as TCheckBox).Hint := Format('Enabled: %s', [BoolToStr((Sender as TCheckBox).Checked, True)]);
     end;
-    (Sender as TCheckBox).Hint := Format('Enabled: %s', [BoolToStr((Sender as TCheckBox).Checked, True)]);
   end;
   if((Sender is TTrackBar)) then begin
     if(((Sender as TTrackBar).Tag = 99)) then begin
       DSPMod.Info.preamp                           := (Sender as TTrackBar).Max - (Sender as TTrackBar).Position + (Sender as TTrackBar).Min;
+      (Sender as TTrackBar).Hint := Format('Gain: %s dB', [FloatToStr(((Sender as TTrackBar).Max - (Sender as TTrackBar).Position + (Sender as TTrackBar).Min) / 10)]);
     end                                  else begin
       DSPMod.Info.bands[(Sender as TTrackBar).Tag] := (Sender as TTrackBar).Max - (Sender as TTrackBar).Position + (Sender as TTrackBar).Min;
+      (Sender as TTrackBar).Hint := Format('Gain: %s dB', [FloatToStr(((Sender as TTrackBar).Max - (Sender as TTrackBar).Position + (Sender as TTrackBar).Min) / 10)]);
     end;
-    (Sender as TTrackBar).Hint := Format('Gain: %s dB', [FloatToStr(((Sender as TTrackBar).Max - (Sender as TTrackBar).Position + (Sender as TTrackBar).Min) / 10)]);
   end;
 end;
 
@@ -176,7 +180,7 @@ begin
 end;
 
 initialization
-  CFGForm := TWMPDSPForm.Create(nil);
+  CFGForm := TWMPDSPForm.Create(Screen.Owner);
 
 finalization
   CFGForm.Destroy();

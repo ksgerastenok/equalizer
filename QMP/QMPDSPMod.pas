@@ -9,12 +9,9 @@ uses
   QMPDSPPlug;
 
 type
-  TFilters = array[0..4, 0..9] of TBQFilter;
-
-type
   TQMPDSPMod = class(TQMPDSPPlug)
   private
-    feqz: TFilters;
+    feqz: array[0..4, 0..9] of TBQFilter;
     finfo: PEQInfo;
     function getInfo(): PEQInfo;
   public

@@ -9,12 +9,9 @@ uses
   WMPDSPPlug;
 
 type
-  TFilters = array[0..4, 0..18] of TBQFilter;
-
-type
   TWMPDSPMod = class(TWMPDSPPlug)
   private
-    feqz: TFilters;
+    feqz: array[0..4, 0..18] of TBQFilter;
     finfo: PEQInfo;
     function getInfo(): PEQInfo;
   public
