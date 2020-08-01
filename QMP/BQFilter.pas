@@ -18,6 +18,8 @@ type
     fband: TBand;
     fgain: TGain;
     ffilter: TFilter;
+    fconfig: array[0..1, 0..2] of Double;
+    fsignal: array[0..1, 0..2] of Double;
     famp: Double;
     ffreq: Double;
     frate: Double;
@@ -25,8 +27,6 @@ type
     falpha: Double;
     ffactor: Double;
     fenabled: Boolean;
-    fconfig: array[0..1, 0..2] of Double;
-    fsignal: array[0..1, 0..2] of Double;
     function getBand(): TBand;
     function getGain(): TGain;
     function getFilter(): TFilter;
@@ -110,84 +110,84 @@ begin
     end;
     case(self.ffilter) of
       ftEqu: begin
-        self.fconfig[0, 0] := 1 + self.falpha * self.ffactor;
-        self.fconfig[0, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
         self.fconfig[0, 2] := 1 - self.falpha * self.ffactor;
-        self.fconfig[1, 0] := 1 + self.falpha / self.ffactor;
-        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[0, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[0, 0] := 1 + self.falpha * self.ffactor;
         self.fconfig[1, 2] := 1 - self.falpha / self.ffactor;
+        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[1, 0] := 1 + self.falpha / self.ffactor;
       end;
       ftInv: begin
-        self.fconfig[0, 0] := 1 - self.falpha;
-        self.fconfig[0, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
         self.fconfig[0, 2] := 1 + self.falpha;
-        self.fconfig[1, 0] := 1 + self.falpha;
-        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[0, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[0, 0] := 1 - self.falpha;
         self.fconfig[1, 2] := 1 - self.falpha;
+        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[1, 0] := 1 + self.falpha;
       end;
       ftLow: begin
-        self.fconfig[0, 0] := (1 - Cos(2 * Pi * self.ffreq / self.frate)) / 2;
-        self.fconfig[0, 1] := (1 - Cos(2 * Pi * self.ffreq / self.frate)) / +1;
         self.fconfig[0, 2] := (1 - Cos(2 * Pi * self.ffreq / self.frate)) / 2;
-        self.fconfig[1, 0] := 1 + self.falpha;
-        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[0, 1] := (1 - Cos(2 * Pi * self.ffreq / self.frate)) / +1;
+        self.fconfig[0, 0] := (1 - Cos(2 * Pi * self.ffreq / self.frate)) / 2;
         self.fconfig[1, 2] := 1 - self.falpha;
+        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[1, 0] := 1 + self.falpha;
       end;
       ftHigh: begin
-        self.fconfig[0, 0] := (1 + Cos(2 * Pi * self.ffreq / self.frate)) / 2;
-        self.fconfig[0, 1] := (1 + Cos(2 * Pi * self.ffreq / self.frate)) / -1;
         self.fconfig[0, 2] := (1 + Cos(2 * Pi * self.ffreq / self.frate)) / 2;
-        self.fconfig[1, 0] := 1 + self.falpha;
-        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[0, 1] := (1 + Cos(2 * Pi * self.ffreq / self.frate)) / -1;
+        self.fconfig[0, 0] := (1 + Cos(2 * Pi * self.ffreq / self.frate)) / 2;
         self.fconfig[1, 2] := 1 - self.falpha;
+        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[1, 0] := 1 + self.falpha;
       end;
       ftPeak: begin
-        self.fconfig[0, 0] := +1 * Sin(2 * Pi * self.ffreq / self.frate) / 2;
-        self.fconfig[0, 1] := 0;
         self.fconfig[0, 2] := -1 * Sin(2 * Pi * self.ffreq / self.frate) / 2;
-        self.fconfig[1, 0] := 1 + self.falpha;
-        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[0, 1] := 0;
+        self.fconfig[0, 0] := +1 * Sin(2 * Pi * self.ffreq / self.frate) / 2;
         self.fconfig[1, 2] := 1 - self.falpha;
+        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[1, 0] := 1 + self.falpha;
       end;
       ftBand: begin
-        self.fconfig[0, 0] := +1 * self.falpha;
-        self.fconfig[0, 1] := 0;
         self.fconfig[0, 2] := -1 * self.falpha;
-        self.fconfig[1, 0] := 1 + self.falpha;
-        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[0, 1] := 0;
+        self.fconfig[0, 0] := +1 * self.falpha;
         self.fconfig[1, 2] := 1 - self.falpha;
+        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[1, 0] := 1 + self.falpha;
       end;
       ftNotch: begin
-        self.fconfig[0, 0] := 1;
-        self.fconfig[0, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
         self.fconfig[0, 2] := 1;
+        self.fconfig[0, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
+        self.fconfig[0, 0] := 1;
+        self.fconfig[1, 2] := 1 - self.falpha;
+        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
         self.fconfig[1, 0] := 1 + self.falpha;
-        self.fconfig[1, 0] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
-        self.fconfig[1, 0] := 1 - self.falpha;
       end;
       ftBass: begin
-        self.fconfig[0, 0] := self.ffactor * ((self.ffactor + 1) - (self.ffactor - 1) * Cos(2 * Pi * self.ffreq / self.frate) + 2 * Sqrt(self.ffactor) * self.falpha);
-        self.fconfig[0, 1] := +2 * self.ffactor * ((self.ffactor - 1) - (self.ffactor + 1) * Cos(2 * Pi * self.ffreq / self.frate));
         self.fconfig[0, 2] := self.ffactor * ((self.ffactor + 1) - (self.ffactor - 1) * Cos(2 * Pi * self.ffreq / self.frate) - 2 * Sqrt(self.ffactor) * self.falpha);
-        self.fconfig[1, 0] := (self.ffactor + 1) + (self.ffactor - 1) * Cos(2 * Pi * self.ffreq / self.frate) + 2 * Sqrt(self.ffactor) * self.falpha;
-        self.fconfig[1, 1] := -2 *      1       * ((self.ffactor - 1) + (self.ffactor + 1) * Cos(2 * Pi * self.ffreq / self.frate));
+        self.fconfig[0, 1] := +2 * self.ffactor * ((self.ffactor - 1) - (self.ffactor + 1) * Cos(2 * Pi * self.ffreq / self.frate));
+        self.fconfig[0, 0] := self.ffactor * ((self.ffactor + 1) - (self.ffactor - 1) * Cos(2 * Pi * self.ffreq / self.frate) + 2 * Sqrt(self.ffactor) * self.falpha);
         self.fconfig[1, 2] := (self.ffactor + 1) + (self.ffactor - 1) * Cos(2 * Pi * self.ffreq / self.frate) - 2 * Sqrt(self.ffactor) * self.falpha;
+        self.fconfig[1, 1] := -2 *      1       * ((self.ffactor - 1) + (self.ffactor + 1) * Cos(2 * Pi * self.ffreq / self.frate));
+        self.fconfig[1, 0] := (self.ffactor + 1) + (self.ffactor - 1) * Cos(2 * Pi * self.ffreq / self.frate) + 2 * Sqrt(self.ffactor) * self.falpha;
       end;
       ftTreble: begin
-        self.fconfig[0, 0] := self.ffactor * ((self.ffactor + 1) + (self.ffactor - 1) * Cos(2 * Pi * self.ffreq / self.frate) + 2 * Sqrt(self.ffactor) * self.falpha);
-        self.fconfig[0, 1] := -2 * self.ffactor * ((self.ffactor - 1) + (self.ffactor + 1) * Cos(2 * Pi * self.ffreq / self.frate));
         self.fconfig[0, 2] := self.ffactor * ((self.ffactor + 1) + (self.ffactor - 1) * Cos(2 * Pi * self.ffreq / self.frate) - 2 * Sqrt(self.ffactor) * self.falpha);
-        self.fconfig[1, 0] := (self.ffactor + 1) - (self.ffactor - 1) * Cos(2 * Pi * self.ffreq / self.frate) + 2 * Sqrt(self.ffactor) * self.falpha;
-        self.fconfig[1, 1] := +2 *      1       * ((self.ffactor - 1) - (self.ffactor + 1) * Cos(2 * Pi * self.ffreq / self.frate));
+        self.fconfig[0, 1] := -2 * self.ffactor * ((self.ffactor - 1) + (self.ffactor + 1) * Cos(2 * Pi * self.ffreq / self.frate));
+        self.fconfig[0, 0] := self.ffactor * ((self.ffactor + 1) + (self.ffactor - 1) * Cos(2 * Pi * self.ffreq / self.frate) + 2 * Sqrt(self.ffactor) * self.falpha);
         self.fconfig[1, 2] := (self.ffactor + 1) - (self.ffactor - 1) * Cos(2 * Pi * self.ffreq / self.frate) - 2 * Sqrt(self.ffactor) * self.falpha;
+        self.fconfig[1, 1] := +2 *      1       * ((self.ffactor - 1) - (self.ffactor + 1) * Cos(2 * Pi * self.ffreq / self.frate));
+        self.fconfig[1, 0] := (self.ffactor + 1) - (self.ffactor - 1) * Cos(2 * Pi * self.ffreq / self.frate) + 2 * Sqrt(self.ffactor) * self.falpha;
       end;
       else begin
-        self.fconfig[0, 0] := 0;
-        self.fconfig[0, 1] := 0;
         self.fconfig[0, 2] := 0;
-        self.fconfig[1, 0] := 0;
-        self.fconfig[1, 1] := 0;
+        self.fconfig[0, 1] := 0;
+        self.fconfig[0, 0] := 0;
         self.fconfig[1, 2] := 0;
+        self.fconfig[1, 1] := 0;
+        self.fconfig[1, 0] := 0;
       end;
     end;
     case(self.fenabled) of
@@ -219,12 +219,12 @@ begin
   except
     self.falpha := 0;
     self.ffactor := 0;
-    self.fconfig[0, 0] := 0;
-    self.fconfig[0, 1] := 0;
     self.fconfig[0, 2] := 0;
-    self.fconfig[1, 0] := 0;
-    self.fconfig[1, 1] := 0;
+    self.fconfig[0, 1] := 0;
+    self.fconfig[0, 0] := 0;
     self.fconfig[1, 2] := 0;
+    self.fconfig[1, 1] := 0;
+    self.fconfig[1, 0] := 0;
     self.fsignal[0, 2] := 0;
     self.fsignal[0, 1] := 0;
     self.fsignal[0, 0] := 0;

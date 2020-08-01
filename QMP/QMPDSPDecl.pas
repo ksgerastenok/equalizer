@@ -33,7 +33,7 @@ type
   TQMPDSPModule = record
     Init: function(const flags: Integer): Integer; cdecl;
     Quit: procedure(const flags: Integer); cdecl;
-    Open: function(const medianame: PChar; const wf: PWAVEFORMATEX; const flags: Integer): Integer; cdecl;
+    Open: function(const media: PChar; const wf: PWAVEFORMATEX; const flags: Integer): Integer; cdecl;
     Stop: procedure(const flags: Integer); cdecl;
     Flush: procedure(const flags: Integer); cdecl;
     Modify: function(const data: PWriteData; const latency: PInteger; const flags: Integer): Integer; cdecl;
