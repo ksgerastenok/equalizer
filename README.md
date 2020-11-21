@@ -1,5 +1,4 @@
 # Equalizer
-This repository contains Equalizer plugin for WinAmp and QMP written in Delphi.
+This repository contains Equalizer plugin for WinAmp (19-bands) and QMP (10-bands) written in Delphi.
 This Equalizer is based on BiQuad IIR Filter.
 More information can be found in file Audio-EQ-Cookbook.txt.
-can 
