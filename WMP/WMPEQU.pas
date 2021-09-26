@@ -76,7 +76,7 @@ var
   k: Integer;
   i: Integer;
 begin
-    try
+  try
     Assign(f, 'equalizer.cfg');
     ReWrite(f, 1);
     BlockWrite(f, TWMPEQU.finfo, SizeOf(TInfo) * 1);
