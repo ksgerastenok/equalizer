@@ -82,11 +82,11 @@ begin
         PLongInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.clip(Value) * $7FFFFFFF);
       end;
       else begin
-        PSmallInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.clip(Value) * $00000000);
+        PSmallInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(0.0);
       end;
     end;
   except
-    PSmallInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.clip(Value) * $00000000);
+    PSmallInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(0.0);
   end;
 end;
 
