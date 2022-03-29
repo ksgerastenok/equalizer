@@ -49,14 +49,14 @@ end;
 function TQMPDSP.getSamples(const Sample: LongWord; const Channel: LongWord): Double;
 begin
   try
-    case (self.fdata.Bits div 8) of
-      1: begin
+    case (self.fdata.Bits) of
+      8: begin
         Result := self.clip(PShortInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] / $0000007F);
       end;
-      2: begin
+      16: begin
         Result := self.clip(PSmallInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] / $00007FFF);
       end;
-      4: begin
+      32: begin
         Result := self.clip(PLongInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] / $7FFFFFFF);
       end;
       else begin
@@ -71,14 +71,14 @@ end;
 procedure TQMPDSP.setSamples(const Sample: LongWord; const Channel: LongWord; const Value: Double);
 begin
   try
-    case (self.fdata.Bits div 8) of
-      1: begin
+    case (self.fdata.Bits) of
+      8: begin
         PShortInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.clip(Value) * $0000007F);
       end;
-      2: begin
+      16: begin
         PSmallInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.clip(Value) * $00007FFF);
       end;
-      4: begin
+      32: begin
         PLongInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.clip(Value) * $7FFFFFFF);
       end;
       else begin
