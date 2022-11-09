@@ -12,7 +12,6 @@ type
   PWMPEQZ = ^TWMPEQZ;
   TWMPEQZ = record
   private
-    class var fdata: PData;
     class var ffrm: TWMPFRM;
     class var fequ: TWMPEQU;
     class function Init(const Module: PPlugin): Integer; cdecl; static;
