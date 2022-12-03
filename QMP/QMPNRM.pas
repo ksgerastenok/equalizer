@@ -71,7 +71,7 @@ begin
       a := self.famp[k];
       for x := 0 to self.fdsp.Data.Samples - 1 do begin
         if (b <= a) then begin
-          y := Max(Min(a, 5 * (b - a) * x / self.fdsp.Data.Rates + a), b);
+          y := Max(Min(a, 5.0 * (b - a) * x / self.fdsp.Data.Rates + a), b);
           //y := (2 * (a - b) / Pi) * ArcTan2(Tan((0.01 * b * Pi) / (2 * (a - b))) * 0.2 * self.fdsp.Data.Rates, x) + b;
           //y := b * (x * (a - b * (1.0 + 0.01)) + 0.01 * a * 0.35 * self.fdsp.Data.Rates) / (x * (a - b * (1.0 + 0.01)) + 0.01 * b * 0.35 * self.fdsp.Data.Rates);
         end         else begin
