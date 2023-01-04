@@ -45,7 +45,7 @@ INT QMPNRM::modify(PDATA data, PINT latency, INT flags) {
 			DOUBLE b = min(max(1.0, 1.0 / pow(5.0 * f, 0.5)), 10.0);
 			DOUBLE a = QMPNRM::amp[k];
 			for (INT x = 0; x != QMPNRM::dsp.getData()->samples; x += 1) {
-				DOUBLE time = (b <= a) ? 0.2 : 5.0;
+				DOUBLE time = (b <= a) ? 0.5 : 25.0;
 				QMPNRM::dsp.setSamples(x, k, ((b - a) * min(max(0.0, x / (time * QMPNRM::dsp.getData()->rates)), 1.0) + a) * QMPNRM::dsp.getSamples(x, k));
 			};
 		};
