@@ -82,7 +82,7 @@ begin
       b := Min(Max(1.0, 1.0 / Sqrt(5.0 * f)), 10.0);
       a := TQMPNRM.famp[k];
       for x := 0 to TQMPNRM.fdsp.Data.Samples - 1 do begin
-        y := (b - a) * Min(Max(0.0, x / (IfThen(b <= a, 0.2, 5.0) * TQMPNRM.fdsp.Data.Rates)), 1.0) + a;
+        y := (b - a) * Min(Max(0.0, x / (IfThen(b <= a, 0.5, 25.0) * TQMPNRM.fdsp.Data.Rates)), 1.0) + a;
         //y := b * (x * (a - b * (1.0 - IfThen(b <= a, -0.01, +0.01))) - IfThen(b <= a, -0.01, +0.01) * a * IfThen(b <= a, 0.2, 5.0) * self.fdsp.Data.Rates) / (x * (a - b * (1.0 - IfThen(b <= a, -0.01, +0.01))) - IfThen(b <= a, -0.01, +0.01) * b * IfThen(b <= a, 0.2, 5.0) * self.fdsp.Data.Rates);
         TQMPNRM.fdsp.Samples[x, k] := y * TQMPNRM.fdsp.Samples[x, k];
       end;
