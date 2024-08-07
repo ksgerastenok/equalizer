@@ -249,14 +249,14 @@ begin
     with (Sender as TForm) do begin
       for i := 0 to ControlCount - 1 do begin
         if (Controls[i] is TTrackBar) then begin
-          with (Controls[i] as TTrackBar) do begin
-            self.TrackBarLoad(Controls[i]);
-          end;
+          //with (Controls[i] as TTrackBar) do begin
+          self.TrackBarLoad(Controls[i]);
+          //end;
         end;
         if (Controls[i] is TCheckBox) then begin
-          with (Controls[i] as TCheckBox) do begin
-            self.CheckBoxLoad(Controls[i]);
-          end;
+          //with (Controls[i] as TCheckBox) do begin
+          self.CheckBoxLoad(Controls[i]);
+          //end;
         end;
       end;
     end;
@@ -271,14 +271,14 @@ begin
     with (Sender as TForm) do begin
       for i := 0 to ControlCount - 1 do begin
         if (Controls[i] is TTrackBar) then begin
-          with (Controls[i] as TTrackBar) do begin
-            self.TrackBarSave(Controls[i]);
-          end;
+          //with (Controls[i] as TTrackBar) do begin
+          self.TrackBarSave(Controls[i]);
+          //end;
         end;
         if (Controls[i] is TCheckBox) then begin
-          with (Controls[i] as TCheckBox) do begin
-            self.CheckBoxSave(Controls[i]);
-          end;
+          //with (Controls[i] as TCheckBox) do begin
+          self.CheckBoxSave(Controls[i]);
+          //end;
         end;
       end;
     end;
