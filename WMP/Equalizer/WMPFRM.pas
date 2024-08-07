@@ -8,8 +8,7 @@ uses
   Forms,
   Controls,
   ComCtrls,
-  StdCtrls,
-  SysUtils;
+  StdCtrls;
 
 type
   PWMPFRM = ^TWMPFRM;
@@ -18,10 +17,10 @@ type
     var finfo: TInfo;
     var fform: TForm;
     function getInfo(): TInfo;
-    function CreateForm(const Top, Left, Width, Height: Integer; const Caption: String): TForm;
-    function CreateTrackBar(const Top, Left, Width, Height: Integer; const Tag: Integer): TTrackBar;
-    function CreateCheckBox(const Top, Left, Width, Height: Integer; const Caption: String): TCheckBox;
-    function CreateStaticText(const Top, Left, Width, Height: Integer; const Caption: String): TStaticText;
+    procedure CreateForm(const Top, Left, Width, Height: Integer; const Caption: String);
+    procedure CreateTrackBar(const Top, Left, Width, Height: Integer; const Tag: Integer);
+    procedure CreateCheckBox(const Top, Left, Width, Height: Integer; const Caption: String);
+    procedure CreateStaticText(const Top, Left, Width, Height: Integer; const Caption: String);
     procedure TrackBarLoad(Sender: TObject);
     procedure TrackBarSave(Sender: TObject);
     procedure CheckBoxLoad(Sender: TObject);
@@ -43,12 +42,14 @@ implementation
 uses
   Math,
   StrUtils,
+  SysUtils,
   Interfaces;
 
 procedure TWMPFRM.Init();
 var
   f: file;
 begin
+  Application.Initialize();
   self.Create();
   try
     Assign(f, 'equalizer.cfg');
@@ -71,6 +72,7 @@ begin
   except
   end;
   self.Destroy();
+  Application.Terminate();
 end;
 
 procedure TWMPFRM.Show();
@@ -92,34 +94,29 @@ procedure TWMPFRM.Create();
 var
   i: Integer;
 begin
-  Application.Initialize();
-  self.fform := self.CreateForm(120, 215, 600, 285, 'Equalizer');
-  self.fform.InsertControl(self.CreateCheckBox(260, 5, 80, 20, 'Enabled'));
-  self.fform.InsertControl(self.CreateTrackBar(5, 10, 20, 255, 99));
-  self.fform.InsertControl(self.CreateStaticText(245, 30, 45, 20, '-20 dB'));
-  self.fform.InsertControl(self.CreateStaticText(125, 35, 45, 20, '0 dB'));
-  self.fform.InsertControl(self.CreateStaticText(5, 30, 45, 20, '+20 dB'));
+  self.CreateForm(120, 215, 600, 285, 'Equalizer');
+  self.CreateCheckBox(260, 5, 80, 20, 'Enabled');
+  self.CreateTrackBar(5, 10, 20, 255, 99);
+  self.CreateStaticText(245, 30, 45, 20, '-20 dB')  ;
+  self.CreateStaticText(125, 35, 45, 20, '0 dB');
+  self.CreateStaticText(5, 30, 45, 20, '+20 dB');
   for i := 0 to Length(self.finfo.Bands) - 1 do begin
-    self.fform.InsertControl(self.CreateTrackBar(5, 75 + 25 * i, 20, 255, i));
-    self.fform.InsertControl(self.CreateStaticText(265, 70 + 25 * i, 30, 20, IfThen(20 * Power(2, 0.5 * i) < 1000, Format('%4.0f ', [20 * Power(2, 0.5 * i) / 1]), Format('%4.1fk', [20 * Power(2, 0.5 * i) / 1000]))));
+    self.CreateTrackBar(5, 75 + 25 * i, 20, 255, i);
+    self.CreateStaticText(265, 70 + 25 * i, 30, 20, IfThen(20 * Power(2, 0.5 * i) < 1000, Format('%4.0f ', [20 * Power(2, 0.5 * i) / 1]), Format('%4.1fk', [20 * Power(2, 0.5 * i) / 1000])));
   end;
 end;
 
 procedure TWMPFRM.Destroy();
-var
-  i: Integer;
 begin
-  self.fform.Hide();
-  for i := 0 to self.fform.ControlCount - 1 do begin
-    self.fform.Controls[i].Destroy();
-  end;
+  self.fform.Close();
   self.fform.Destroy();
-  Application.Terminate();
 end;
 
-function TWMPFRM.CreateForm(const Top, Left, Width, Height: Integer; const Caption: String): TForm;
+procedure TWMPFRM.CreateForm(const Top, Left, Width, Height: Integer; const Caption: String);
+var
+  Result: TForm;
 begin
-  Result := TForm.Create(Application);
+  Result := TForm.Create(nil);
   Result.Font.Size := 8;
   Result.Caption := Caption;
   Result.Top := Top;
@@ -132,11 +129,14 @@ begin
   Result.ShowHint := True;
   Result.OnShow := self.FormShow;
   Result.OnHide := self.FormHide;
+  self.fform := Result;
 end;
 
-function TWMPFRM.CreateTrackBar(const Top, Left, Width, Height: Integer; const Tag: Integer): TTrackBar;
+procedure TWMPFRM.CreateTrackBar(const Top, Left, Width, Height: Integer; const Tag: Integer);
+var
+  Result: TTrackBar;
 begin
-  Result := TTrackBar.Create(Application);
+  Result := TTrackBar.Create(nil);
   Result.Font.Size := 8;
   Result.Orientation := trVertical;
   Result.Tag := Tag;
@@ -151,11 +151,14 @@ begin
   Result.TickMarks := tmBoth;
   Result.TickStyle := tsNone;
   Result.OnChange := self.TrackBarSave;
+  Result.Parent := self.fform;
 end;
 
-function TWMPFRM.CreateCheckBox(const Top, Left, Width, Height: Integer; const Caption: String): TCheckBox;
+procedure TWMPFRM.CreateCheckBox(const Top, Left, Width, Height: Integer; const Caption: String);
+var
+  Result: TCheckBox;
 begin
-  Result := TCheckBox.Create(Application);
+  Result := TCheckBox.Create(nil);
   Result.Font.Size := 8;
   Result.Caption := Caption;
   Result.Top := Top;
@@ -164,11 +167,14 @@ begin
   Result.Height := Height;
   Result.ShowHint := True;
   Result.OnClick := self.CheckBoxSave;
+  Result.Parent := self.fform;
 end;
 
-function TWMPFRM.CreateStaticText(const Top, Left, Width, Height: Integer; const Caption: String): TStaticText;
+procedure TWMPFRM.CreateStaticText(const Top, Left, Width, Height: Integer; const Caption: String);
+var
+  Result: TStaticText;
 begin
-  Result := TStaticText.Create(Application);
+  Result := TStaticText.Create(nil);
   Result.Font.Size := 8;
   Result.Caption := Caption;
   Result.Top := Top;
@@ -176,6 +182,7 @@ begin
   Result.Width := Width;
   Result.Height := Height;
   Result.ShowHint := True;
+  Result.Parent := self.fform;
 end;
 
 procedure TWMPFRM.TrackBarLoad(Sender: TObject);
