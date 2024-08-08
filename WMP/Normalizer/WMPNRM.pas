@@ -95,7 +95,7 @@ begin
     for k := 0 to TWMPNRM.fdsp.Channels - 1 do begin
       f := f + (TWMPNRM.famp[k] - f) / (k + 1);
     end;
-    TWMPNRM.ffrm.Update(20 * Log10(f));
+    TWMPNRM.ffrm.Amp := f;
   end;
   Result := Samples;
 end;
