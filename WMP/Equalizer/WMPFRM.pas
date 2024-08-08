@@ -186,78 +186,78 @@ begin
 end;
 
 procedure TWMPFRM.TrackBarLoad(Sender: TObject);
+var
+  s: TTrackBar;
 begin
   if (Sender is TTrackBar) then begin
-    with (Sender as TTrackBar) do begin
-      if (Tag = 99) then begin
-        Position := Max - self.finfo.Preamp     + Min;
-      end           else begin
-        Position := Max - self.finfo.Bands[Tag] + Min;
-      end;
-      Hint := Format('Gain: %f dB', [(Max - Position + Min) / 10]);
+    s := (Sender as TTrackBar);
+    if (s.Tag = 99) then begin
+      s.Position := s.Max - self.finfo.Preamp       + s.Min;
+    end             else begin
+      s.Position := s.Max - self.finfo.Bands[s.Tag] + s.Min;
     end;
+    s.Hint := Format('Gain: %f dB', [(s.Max - s.Position + s.Min) / 10]);
   end;
 end;
 
 procedure TWMPFRM.TrackBarSave(Sender: TObject);
+var
+  s: TTrackBar;
 begin
   if (Sender is TTrackBar) then begin
-    with (Sender as TTrackBar) do begin
-      if (Tag = 99) then begin
-        self.finfo.Preamp     := Max - Position + Min;
-      end           else begin
-        self.finfo.Bands[Tag] := Max - Position + Min;
-      end;
-      Hint := Format('Gain: %f dB', [(Max - Position + Min) / 10]);
+    s := (Sender as TTrackBar);
+    if (s.Tag = 99) then begin
+      self.finfo.Preamp       := s.Max - s.Position + s.Min;
+    end             else begin
+      self.finfo.Bands[s.Tag] := s.Max - s.Position + s.Min;
     end;
+    s.Hint := Format('Gain: %f dB', [(s.Max - s.Position + s.Min) / 10]);
   end;
 end;
 
 procedure TWMPFRM.CheckBoxLoad(Sender: TObject);
+var
+  s: TCheckBox;
 begin
   if (Sender is TCheckBox) then begin
-    with (Sender as TCheckBox) do begin
-      if (Tag = 99) then begin
-        Checked := self.finfo.Enabled;
-      end           else begin
-        Checked := self.finfo.Enabled;
-      end;
-      Hint := Format('Enabled: %s', [Checked.ToString(TUseBoolStrs.True)]);
+    s := (Sender as TCheckBox);
+    if (s.Tag = 99) then begin
+      s.Checked := self.finfo.Enabled;
+    end             else begin
+      s.Checked := self.finfo.Enabled;
     end;
+    s.Hint := Format('Enabled: %s', [s.Checked.ToString(TUseBoolStrs.True)]);
   end;
 end;
 
 procedure TWMPFRM.CheckBoxSave(Sender: TObject);
+var
+  s: TCheckBox;
 begin
   if (Sender is TCheckBox) then begin
-    with (Sender as TCheckBox) do begin
-      if (Tag = 99) then begin
-        self.finfo.Enabled := Checked;
-      end           else begin
-        self.finfo.Enabled := Checked;
-      end;
-      Hint := Format('Enabled: %s', [Checked.ToString(TUseBoolStrs.True)]);
+    s := (Sender as TCheckBox);
+    if (s.Tag = 99) then begin
+      self.finfo.Enabled := s.Checked;
+    end             else begin
+      self.finfo.Enabled := s.Checked;
     end;
+    s.Hint := Format('Enabled: %s', [s.Checked.ToString(TUseBoolStrs.True)]);
   end;
 end;
 
 procedure TWMPFRM.FormShow(Sender: TObject);
 var
+  s: TForm;
   i: Integer;
 begin
   if (Sender is TForm) then begin
-    with (Sender as TForm) do begin
-      for i := 0 to ControlCount - 1 do begin
-        if (Controls[i] is TTrackBar) then begin
-          //with (Controls[i] as TTrackBar) do begin
-          self.TrackBarLoad(Controls[i]);
-          //end;
-        end;
-        if (Controls[i] is TCheckBox) then begin
-          //with (Controls[i] as TCheckBox) do begin
-          self.CheckBoxLoad(Controls[i]);
-          //end;
-        end;
+    s := (Sender as TForm);
+    for i := 0 to s.ControlCount - 1 do begin
+      if (s.Controls[i] is TTrackBar) then begin
+        self.TrackBarLoad(s.Controls[i]);
+      end;
+      if (s.Controls[i] is TCheckBox) then begin
+        self.CheckBoxLoad(s.Controls[i]);
       end;
     end;
   end;
@@ -265,21 +265,17 @@ end;
 
 procedure TWMPFRM.FormHide(Sender: TObject);
 var
+  s: TForm;
   i: Integer;
 begin
   if (Sender is TForm) then begin
-    with (Sender as TForm) do begin
-      for i := 0 to ControlCount - 1 do begin
-        if (Controls[i] is TTrackBar) then begin
-          //with (Controls[i] as TTrackBar) do begin
-          self.TrackBarSave(Controls[i]);
-          //end;
-        end;
-        if (Controls[i] is TCheckBox) then begin
-          //with (Controls[i] as TCheckBox) do begin
-          self.CheckBoxSave(Controls[i]);
-          //end;
-        end;
+    s := (Sender as TForm);
+    for i := 0 to s.ControlCount - 1 do begin
+      if (s.Controls[i] is TTrackBar) then begin
+        self.TrackBarSave(s.Controls[i]);
+      end;
+      if (s.Controls[i] is TCheckBox) then begin
+        self.CheckBoxSave(s.Controls[i]);
       end;
     end;
   end;
