@@ -16,6 +16,7 @@ type
   private
     var finfo: TInfo;
     var fform: TForm;
+    procedure setAmp(const Value: Double);
     procedure CreateForm(const Top, Left, Width, Height: Integer; const Caption: String);
     procedure CreateTrackBar(const Top, Left, Width, Height: Integer; const Tag: Integer);
     procedure CreateStaticText(const Top, Left, Width, Height: Integer; const Caption: String);
@@ -26,7 +27,7 @@ type
     procedure Done();
     procedure Show();
     procedure Hide();
-    procedure Update(const Value: Double);
+    property Amp: Double write setAmp;
   end;
 
 implementation
@@ -131,15 +132,15 @@ begin
   Result.Parent := self.fform;
 end;
 
-procedure TWMPFRM.Update(const Value: Double);
+procedure TWMPFRM.setAmp(const Value: Double);
 var
+  s: TTrackBar;
   i: Integer;
 begin
   for i := 0 to self.fform.ControlCount - 1 do begin
     if (self.fform.Controls[i] is TTrackBar) then begin
-      with (self.fform.Controls[i] as TTrackBar) do begin
-        Position := Round(Value * 10);
-      end;
+      s := (self.fform.Controls[i] as TTrackBar);
+      s.Position := Round(20 * Log10(Value) * 10);
     end;
   end;
 end;
