@@ -48,7 +48,7 @@ begin
   for k := 0 to Length(TQMPEQU.feqz) - 1 do begin
     for i := 0 to Length(TQMPEQU.feqz[k]) - 1 do begin
       TQMPEQU.feqz[k, i].Init(ftEqu, btOctave, gtDb);
-      TQMPEQU.feqz[k, i].Freq := 35 * Power(2, 1.0 * i);
+      TQMPEQU.feqz[k, i].Freq := 32 * Power(2, 1.0 * i);
       TQMPEQU.feqz[k, i].Width := 1.0;
     end;
   end;
@@ -76,17 +76,17 @@ var
   i: LongWord;
   x: LongWord;
 begin
-  TQMPEQU.fdsp.Data := Data.Data;
-  TQMPEQU.fdsp.Bits := Data.Bits;
-  TQMPEQU.fdsp.Rates := Data.Rates;
-  TQMPEQU.fdsp.Samples := Data.Samples;
-  TQMPEQU.fdsp.Channels := Data.Channels;
   if (TQMPEQU.fenabled) then begin
+    TQMPEQU.fdsp.Data.Data := Data.Data;
+    TQMPEQU.fdsp.Data.Bits := Data.Bits;
+    TQMPEQU.fdsp.Data.Rates := Data.Rates;
+    TQMPEQU.fdsp.Data.Samples := Data.Samples;
+    TQMPEQU.fdsp.Data.Channels := Data.Channels;
     for k := 0 to Length(TQMPEQU.feqz) - 1 do begin
       for i := 0 to Length(TQMPEQU.feqz[k]) - 1 do begin
-        TQMPEQU.feqz[k, i].Rate := TQMPEQU.fdsp.Rates;
-        for x := 0 to TQMPEQU.fdsp.Samples - 1 do begin
-          if (k < TQMPEQU.fdsp.Channels) then begin
+        TQMPEQU.feqz[k, i].Rate := TQMPEQU.fdsp.Data.Rates;
+        for x := 0 to TQMPEQU.fdsp.Data.Samples - 1 do begin
+          if (k < TQMPEQU.fdsp.Data.Channels) then begin
             TQMPEQU.fdsp.Buffer[x, k] := TQMPEQU.feqz[k, i].Process(TQMPEQU.fdsp.Buffer[x, k]);
           end;
         end;
