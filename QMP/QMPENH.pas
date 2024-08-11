@@ -41,7 +41,7 @@ end;
 class function TQMPENH.Init(const Flags: Integer): Integer; cdecl;
 begin
   TQMPENH.fdsp.Init();
-  TQMPENH.fwidth := Power(10, 7.5 / 20);
+  TQMPENH.fwidth := Power(10, 5.0 / 20);
   Result := 1;
 end;
 
@@ -57,18 +57,18 @@ var
   x: LongWord;
   f: Double;
 begin
-  TQMPENH.fdsp.Data := Data.Data;
-  TQMPENH.fdsp.Bits := Data.Bits;
-  TQMPENH.fdsp.Rates := Data.Rates;
-  TQMPENH.fdsp.Samples := Data.Samples;
-  TQMPENH.fdsp.Channels := Data.Channels;
   if (TQMPENH.fenabled) then begin
-    for x := 0 to TQMPENH.fdsp.Samples - 1 do begin
+    TQMPENH.fdsp.Data.Data := Data.Data;
+    TQMPENH.fdsp.Data.Bits := Data.Bits;
+    TQMPENH.fdsp.Data.Rates := Data.Rates;
+    TQMPENH.fdsp.Data.Samples := Data.Samples;
+    TQMPENH.fdsp.Data.Channels := Data.Channels;
+    for x := 0 to TQMPENH.fdsp.Data.Samples - 1 do begin
       f := 0;
-      for k := 0 to TQMPENH.fdsp.Channels - 1 do begin
+      for k := 0 to TQMPENH.fdsp.Data.Channels - 1 do begin
         f := f + (TQMPENH.fdsp.Buffer[x, k] - f) / (k + 1);
       end;
-      for k := 0 to TQMPENH.fdsp.Channels - 1 do begin
+      for k := 0 to TQMPENH.fdsp.Data.Channels - 1 do begin
         TQMPENH.fdsp.Buffer[x, k] := f + TQMPENH.fwidth * (TQMPENH.fdsp.Buffer[x, k] - f);
       end;
     end;
