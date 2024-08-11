@@ -67,21 +67,21 @@ var
   a: Double;
   b: Double;
 begin
-  TQMPNRM.fdsp.Data := Data.Data;
-  TQMPNRM.fdsp.Bits := Data.Bits;
-  TQMPNRM.fdsp.Rates := Data.Rates;
-  TQMPNRM.fdsp.Samples := Data.Samples;
-  TQMPNRM.fdsp.Channels := Data.Channels;
   if (TQMPNRM.fenabled) then begin
-    for k := 0 to TQMPNRM.fdsp.Channels - 1 do begin
+    TQMPNRM.fdsp.Data.Data := Data.Data;
+    TQMPNRM.fdsp.Data.Bits := Data.Bits;
+    TQMPNRM.fdsp.Data.Rates := Data.Rates;
+    TQMPNRM.fdsp.Data.Samples := Data.Samples;
+    TQMPNRM.fdsp.Data.Channels := Data.Channels;
+    for k := 0 to TQMPNRM.fdsp.Data.Channels - 1 do begin
       f := 1.0;
-      for x := 0 to TQMPNRM.fdsp.Samples - 1 do begin
+      for x := 0 to TQMPNRM.fdsp.Data.Samples - 1 do begin
         f := f / Sqrt(1.0 + ((4.5 * Sqr(f * TQMPNRM.fdsp.Buffer[x, k]) - 1.0) / (x + 1)));
       end;
       b := Min(Max(1.0, f), 10.0);
       a := Min(Max(1.0, TQMPNRM.famp[k]), 10.0);
-      for x := 0 to TQMPNRM.fdsp.Samples - 1 do begin
-        TQMPNRM.famp[k] := (b - a) * Min(Max(0.0, x / (IfThen(b <= a, 0.50, 25.0) * TQMPNRM.fdsp.Rates)), 1.0) + a;
+      for x := 0 to TQMPNRM.fdsp.Data.Samples - 1 do begin
+        TQMPNRM.famp[k] := (b - a) * Min(Max(0.0, x / (IfThen(b <= a, 0.50, 25.0) * TQMPNRM.fdsp.Data.Rates)), 1.0) + a;
         TQMPNRM.fdsp.Buffer[x, k] := TQMPNRM.famp[k] * TQMPNRM.fdsp.Buffer[x, k];
       end;
     end;
