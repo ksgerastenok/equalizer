@@ -81,22 +81,22 @@ var
   x: LongWord;
 begin
   TWMPEQU.fenabled := TWMPEQU.ffrm.Info.Enabled;
-  for k := 0 to Length(TWMPEQU.feqz) - 1 do begin
-    for i := 0 to Length(TWMPEQU.feqz[k]) - 1 do begin
-      TWMPEQU.feqz[k, i].Amp := (TWMPEQU.ffrm.Info.Preamp + TWMPEQU.ffrm.Info.Bands[i]) / 10;
-    end;
-  end;
-  TWMPEQU.fdsp.Data := Data;
-  TWMPEQU.fdsp.Bits := Bits;
-  TWMPEQU.fdsp.Rates := Rates;
-  TWMPEQU.fdsp.Samples := Samples;
-  TWMPEQU.fdsp.Channels := Channels;
   if (TWMPEQU.fenabled) then begin
     for k := 0 to Length(TWMPEQU.feqz) - 1 do begin
       for i := 0 to Length(TWMPEQU.feqz[k]) - 1 do begin
-        TWMPEQU.feqz[k, i].Rate := TWMPEQU.fdsp.Rates;
-        for x := 0 to TWMPEQU.fdsp.Samples - 1 do begin
-          if (k < TWMPEQU.fdsp.Channels) then begin
+        TWMPEQU.feqz[k, i].Amp := (TWMPEQU.ffrm.Info.Preamp + TWMPEQU.ffrm.Info.Bands[i]) / 10;
+      end;
+    end;
+    TWMPEQU.fdsp.Data.Data := Data;
+    TWMPEQU.fdsp.Data.Bits := Bits;
+    TWMPEQU.fdsp.Data.Rates := Rates;
+    TWMPEQU.fdsp.Data.Samples := Samples;
+    TWMPEQU.fdsp.Data.Channels := Channels;
+    for k := 0 to Length(TWMPEQU.feqz) - 1 do begin
+      for i := 0 to Length(TWMPEQU.feqz[k]) - 1 do begin
+        TWMPEQU.feqz[k, i].Rate := TWMPEQU.fdsp.Data.Rates;
+        for x := 0 to TWMPEQU.fdsp.Data.Samples - 1 do begin
+          if (k < TWMPEQU.fdsp.Data.Channels) then begin
             TWMPEQU.fdsp.Buffer[x, k] := TWMPEQU.feqz[k, i].Process(TWMPEQU.fdsp.Buffer[x, k]);
           end;
         end;
