@@ -12,26 +12,13 @@ type
   private
     var fdata: TData;
     function clip(const Value: Double): Double;
-    function getData(): Pointer;
-    procedure setData(const Data: Pointer);
-    function getBits(): LongWord;
-    procedure setBits(const Bits: LongWord);
-    function getRates(): LongWord;
-    procedure setRates(const Rates: LongWord);
-    function getSamples(): LongWord;
-    procedure setSamples(const Samples: LongWord);
-    function getChannels(): LongWord;
-    procedure setChannels(const Channels: LongWord);
+    function getData(): PData;
     function getBuffer(const Sample: LongWord; const Channel: LongWord): Double;
     procedure setBuffer(const Sample: LongWord; const Channel: LongWord; const Value: Double);
   public
     procedure Init();
     procedure Done();
-    property Data: Pointer read getData write setData;
-    property Bits: LongWord read getBits write setBits;
-    property Rates: LongWord read getRates write setRates;
-    property Samples: LongWord read getSamples write setSamples;
-    property Channels: LongWord read getChannels write setChannels;
+    property Data: PData read getData;
     property Buffer[const Sample: LongWord; const Channel: LongWord]: Double read getBuffer write setBuffer;
   end;
 
@@ -53,54 +40,9 @@ begin
   Result := Min(Max(-1.0, Value), +1.0);
 end;
 
-function TQMPDSP.getData(): Pointer;
+function TQMPDSP.getData(): PData;
 begin
-  Result := self.fdata.Data;
-end;
-
-procedure TQMPDSP.setData(const Data: Pointer);
-begin
-  self.fdata.Data := Data;
-end;
-
-function TQMPDSP.getBits(): LongWord;
-begin
-  Result := self.fdata.Bits;
-end;
-
-procedure TQMPDSP.setBits(const Bits: LongWord);
-begin
-  self.fdata.Bits := Bits;
-end;
-
-function TQMPDSP.getRates(): LongWord;
-begin
-  Result := self.fdata.Rates;
-end;
-
-procedure TQMPDSP.setRates(const Rates: LongWord);
-begin
-  self.fdata.Rates := Rates;
-end;
-
-function TQMPDSP.getSamples(): LongWord;
-begin
-  Result := self.fdata.Samples;
-end;
-
-procedure TQMPDSP.setSamples(const Samples: LongWord);
-begin
-  self.fdata.Samples := Samples;
-end;
-
-function TQMPDSP.getChannels(): LongWord;
-begin
-  Result := self.fdata.Channels;
-end;
-
-procedure TQMPDSP.setChannels(const Channels: LongWord);
-begin
-  self.fdata.Channels := Channels;
+  Result := Addr(self.fdata);
 end;
 
 function TQMPDSP.getBuffer(const Sample: LongWord; const Channel: LongWord): Double;
