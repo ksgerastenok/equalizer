@@ -15,20 +15,16 @@ type
   TWMPFRM = record
   private
     var finfo: TInfo;
-    var fform: TForm;
     function getInfo(): TInfo;
-    procedure CreateForm(const Top, Left, Width, Height: Integer; const Caption: String);
-    procedure CreateTrackBar(const Top, Left, Width, Height: Integer; const Tag: Integer);
-    procedure CreateCheckBox(const Top, Left, Width, Height: Integer; const Caption: String);
-    procedure CreateStaticText(const Top, Left, Width, Height: Integer; const Caption: String);
-    procedure TrackBarLoad(Sender: TObject);
-    procedure TrackBarSave(Sender: TObject);
-    procedure CheckBoxLoad(Sender: TObject);
-    procedure CheckBoxSave(Sender: TObject);
+    function getForm(): TForm;
     procedure Create();
     procedure Destroy();
     procedure FormShow(Sender: TObject);
     procedure FormHide(Sender: TObject);
+    procedure TrackBarLoad(Sender: TObject);
+    procedure TrackBarSave(Sender: TObject);
+    procedure CheckBoxLoad(Sender: TObject);
+    procedure CheckBoxSave(Sender: TObject);
   public
     procedure Init();
     procedure Done();
@@ -77,12 +73,12 @@ end;
 
 procedure TWMPFRM.Show();
 begin
-  self.fform.Show();
+  self.getForm().Show();
 end;
 
 procedure TWMPFRM.Hide();
 begin
-  self.fform.Hide();
+  self.getForm().Hide();
 end;
 
 function TWMPFRM.getInfo(): TInfo;
@@ -90,174 +86,144 @@ begin
   Result := self.finfo;
 end;
 
+function TWMPFRM.getForm(): TForm;
+var
+  i: Integer;
+begin
+  for i := 0 to Application.ComponentCount - 1 do begin
+    if (Application.Components[i] is TForm) then begin
+      Result := (Application.Components[i] as TForm);
+    end;
+  end;
+end;
+
 procedure TWMPFRM.Create();
 var
   i: Integer;
 begin
-  self.CreateForm(120, 215, 600, 285, 'Equalizer');
-  self.CreateCheckBox(260, 5, 80, 20, 'Enabled');
-  self.CreateTrackBar(5, 10, 20, 255, 99);
-  self.CreateStaticText(245, 30, 45, 20, '-20 dB')  ;
-  self.CreateStaticText(125, 35, 45, 20, '0 dB');
-  self.CreateStaticText(5, 30, 45, 20, '+20 dB');
+  with (TForm.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Equalizer';
+    Top := 120;
+    Left := 215;
+    Width := 600;
+    Height := 285;
+    BorderIcons := [biSystemMenu];
+    BorderStyle := bsSingle;
+    Position := poMainFormCenter;
+    ShowHint := True;
+    Parent := nil;
+    OnShow := self.FormShow;
+    OnHide := self.FormHide;
+  end;
+  with (TCheckBox.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Enabled';
+    Top := 260;
+    Left := 5;
+    Width := 80;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getForm();
+    OnClick := self.CheckBoxSave;
+  end;
+  with (TTrackBar.Create(Application)) do begin
+    Font.Size := 8;
+    Orientation := trVertical;
+    Top := 5;
+    Left := 10;
+    Width := 20;
+    Height := 255;
+    Tag := 99;
+    Min := -200;
+    Position := 0;
+    Max := 200;
+    ShowHint := True;
+    TickMarks := tmBoth;
+    TickStyle := tsNone;
+    Parent := self.getForm();
+    OnChange := self.TrackBarSave;
+  end;
+  with (TStaticText.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := '-20 dB';
+    Top := 245;
+    Left := 30;
+    Width := 45;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getForm();
+  end;
+  with (TStaticText.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := '0 dB';
+    Top := 125;
+    Left := 35;
+    Width := 45;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getForm();
+  end;
+  with (TStaticText.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := '+20 dB';
+    Top := 5;
+    Left := 30;
+    Width := 45;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getForm();
+  end;
   for i := 0 to Length(self.finfo.Bands) - 1 do begin
-    self.CreateTrackBar(5, 75 + 25 * i, 20, 255, i);
-    self.CreateStaticText(265, 70 + 25 * i, 30, 20, IfThen(20 * Power(2, 0.5 * i) < 1000, Format('%4.0f ', [20 * Power(2, 0.5 * i) / 1]), Format('%4.1fk', [20 * Power(2, 0.5 * i) / 1000])));
+    with (TTrackBar.Create(Application)) do begin
+      Font.Size := 8;
+      Orientation := trVertical;
+      Top := 5;
+      Left := 75 + 25 * i;
+      Width := 20;
+      Height := 255;
+      Tag := i;
+      Min := -200;
+      Position := 0;
+      Max := 200;
+      ShowHint := True;
+      TickMarks := tmBoth;
+      TickStyle := tsNone;
+      Parent := self.getForm();
+      OnChange := self.TrackBarSave;
+    end;
+    with (TStaticText.Create(Application)) do begin
+      Font.Size := 8;
+      Caption := IfThen(20 * Power(2, 0.5 * i) < 1000, Format('%4.0f ', [20 * Power(2, 0.5 * i) / 1]), Format('%4.1fk', [20 * Power(2, 0.5 * i) / 1000]));
+      Top := 265;
+      Left := 70 + 25 * i;
+      Width := 30;
+      Height := 20;
+      ShowHint := True;
+      Parent := self.getForm();
+    end;
   end;
 end;
 
 procedure TWMPFRM.Destroy();
 begin
-  self.fform.Close();
-  self.fform.Destroy();
-end;
-
-procedure TWMPFRM.CreateForm(const Top, Left, Width, Height: Integer; const Caption: String);
-var
-  Result: TForm;
-begin
-  Result := TForm.Create(nil);
-  Result.Font.Size := 8;
-  Result.Caption := Caption;
-  Result.Top := Top;
-  Result.Left := Left;
-  Result.Width := Width;
-  Result.Height := Height;
-  Result.BorderIcons := [biSystemMenu];
-  Result.BorderStyle := bsSingle;
-  Result.Position := poMainFormCenter;
-  Result.ShowHint := True;
-  Result.OnShow := self.FormShow;
-  Result.OnHide := self.FormHide;
-  self.fform := Result;
-end;
-
-procedure TWMPFRM.CreateTrackBar(const Top, Left, Width, Height: Integer; const Tag: Integer);
-var
-  Result: TTrackBar;
-begin
-  Result := TTrackBar.Create(nil);
-  Result.Font.Size := 8;
-  Result.Orientation := trVertical;
-  Result.Tag := Tag;
-  Result.Top := Top;
-  Result.Left := Left;
-  Result.Width := Width;
-  Result.Height := Height;
-  Result.Min := -200;
-  Result.Position := 0;
-  Result.Max := 200;
-  Result.ShowHint := True;
-  Result.TickMarks := tmBoth;
-  Result.TickStyle := tsNone;
-  Result.OnChange := self.TrackBarSave;
-  Result.Parent := self.fform;
-end;
-
-procedure TWMPFRM.CreateCheckBox(const Top, Left, Width, Height: Integer; const Caption: String);
-var
-  Result: TCheckBox;
-begin
-  Result := TCheckBox.Create(nil);
-  Result.Font.Size := 8;
-  Result.Caption := Caption;
-  Result.Top := Top;
-  Result.Left := Left;
-  Result.Width := Width;
-  Result.Height := Height;
-  Result.ShowHint := True;
-  Result.OnClick := self.CheckBoxSave;
-  Result.Parent := self.fform;
-end;
-
-procedure TWMPFRM.CreateStaticText(const Top, Left, Width, Height: Integer; const Caption: String);
-var
-  Result: TStaticText;
-begin
-  Result := TStaticText.Create(nil);
-  Result.Font.Size := 8;
-  Result.Caption := Caption;
-  Result.Top := Top;
-  Result.Left := Left;
-  Result.Width := Width;
-  Result.Height := Height;
-  Result.ShowHint := True;
-  Result.Parent := self.fform;
-end;
-
-procedure TWMPFRM.TrackBarLoad(Sender: TObject);
-var
-  s: TTrackBar;
-begin
-  if (Sender is TTrackBar) then begin
-    s := (Sender as TTrackBar);
-    if (s.Tag = 99) then begin
-      s.Position := s.Max - self.finfo.Preamp       + s.Min;
-    end             else begin
-      s.Position := s.Max - self.finfo.Bands[s.Tag] + s.Min;
-    end;
-    s.Hint := Format('Gain: %f dB', [(s.Max - s.Position + s.Min) / 10]);
-  end;
-end;
-
-procedure TWMPFRM.TrackBarSave(Sender: TObject);
-var
-  s: TTrackBar;
-begin
-  if (Sender is TTrackBar) then begin
-    s := (Sender as TTrackBar);
-    if (s.Tag = 99) then begin
-      self.finfo.Preamp       := s.Max - s.Position + s.Min;
-    end             else begin
-      self.finfo.Bands[s.Tag] := s.Max - s.Position + s.Min;
-    end;
-    s.Hint := Format('Gain: %f dB', [(s.Max - s.Position + s.Min) / 10]);
-  end;
-end;
-
-procedure TWMPFRM.CheckBoxLoad(Sender: TObject);
-var
-  s: TCheckBox;
-begin
-  if (Sender is TCheckBox) then begin
-    s := (Sender as TCheckBox);
-    if (s.Tag = 99) then begin
-      s.Checked := self.finfo.Enabled;
-    end             else begin
-      s.Checked := self.finfo.Enabled;
-    end;
-    s.Hint := Format('Enabled: %s', [s.Checked.ToString(TUseBoolStrs.True)]);
-  end;
-end;
-
-procedure TWMPFRM.CheckBoxSave(Sender: TObject);
-var
-  s: TCheckBox;
-begin
-  if (Sender is TCheckBox) then begin
-    s := (Sender as TCheckBox);
-    if (s.Tag = 99) then begin
-      self.finfo.Enabled := s.Checked;
-    end             else begin
-      self.finfo.Enabled := s.Checked;
-    end;
-    s.Hint := Format('Enabled: %s', [s.Checked.ToString(TUseBoolStrs.True)]);
-  end;
+  self.getForm().Close();
+  self.getForm().Destroy();
 end;
 
 procedure TWMPFRM.FormShow(Sender: TObject);
 var
-  s: TForm;
   i: Integer;
 begin
   if (Sender is TForm) then begin
-    s := (Sender as TForm);
-    for i := 0 to s.ControlCount - 1 do begin
-      if (s.Controls[i] is TTrackBar) then begin
-        self.TrackBarLoad(s.Controls[i]);
-      end;
-      if (s.Controls[i] is TCheckBox) then begin
-        self.CheckBoxLoad(s.Controls[i]);
+    with (Sender as TForm) do begin
+      for i := 0 to ControlCount - 1 do begin
+        if (Controls[i] is TTrackBar) then begin
+          self.TrackBarLoad(Controls[i]);
+        end;
+        if (Controls[i] is TCheckBox) then begin
+          self.CheckBoxLoad(Controls[i]);
+        end;
       end;
     end;
   end;
@@ -265,18 +231,74 @@ end;
 
 procedure TWMPFRM.FormHide(Sender: TObject);
 var
-  s: TForm;
   i: Integer;
 begin
   if (Sender is TForm) then begin
-    s := (Sender as TForm);
-    for i := 0 to s.ControlCount - 1 do begin
-      if (s.Controls[i] is TTrackBar) then begin
-        self.TrackBarSave(s.Controls[i]);
+    with (Sender as TForm) do begin
+      for i := 0 to ControlCount - 1 do begin
+        if (Controls[i] is TTrackBar) then begin
+          self.TrackBarSave(Controls[i]);
+        end;
+        if (Controls[i] is TCheckBox) then begin
+          self.CheckBoxSave(Controls[i]);
+        end;
       end;
-      if (s.Controls[i] is TCheckBox) then begin
-        self.CheckBoxSave(s.Controls[i]);
+    end;
+  end;
+end;
+
+procedure TWMPFRM.TrackBarLoad(Sender: TObject);
+begin
+  if (Sender is TTrackBar) then begin
+    with (Sender as TTrackBar) do begin
+      if (Tag = 99) then begin
+        Position := Max - self.finfo.Preamp     + Min;
+      end           else begin
+        Position := Max - self.finfo.Bands[Tag] + Min;
       end;
+      Hint := Format('Gain: %f dB', [(Max - Position + Min) / 10]);
+    end;
+  end;
+end;
+
+procedure TWMPFRM.TrackBarSave(Sender: TObject);
+begin
+  if (Sender is TTrackBar) then begin
+    with (Sender as TTrackBar) do begin
+      if (Tag = 99) then begin
+        self.finfo.Preamp     := Max - Position + Min;
+      end           else begin
+        self.finfo.Bands[Tag] := Max - Position + Min;
+      end;
+      Hint := Format('Gain: %f dB', [(Max - Position + Min) / 10]);
+    end;
+  end;
+end;
+
+procedure TWMPFRM.CheckBoxLoad(Sender: TObject);
+begin
+  if (Sender is TCheckBox) then begin
+    with (Sender as TCheckBox) do begin
+      if (Tag = 99) then begin
+        Checked := self.finfo.Enabled;
+      end           else begin
+        Checked := self.finfo.Enabled;
+      end;
+      Hint := Format('Enabled: %s', [Checked.ToString(TUseBoolStrs.True)]);
+    end;
+  end;
+end;
+
+procedure TWMPFRM.CheckBoxSave(Sender: TObject);
+begin
+  if (Sender is TCheckBox) then begin
+    with (Sender as TCheckBox) do begin
+      if (Tag = 99) then begin
+        self.finfo.Enabled := Checked;
+      end           else begin
+        self.finfo.Enabled := Checked;
+      end;
+      Hint := Format('Enabled: %s', [Checked.ToString(TUseBoolStrs.True)]);
     end;
   end;
 end;
