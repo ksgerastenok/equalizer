@@ -81,14 +81,12 @@ var
 begin
   if (TWMPEQU.ffrm.Info.Enabled) then begin
     TWMPEQU.fdsp.Init(Data, Bits, Rates, Samples, Channels);
-    for x := 0 to Samples - 1 do begin
-      for k := 0 to Length(TWMPEQU.feqz) - 1 do begin
-        for i := 0 to Length(TWMPEQU.feqz[k]) - 1 do begin
-          if (k < Channels) then begin
-            TWMPEQU.feqz[k, i].Amp := (TWMPEQU.ffrm.Info.Preamp + TWMPEQU.ffrm.Info.Bands[i]) / 10;
-            TWMPEQU.feqz[k, i].Rate := Rates;
-            TWMPEQU.fdsp.Buffer[x, k] := TWMPEQU.feqz[k, i].Process(TWMPEQU.fdsp.Buffer[x, k]);
-          end;
+    for k := 0 to Min(Length(TWMPEQU.feqz), Channels) - 1 do begin
+      for i := 0 to Min(Length(TWMPEQU.feqz[k]), 21) - 1 do begin
+        TWMPEQU.feqz[k, i].Amp := (TWMPEQU.ffrm.Info.Preamp + TWMPEQU.ffrm.Info.Bands[i]) / 10;
+        TWMPEQU.feqz[k, i].Rate := Rates;
+        for x := 0 to Samples - 1 do begin
+          TWMPEQU.fdsp.Buffer[x, k] := TWMPEQU.feqz[k, i].Process(TWMPEQU.fdsp.Buffer[x, k]);
         end;
       end;
     end;
