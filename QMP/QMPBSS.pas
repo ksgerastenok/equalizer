@@ -45,9 +45,9 @@ var
 begin
   for k := 0 to Length(TQMPBSS.fbqf) - 1 do begin
     TQMPBSS.fbqf[k].Init(ftBass, btOctave, gtDb);
-    TQMPBSS.fbqf[k].Amp := 5.0;
-    TQMPBSS.fbqf[k].Freq := 160.0;
-    TQMPBSS.fbqf[k].Width := 2.0;
+    TQMPBSS.fbqf[k].Amp := 7.5;
+    TQMPBSS.fbqf[k].Freq := 110.0;
+    TQMPBSS.fbqf[k].Width := 2.5;
   end;
   Result := 1;
 end;
@@ -71,9 +71,9 @@ var
 begin
   if (TQMPBSS.finfo.Enabled) then begin
     TQMPBSS.fdsp.Init(Data);
-    for x := 0 to Data.Samples - 1 do begin
-      for k := 0 to Data.Channels - 1 do begin
-        TQMPBSS.fbqf[k].Rate := Data.Rates;
+    for k := 0 to Data.Channels - 1 do begin
+      TQMPBSS.fbqf[k].Rate := Data.Rates;
+      for x := 0 to Data.Samples - 1 do begin
         TQMPBSS.fdsp.Buffer[x, k] := TQMPBSS.fbqf[k].Process(TQMPBSS.fdsp.Buffer[x, k]);
       end;
     end;
