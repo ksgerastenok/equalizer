@@ -47,7 +47,7 @@ begin
     TQMPTRB.fbqf[k].Init(ftTreble, btOctave, gtDb);
     TQMPTRB.fbqf[k].Amp := 15.0;
     TQMPTRB.fbqf[k].Freq := 2500.0;
-    TQMPTRB.fbqf[k].Width := 2.5;
+    TQMPTRB.fbqf[k].Width := 3.0;
   end;
   Result := 1;
 end;

@@ -47,7 +47,7 @@ begin
     TQMPBSS.fbqf[k].Init(ftBass, btOctave, gtDb);
     TQMPBSS.fbqf[k].Amp := 7.5;
     TQMPBSS.fbqf[k].Freq := 110.0;
-    TQMPBSS.fbqf[k].Width := 2.5;
+    TQMPBSS.fbqf[k].Width := 3.0;
   end;
   Result := 1;
 end;
