@@ -58,12 +58,12 @@ begin
   Application.Initialize();
   self.Create();
   self.finfo.Enabled := True;
-  self.finfo.Bass.Amp := 7.5;
+  self.finfo.Bass.Amp := 3.5;
   self.finfo.Bass.Freq := 110.0;
-  self.finfo.Bass.Width := 2.5;
-  self.finfo.Treble.Amp := 15.0;
+  self.finfo.Bass.Width := 3.0;
+  self.finfo.Treble.Amp := 12.0;
   self.finfo.Treble.Freq := 2500.0;
-  self.finfo.Treble.Width := 2.5;
+  self.finfo.Treble.Width := 3.0;
 end;
 
 procedure TWMPFRM.Done();
