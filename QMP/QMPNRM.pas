@@ -64,12 +64,12 @@ begin
     for k := 0 to Data.Channels - 1 do begin
       s := 1.0;
       for x := 0 to Data.Samples - 1 do begin
-        s := s / Sqrt(Max(1.0 + ((Sqr(3.0 * s * TQMPNRM.fdsp.Buffer[x, k]) - 1.0) / (x + 1)), 0.01));
+        s := s / Sqrt(Max(1.0 + ((Sqr(1.8 * s * TQMPNRM.fdsp.Buffer[x, k]) - 1.0) / (x + 1)), 0.01));
       end;
       f := Min(f, s);
     end;
-    a := ((IfThen(TQMPNRM.famp <= f, 0.95, 1.05) - 1.0) / (IfThen(TQMPNRM.famp <= f, 0.95, 1.05) - (TQMPNRM.famp / f))) * IfThen(TQMPNRM.famp <= f, 25.0 * Data.Rates, 0.5 * Data.Rates) * (TQMPNRM.famp / f);
-    b := ((IfThen(TQMPNRM.famp <= f, 0.95, 1.05) - 1.0) / (IfThen(TQMPNRM.famp <= f, 0.95, 1.05) - (TQMPNRM.famp / f))) * IfThen(TQMPNRM.famp <= f, 25.0 * Data.Rates, 0.5 * Data.Rates) * (       1.0      );
+    a := ((IfThen(TQMPNRM.famp <= f, 0.95, 1.05) - 1.0) / (IfThen(TQMPNRM.famp <= f, 0.95, 1.05) - (TQMPNRM.famp / f))) * IfThen(TQMPNRM.famp <= f, 10.0 * Data.Rates, 0.5 * Data.Rates) * (TQMPNRM.famp / f);
+    b := ((IfThen(TQMPNRM.famp <= f, 0.95, 1.05) - 1.0) / (IfThen(TQMPNRM.famp <= f, 0.95, 1.05) - (TQMPNRM.famp / f))) * IfThen(TQMPNRM.famp <= f, 10.0 * Data.Rates, 0.5 * Data.Rates) * (       1.0      );
     for k := 0 to Data.Channels - 1 do begin
       for x := 0 to Data.Samples - 1 do begin
         TQMPNRM.famp := f * (x - a) / (x - b);

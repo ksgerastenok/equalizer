@@ -31,7 +31,7 @@ uses
 class function TQMPTRB.Plugin(): PPlugin; cdecl;
 begin
   Result := New(PPlugin);
-  Result.Description := 'Quinnware Treble Enhancer v3.51';
+  Result.Description := 'Quinnware Full Treble v3.51';
   Result.Version := $0000;
   Result.Init := TQMPTRB.Init;
   Result.Quit := TQMPTRB.Quit;
@@ -45,7 +45,7 @@ var
 begin
   for k := 0 to Length(TQMPTRB.fbqf) - 1 do begin
     TQMPTRB.fbqf[k].Init(ftTreble, btOctave, gtDb);
-    TQMPTRB.fbqf[k].Amp := 15.0;
+    TQMPTRB.fbqf[k].Amp := 12.0;
     TQMPTRB.fbqf[k].Freq := 2500.0;
     TQMPTRB.fbqf[k].Width := 3.0;
   end;
