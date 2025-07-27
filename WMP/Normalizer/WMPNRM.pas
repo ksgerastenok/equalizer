@@ -70,12 +70,12 @@ begin
     for k := 0 to Channels - 1 do begin
       s := 1.0;
       for x := 0 to Samples - 1 do begin
-        s := s / Sqrt(Max(1.0 + ((Sqr(3.0 * s * TWMPNRM.fdsp.Buffer[x, k]) - 1.0) / (x + 1)), 0.01));
+        s := s / Sqrt(Max(1.0 + ((Sqr(1.8 * s * TWMPNRM.fdsp.Buffer[x, k]) - 1.0) / (x + 1)), 0.01));
       end;
       f := Min(f, s);
     end;
-    a := ((IfThen(TWMPNRM.famp <= f, 0.95, 1.05) - 1.0) / (IfThen(TWMPNRM.famp <= f, 0.95, 1.05) - (TWMPNRM.famp / f))) * IfThen(TWMPNRM.famp <= f, 25.0 * Rates, 0.5 * Rates) * (TWMPNRM.famp / f);
-    b := ((IfThen(TWMPNRM.famp <= f, 0.95, 1.05) - 1.0) / (IfThen(TWMPNRM.famp <= f, 0.95, 1.05) - (TWMPNRM.famp / f))) * IfThen(TWMPNRM.famp <= f, 25.0 * Rates, 0.5 * Rates) * (       1.0      );
+    a := ((IfThen(TWMPNRM.famp <= f, 0.95, 1.05) - 1.0) / (IfThen(TWMPNRM.famp <= f, 0.95, 1.05) - (TWMPNRM.famp / f))) * IfThen(TWMPNRM.famp <= f, 10.0 * Rates, 0.5 * Rates) * (TWMPNRM.famp / f);
+    b := ((IfThen(TWMPNRM.famp <= f, 0.95, 1.05) - 1.0) / (IfThen(TWMPNRM.famp <= f, 0.95, 1.05) - (TWMPNRM.famp / f))) * IfThen(TWMPNRM.famp <= f, 10.0 * Rates, 0.5 * Rates) * (       1.0      );
     for k := 0 to Channels - 1 do begin
       for x := 0 to Samples - 1 do begin
         TWMPNRM.famp := f * (x - a) / (x - b);
