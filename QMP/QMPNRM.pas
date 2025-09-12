@@ -4,6 +4,7 @@ unit
 interface
 
 uses
+  QMPRNG,
   QMPDSP,
   QMPDCL;
 
@@ -12,7 +13,7 @@ type
   TQMPNRM = record
   private
     class var finfo: TInfo;
-    class var famp: Double;
+    class var frng: TQMPRNG;
     class var fdsp: TQMPDSP;
     class function Init(const Flags: Integer): Integer; cdecl; static;
     class procedure Quit(const Flags: Integer); cdecl; static;
@@ -40,23 +41,21 @@ end;
 
 class function TQMPNRM.Init(const Flags: Integer): Integer; cdecl;
 begin
-  TQMPNRM.famp := 1.0;
+  TQMPNRM.frng.Init(500);
   Result := 1;
 end;
 
 class procedure TQMPNRM.Quit(const Flags: Integer); cdecl;
 begin
-  TQMPNRM.famp := 0.0;
+  TQMPNRM.frng.Done();
 end;
 
 class function TQMPNRM.Modify(const Data: PData; const Latency: PInteger; const Flags: Integer): Integer; cdecl;
 var
   k: LongWord;
   x: LongWord;
-  s: Double;
   f: Double;
-  a: Double;
-  b: Double;
+  s: Double;
 begin
   if (TQMPNRM.finfo.Enabled) then begin
     TQMPNRM.fdsp.Init(Data);
@@ -64,16 +63,14 @@ begin
     for k := 0 to Data.Channels - 1 do begin
       s := 1.0;
       for x := 0 to Data.Samples - 1 do begin
-        s := s / Sqrt(Max(1.0 + ((Sqr(1.8 * s * TQMPNRM.fdsp.Buffer[x, k]) - 1.0) / (x + 1)), 0.01));
+        s := s / Sqrt(Max(1.0 + (Sqr(1.75 * s * TQMPNRM.fdsp.Buffer[x, k]) - 1.0) / (x + 1), 0.01));
       end;
       f := Min(f, s);
     end;
-    a := ((IfThen(TQMPNRM.famp <= f, 0.95, 1.05) - 1.0) / (IfThen(TQMPNRM.famp <= f, 0.95, 1.05) - (TQMPNRM.famp / f))) * IfThen(TQMPNRM.famp <= f, 10.0 * Data.Rates, 0.5 * Data.Rates) * (TQMPNRM.famp / f);
-    b := ((IfThen(TQMPNRM.famp <= f, 0.95, 1.05) - 1.0) / (IfThen(TQMPNRM.famp <= f, 0.95, 1.05) - (TQMPNRM.famp / f))) * IfThen(TQMPNRM.famp <= f, 10.0 * Data.Rates, 0.5 * Data.Rates) * (       1.0      );
+    f := TQMPNRM.frng.getSample(f);
     for k := 0 to Data.Channels - 1 do begin
       for x := 0 to Data.Samples - 1 do begin
-        TQMPNRM.famp := f * (x - a) / (x - b);
-        TQMPNRM.fdsp.Buffer[x, k] := TQMPNRM.fdsp.Buffer[x, k] * TQMPNRM.famp;
+        TQMPNRM.fdsp.Buffer[x, k] := TQMPNRM.fdsp.Buffer[x, k] * f;
       end;
     end;
     TQMPNRM.fdsp.Done();
