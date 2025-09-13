@@ -4,17 +4,12 @@ unit
 interface
 
 uses
-  WMPDCL,
-  Forms,
-  Controls,
-  ComCtrls,
-  StdCtrls;
+  WMPDCL;
 
 type
   PWMPFRM = ^TWMPFRM;
   TWMPFRM = record
   private
-    function getForm(): TForm;
     procedure setAmp(const Value: Double);
     procedure Create();
     procedure Destroy();
@@ -29,9 +24,27 @@ type
 implementation
 
 uses
-  Math,
+  Forms,
+  Controls,
+  ComCtrls,
+  StdCtrls,
   SysUtils,
-  Interfaces;
+  Interfaces,
+  Math;
+
+function getForm(): TForm;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to Application.ComponentCount - 1 do begin
+    if (Application.Components[i] is TForm) then begin
+      if (Application.Components[i] <> Application.MainForm) then begin
+        Result := (Application.Components[i] as TForm);
+      end;
+    end;
+  end;
+end;
 
 procedure TWMPFRM.Init();
 begin
@@ -47,23 +60,12 @@ end;
 
 procedure TWMPFRM.Show();
 begin
-  self.getForm().Show();
+  getForm().Show();
 end;
 
 procedure TWMPFRM.Hide();
 begin
-  self.getForm().Hide();
-end;
-
-function TWMPFRM.getForm(): TForm;
-var
-  i: Integer;
-begin
-  for i := 0 to Application.ComponentCount - 1 do begin
-    if (Application.Components[i] is TForm) then begin
-      Result := (Application.Components[i] as TForm);
-    end;
-  end;
+  getForm().Hide();
 end;
 
 procedure TWMPFRM.Create();
@@ -96,7 +98,7 @@ begin
     ShowHint := True;
     TickMarks := tmBoth;
     TickStyle := tsNone;
-    Parent := self.getForm();
+    Parent := getForm();
   end;
   with (TStaticText.Create(Application)) do begin
     Font.Size := 8;
@@ -106,7 +108,7 @@ begin
     Width := 45;
     Height := 20;
     ShowHint := True;
-    Parent := self.getForm();
+    Parent := getForm();
   end;
   with (TStaticText.Create(Application)) do begin
     Font.Size := 8;
@@ -116,7 +118,7 @@ begin
     Width := 45;
     Height := 20;
     ShowHint := True;
-    Parent := self.getForm();
+    Parent := getForm();
   end;
   with (TStaticText.Create(Application)) do begin
     Font.Size := 8;
@@ -126,7 +128,7 @@ begin
     Width := 45;
     Height := 20;
     ShowHint := True;
-    Parent := self.getForm();
+    Parent := getForm();
   end;
   with (TStaticText.Create(Application)) do begin
     Font.Size := 8;
@@ -136,7 +138,7 @@ begin
     Width := 45;
     Height := 20;
     ShowHint := True;
-    Parent := self.getForm();
+    Parent := getForm();
   end;
   with (TStaticText.Create(Application)) do begin
     Font.Size := 8;
@@ -146,24 +148,23 @@ begin
     Width := 45;
     Height := 20;
     ShowHint := True;
-    Parent := self.getForm();
+    Parent := getForm();
   end;
 end;
 
 procedure TWMPFRM.Destroy();
 begin
-  self.getForm().Close();
-  self.getForm().Destroy();
+  getForm().Close();
+  getForm().Destroy();
 end;
 
 procedure TWMPFRM.setAmp(const Value: Double);
 var
-  s: TTrackBar;
   i: Integer;
 begin
-  for i := 0 to self.getForm().ControlCount - 1 do begin
-    if (self.getForm().Controls[i] is TTrackBar) then begin
-      with(self.getForm().Controls[i] as TTrackBar) do begin
+  for i := 0 to getForm().ControlCount - 1 do begin
+    if (getForm().Controls[i] is TTrackBar) then begin
+      with (getForm().Controls[i] as TTrackBar) do begin
         Position := Round(20 * Log10(Value) * 10);
       end;
     end;
