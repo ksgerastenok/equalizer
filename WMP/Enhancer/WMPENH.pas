@@ -73,13 +73,13 @@ begin
   if (TWMPENH.ffrm.Info.Enabled) then begin
     TWMPENH.fdsp.Init(Data, Bits, Rates, Samples, Channels);
     for k := 0 to Channels - 1 do begin
-      TWMPENH.fbss[k].Amp := TWMPENH.ffrm.Info.Bass.Amp;
-      TWMPENH.ftrb[k].Amp := TWMPENH.ffrm.Info.Treble.Amp;
-      TWMPENH.fbss[k].Freq := TWMPENH.ffrm.Info.Bass.Freq;
-      TWMPENH.ftrb[k].Freq := TWMPENH.ffrm.Info.Treble.Freq;
-      TWMPENH.fbss[k].Width := TWMPENH.ffrm.Info.Bass.Width;
-      TWMPENH.ftrb[k].Width := TWMPENH.ffrm.Info.Treble.Width;
+      TWMPENH.fbss[k].Amp := TWMPENH.ffrm.Bass.Amp;
+      TWMPENH.fbss[k].Freq := TWMPENH.ffrm.Bass.Freq;
+      TWMPENH.fbss[k].Width := TWMPENH.ffrm.Bass.Width;
       TWMPENH.fbss[k].Rate := Rates;
+      TWMPENH.ftrb[k].Amp := TWMPENH.ffrm.Treble.Amp;
+      TWMPENH.ftrb[k].Freq := TWMPENH.ffrm.Treble.Freq;
+      TWMPENH.ftrb[k].Width := TWMPENH.ffrm.Treble.Width;
       TWMPENH.ftrb[k].Rate := Rates;
       for x := 0 to Samples - 1 do begin
         TWMPENH.fdsp.Buffer[x, k] := TWMPENH.fbss[k].Process(TWMPENH.fdsp.Buffer[x, k]);

@@ -4,11 +4,7 @@ unit
 interface
 
 uses
-  WMPDCL,
-  Forms,
-  Controls,
-  ComCtrls,
-  StdCtrls;
+  WMPDCL;
 
 type
   PFilter = ^TFilter;
@@ -19,20 +15,15 @@ type
   end;
 
 type
-  PInfo = ^TInfo;
-  TInfo = record
-    var Enabled: Boolean;
-    var Bass: TFilter;
-    var Treble: TFilter;
-  end;
-
-type
   PWMPFRM = ^TWMPFRM;
   TWMPFRM = record
   private
     var finfo: TInfo;
+    var fbass: TFilter;
+    var ftrbl: TFilter;
     function getInfo(): TInfo;
-    function getForm(): TForm;
+    function getBass(): TFilter;
+    function getTreble(): TFilter;
     procedure Create();
     procedure Destroy();
     procedure FormShow(Sender: TObject);
@@ -45,48 +36,68 @@ type
     procedure Show();
     procedure Hide();
     property Info: TInfo read getInfo;
+    property Bass: TFilter read getBass;
+    property Treble: TFilter read getTreble;
   end;
 
 implementation
 
 uses
+  Forms,
+  Controls,
+  ComCtrls,
+  StdCtrls,
   SysUtils,
   Interfaces;
+
+function getForm(): TForm;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to Application.ComponentCount - 1 do begin
+    if (Application.Components[i] is TForm) then begin
+      if (Application.Components[i] <> Application.MainForm) then begin
+        Result := (Application.Components[i] as TForm);
+      end;
+    end;
+  end;
+end;
 
 procedure TWMPFRM.Init();
 begin
   Application.Initialize();
   self.Create();
   self.finfo.Enabled := True;
-  self.finfo.Bass.Amp := 3.5;
-  self.finfo.Bass.Freq := 110.0;
-  self.finfo.Bass.Width := 3.0;
-  self.finfo.Treble.Amp := 12.0;
-  self.finfo.Treble.Freq := 2500.0;
-  self.finfo.Treble.Width := 3.0;
+  self.fbass.Amp := 5.0;
+  self.fbass.Freq := 140.0;
+  self.fbass.Width := 2.5;
+  self.ftrbl.Amp := 15.0;
+  self.ftrbl.Freq := 3500.0;
+  self.ftrbl.Width := 2.5;
 end;
 
 procedure TWMPFRM.Done();
 begin
-  self.finfo.Enabled := False;
-  self.finfo.Bass.Amp := 0.0;
-  self.finfo.Bass.Freq := 0.0;
-  self.finfo.Bass.Width := 0.0;
-  self.finfo.Treble.Amp := 0.0;
-  self.finfo.Treble.Freq := 0.0;
-  self.finfo.Treble.Width := 0.0;
+  self.finfo.Enabled := True;
+  self.fbass.Amp := 0.0;
+  self.fbass.Freq := 0.0;
+  self.fbass.Width := 0.0;
+  self.ftrbl.Amp := 0.0;
+  self.ftrbl.Freq := 0.0;
+  self.ftrbl.Width := 0.0;
   self.Destroy();
   Application.Terminate();
 end;
 
 procedure TWMPFRM.Show();
 begin
-  self.getForm().Show();
+  getForm().Show();
 end;
 
 procedure TWMPFRM.Hide();
 begin
-  self.getForm().Hide();
+  getForm().Hide();
 end;
 
 function TWMPFRM.getInfo(): TInfo;
@@ -94,16 +105,14 @@ begin
   Result := self.finfo;
 end;
 
-function TWMPFRM.getForm(): TForm;
-var
-  i: Integer;
+function TWMPFRM.getBass(): TFilter;
 begin
-  Result := nil;
-  for i := 0 to Application.ComponentCount - 1 do begin
-    if (Application.Components[i] is TForm) then begin
-      Result := (Application.Components[i] as TForm);
-    end;
-  end;
+  Result := self.fbass;
+end;
+
+function TWMPFRM.getTreble(): TFilter;
+begin
+  Result := self.ftrbl;
 end;
 
 procedure TWMPFRM.Create();
@@ -137,7 +146,7 @@ begin
     ShowHint := True;
     TickMarks := tmBoth;
     TickStyle := tsNone;
-    Parent := self.getForm();
+    Parent := getForm();
     OnChange := self.TrackBarSave;
   end;
   with (TTrackBar.Create(Application)) do begin
@@ -154,7 +163,7 @@ begin
     ShowHint := True;
     TickMarks := tmBoth;
     TickStyle := tsNone;
-    Parent := self.getForm();
+    Parent := getForm();
     OnChange := self.TrackBarSave;
   end;
   with (TTrackBar.Create(Application)) do begin
@@ -171,7 +180,7 @@ begin
     ShowHint := True;
     TickMarks := tmBoth;
     TickStyle := tsNone;
-    Parent := self.getForm();
+    Parent := getForm();
     OnChange := self.TrackBarSave;
   end;
   with (TTrackBar.Create(Application)) do begin
@@ -188,7 +197,7 @@ begin
     ShowHint := True;
     TickMarks := tmBoth;
     TickStyle := tsNone;
-    Parent := self.getForm();
+    Parent := getForm();
     OnChange := self.TrackBarSave;
   end;
   with (TTrackBar.Create(Application)) do begin
@@ -205,7 +214,7 @@ begin
     ShowHint := True;
     TickMarks := tmBoth;
     TickStyle := tsNone;
-    Parent := self.getForm();
+    Parent := getForm();
     OnChange := self.TrackBarSave;
   end;
   with (TTrackBar.Create(Application)) do begin
@@ -222,15 +231,15 @@ begin
     ShowHint := True;
     TickMarks := tmBoth;
     TickStyle := tsNone;
-    Parent := self.getForm();
+    Parent := getForm();
     OnChange := self.TrackBarSave;
   end;
 end;
 
 procedure TWMPFRM.Destroy();
 begin
-  self.getForm().Close();
-  self.getForm().Destroy();
+  getForm().Close();
+  getForm().Destroy();
 end;
 
 procedure TWMPFRM.FormShow(Sender: TObject);
@@ -268,28 +277,28 @@ begin
   if (Sender is TTrackBar) then begin
     with (Sender as TTrackBar) do begin
       if (Tag = 10) then begin
-        Position := Round(self.finfo.Bass.Amp * 10.0);
-        Hint := Format('Amp: %f', [self.finfo.Bass.Amp]);
+        Position := Round(self.fbass.Amp * 10.0);
+        Hint := Format('Amp: %f', [self.fbass.Amp]);
       end;
       if (Tag = 11) then begin
-        Position := Round(self.finfo.Bass.Freq / 10.0);
-        Hint := Format('Freq: %f Hz', [self.finfo.Bass.Freq]);
+        Position := Round(self.fbass.Freq / 10.0);
+        Hint := Format('Freq: %f Hz', [self.fbass.Freq]);
       end;
       if (Tag = 12) then begin
-        Position := Round(self.finfo.Bass.Width * 100.0);
-        Hint := Format('Width: %f', [self.finfo.Bass.Width]);
+        Position := Round(self.fbass.Width * 100.0);
+        Hint := Format('Width: %f', [self.fbass.Width]);
       end;
       if (Tag = 20) then begin
-        Position := Round(self.finfo.Treble.Amp * 10.0);
-        Hint := Format('Amp: %f', [self.finfo.Treble.Amp]);
+        Position := Round(self.ftrbl.Amp * 10.0);
+        Hint := Format('Amp: %f', [self.ftrbl.Amp]);
       end;
       if (Tag = 21) then begin
-        Position := Round(self.finfo.Treble.Freq / 100.0);
-        Hint := Format('Freq: %f Hz', [self.finfo.Treble.Freq]);
+        Position := Round(self.ftrbl.Freq / 100.0);
+        Hint := Format('Freq: %f Hz', [self.ftrbl.Freq]);
       end;
       if (Tag = 22) then begin
-        Position := Round(self.finfo.Treble.Width * 100.0);
-        Hint := Format('Width: %f', [self.finfo.Treble.Width]);
+        Position := Round(self.ftrbl.Width * 100.0);
+        Hint := Format('Width: %f', [self.ftrbl.Width]);
       end;
     end;
   end;
@@ -300,28 +309,28 @@ begin
   if (Sender is TTrackBar) then begin
     with (Sender as TTrackBar) do begin
       if (Tag = 10) then begin
-        self.finfo.Bass.Amp := Position / 10.0;
-        Hint := Format('Amp: %f', [self.finfo.Bass.Amp]);
+        self.fbass.Amp := Position / 10.0;
+        Hint := Format('Amp: %f', [self.fbass.Amp]);
       end;
       if (Tag = 11) then begin
-        self.finfo.Bass.Freq := Position * 10.0;
-        Hint := Format('Freq: %f Hz', [self.finfo.Bass.Freq]);
+        self.fbass.Freq := Position * 10.0;
+        Hint := Format('Freq: %f Hz', [self.fbass.Freq]);
       end;
       if (Tag = 12) then begin
-        self.finfo.Bass.Width := Position / 100.0;
-        Hint := Format('Width: %f', [self.finfo.Bass.Width]);
+        self.fbass.Width := Position / 100.0;
+        Hint := Format('Width: %f', [self.fbass.Width]);
       end;
       if (Tag = 20) then begin
-        self.finfo.Treble.Amp := Position / 10.0;
-        Hint := Format('Amp: %f', [self.finfo.Treble.Amp]);
+        self.ftrbl.Amp := Position / 10.0;
+        Hint := Format('Amp: %f', [self.ftrbl.Amp]);
       end;
       if (Tag = 21) then begin
-        self.finfo.Treble.Freq := Position * 100.0;
-        Hint := Format('Freq: %f Hz', [self.finfo.Treble.Freq]);
+        self.ftrbl.Freq := Position * 100.0;
+        Hint := Format('Freq: %f Hz', [self.ftrbl.Freq]);
       end;
       if (Tag = 22) then begin
-        self.finfo.Treble.Width := Position / 100.0;
-        Hint := Format('Width: %f', [self.finfo.Treble.Width]);
+        self.ftrbl.Width := Position / 100.0;
+        Hint := Format('Width: %f', [self.ftrbl.Width]);
       end;
     end;
   end;
