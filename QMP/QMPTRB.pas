@@ -45,9 +45,9 @@ var
 begin
   for k := 0 to Length(TQMPTRB.fbqf) - 1 do begin
     TQMPTRB.fbqf[k].Init(ftTreble, btOctave, gtDb);
-    TQMPTRB.fbqf[k].Amp := 12.0;
-    TQMPTRB.fbqf[k].Freq := 2500.0;
-    TQMPTRB.fbqf[k].Width := 3.0;
+    TQMPTRB.fbqf[k].Amp := 15.0;
+    TQMPTRB.fbqf[k].Freq := 3500.0;
+    TQMPTRB.fbqf[k].Width := 2.5;
   end;
   Result := 1;
 end;
