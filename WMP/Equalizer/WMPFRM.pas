@@ -4,11 +4,7 @@ unit
 interface
 
 uses
-  WMPDCL,
-  Forms,
-  Controls,
-  ComCtrls,
-  StdCtrls;
+  WMPDCL;
 
 type
   PWMPFRM = ^TWMPFRM;
@@ -16,7 +12,6 @@ type
   private
     var finfo: TInfo;
     function getInfo(): TInfo;
-    function getForm(): TForm;
     procedure Create();
     procedure Destroy();
     procedure FormShow(Sender: TObject);
@@ -36,10 +31,28 @@ type
 implementation
 
 uses
+  Forms,
+  Controls,
+  ComCtrls,
+  StdCtrls,
+  Interfaces,
   Math,
   StrUtils,
-  SysUtils,
-  Interfaces;
+  SysUtils;
+
+function getForm(): TForm;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to Application.ComponentCount - 1 do begin
+    if (Application.Components[i] is TForm) then begin
+      if (Application.Components[i] <> Application.MainForm) then begin
+        Result := (Application.Components[i] as TForm);
+      end;
+    end;
+  end;
+end;
 
 procedure TWMPFRM.Init();
 var
@@ -73,28 +86,17 @@ end;
 
 procedure TWMPFRM.Show();
 begin
-  self.getForm().Show();
+  getForm().Show();
 end;
 
 procedure TWMPFRM.Hide();
 begin
-  self.getForm().Hide();
+  getForm().Hide();
 end;
 
 function TWMPFRM.getInfo(): TInfo;
 begin
   Result := self.finfo;
-end;
-
-function TWMPFRM.getForm(): TForm;
-var
-  i: Integer;
-begin
-  for i := 0 to Application.ComponentCount - 1 do begin
-    if (Application.Components[i] is TForm) then begin
-      Result := (Application.Components[i] as TForm);
-    end;
-  end;
 end;
 
 procedure TWMPFRM.Create();
@@ -124,7 +126,7 @@ begin
     Width := 80;
     Height := 20;
     ShowHint := True;
-    Parent := self.getForm();
+    Parent := getForm();
     OnClick := self.CheckBoxSave;
   end;
   with (TTrackBar.Create(Application)) do begin
@@ -140,7 +142,7 @@ begin
     ShowHint := True;
     TickMarks := tmBoth;
     TickStyle := tsNone;
-    Parent := self.getForm();
+    Parent := getForm();
     OnChange := self.TrackBarSave;
   end;
   with (TStaticText.Create(Application)) do begin
@@ -151,7 +153,7 @@ begin
     Width := 45;
     Height := 20;
     ShowHint := True;
-    Parent := self.getForm();
+    Parent := getForm();
   end;
   with (TStaticText.Create(Application)) do begin
     Font.Size := 8;
@@ -161,7 +163,7 @@ begin
     Width := 45;
     Height := 20;
     ShowHint := True;
-    Parent := self.getForm();
+    Parent := getForm();
   end;
   with (TStaticText.Create(Application)) do begin
     Font.Size := 8;
@@ -171,7 +173,7 @@ begin
     Width := 45;
     Height := 20;
     ShowHint := True;
-    Parent := self.getForm();
+    Parent := getForm();
   end;
   for i := 0 to Length(self.finfo.Bands) - 1 do begin
     with (TTrackBar.Create(Application)) do begin
@@ -187,7 +189,7 @@ begin
       ShowHint := True;
       TickMarks := tmBoth;
       TickStyle := tsNone;
-      Parent := self.getForm();
+      Parent := getForm();
       OnChange := self.TrackBarSave;
     end;
     with (TStaticText.Create(Application)) do begin
@@ -198,15 +200,15 @@ begin
       Width := 30;
       Height := 20;
       ShowHint := True;
-      Parent := self.getForm();
+      Parent := getForm();
     end;
   end;
 end;
 
 procedure TWMPFRM.Destroy();
 begin
-  self.getForm().Close();
-  self.getForm().Destroy();
+  getForm().Close();
+  getForm().Destroy();
 end;
 
 procedure TWMPFRM.FormShow(Sender: TObject);
