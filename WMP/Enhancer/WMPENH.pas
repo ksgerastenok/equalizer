@@ -7,6 +7,7 @@ uses
   WMPDCL,
   WMPDSP,
   WMPBQF,
+  WMPRNG,
   WMPFRM;
 
 type
@@ -15,6 +16,7 @@ type
   private
     class var ffrm: TWMPFRM;
     class var fdsp: TWMPDSP;
+    class var frng: array[0..4] of TWMPRNG;
     class var fbss: array[0..4] of TWMPBQF;
     class var ftrb: array[0..4] of TWMPBQF;
     class function Init(const Module: PPlugin): Integer; cdecl; static;
@@ -26,6 +28,9 @@ type
   end;
 
 implementation
+
+uses
+  Math;
 
 class function TWMPENH.Plugin(): PPlugin; cdecl;
 begin
@@ -43,6 +48,9 @@ var
   k: Integer;
 begin
   TWMPENH.ffrm.Init();
+  for k := 0 to Length(TWMPENH.frng) - 1 do begin
+    TWMPENH.frng[k].Init();
+  end;
   for k := 0 to Length(TWMPENH.fbss) - 1 do begin
     TWMPENH.fbss[k].Init(ftBass, btOctave, gtDb);
   end;
@@ -56,6 +64,9 @@ class procedure TWMPENH.Quit(const Module: PPlugin); cdecl;
 var
   k: Integer;
 begin
+  for k := 0 to Length(TWMPENH.frng) - 1 do begin
+    TWMPENH.frng[k].Done();
+  end;
   for k := 0 to Length(TWMPENH.fbss) - 1 do begin
     TWMPENH.fbss[k].Done();
   end;
@@ -69,6 +80,7 @@ class function TWMPENH.Modify(const Module: PPlugin; const Data: Pointer; const 
 var
   k: LongWord;
   x: LongWord;
+  f: Double;
 begin
   if (TWMPENH.ffrm.Info.Enabled) then begin
     TWMPENH.fdsp.Init(Data, Bits, Rates, Samples, Channels);
@@ -84,6 +96,21 @@ begin
       for x := 0 to Samples - 1 do begin
         TWMPENH.fdsp.Buffer[x, k] := TWMPENH.fbss[k].Process(TWMPENH.fdsp.Buffer[x, k]);
         TWMPENH.fdsp.Buffer[x, k] := TWMPENH.ftrb[k].Process(TWMPENH.fdsp.Buffer[x, k]);
+      end;
+    end;
+    f := 0.01;
+    for k := 0 to Channels - 1 do begin
+      for x := 0 to Samples - 1 do begin
+        TWMPENH.frng[k].addSample(Sqr(TWMPENH.fdsp.Buffer[x, k]));
+      end;
+      f := Max(f, TWMPENH.frng[k].getAvg());
+    end;
+    f := Min(Max(1.0 / Sqrt(9.0 * f), 1.0), Power(10, TWMPENH.ffrm.Info.Preamp / 200));
+    TWMPENH.ffrm.Info.Size := Round(200 * Log10(f));
+    TWMPENH.ffrm.Update();
+    for k := 0 to Channels - 1 do begin
+      for x := 0 to Samples - 1 do begin
+        TWMPENH.fdsp.Buffer[x, k] := TWMPENH.fdsp.Buffer[x, k] * f;
       end;
     end;
     TWMPENH.fdsp.Done();
