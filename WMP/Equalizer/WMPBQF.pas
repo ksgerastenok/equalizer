@@ -62,10 +62,22 @@ begin
   self.fband := Band;
   self.fgain := Gain;
   self.ffilter := Filter;
+  self.fsignal[0, 2] := 0.0;
+  self.fsignal[0, 1] := 0.0;
+  self.fsignal[0, 0] := 0.0;
+  self.fsignal[1, 2] := 0.0;
+  self.fsignal[1, 1] := 0.0;
+  self.fsignal[1, 0] := 0.0;
 end;
 
 procedure TWMPBQF.Done();
 begin
+  self.fsignal[0, 2] := 0.0;
+  self.fsignal[0, 1] := 0.0;
+  self.fsignal[0, 0] := 0.0;
+  self.fsignal[1, 2] := 0.0;
+  self.fsignal[1, 1] := 0.0;
+  self.fsignal[1, 0] := 0.0;
 end;
 
 function TWMPBQF.calcAmp(): Double;
