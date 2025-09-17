@@ -33,12 +33,12 @@ end;
 procedure TWMPRNG.addSample(const Value: Double);
 begin
   self.fcount := self.fcount + 1;
-  self.fvalue := self.fvalue + (Value - self.fvalue) / self.fcount;
+  self.fvalue := self.fvalue + (Sqr(Value) - self.fvalue) / self.fcount;
 end;
 
 function TWMPRNG.getAvg(): Double;
 begin
-  Result := self.fvalue;
+  Result := Sqrt(10.0 * self.fvalue) + 0.1;
 end;
 
 begin

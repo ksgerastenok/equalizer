@@ -89,30 +89,34 @@ begin
       TWMPENH.fbss[k].Freq := TWMPENH.ffrm.Bass.Freq;
       TWMPENH.fbss[k].Width := TWMPENH.ffrm.Bass.Width;
       TWMPENH.fbss[k].Rate := Rates;
+      for x := 0 to Samples - 1 do begin
+        TWMPENH.fdsp.Buffer[x, k] := TWMPENH.fbss[k].Process(TWMPENH.fdsp.Buffer[x, k]);
+      end;
+    end;
+    for k := 0 to Channels - 1 do begin
       TWMPENH.ftrb[k].Amp := TWMPENH.ffrm.Treble.Amp;
       TWMPENH.ftrb[k].Freq := TWMPENH.ffrm.Treble.Freq;
       TWMPENH.ftrb[k].Width := TWMPENH.ffrm.Treble.Width;
       TWMPENH.ftrb[k].Rate := Rates;
       for x := 0 to Samples - 1 do begin
-        TWMPENH.fdsp.Buffer[x, k] := TWMPENH.fbss[k].Process(TWMPENH.fdsp.Buffer[x, k]);
         TWMPENH.fdsp.Buffer[x, k] := TWMPENH.ftrb[k].Process(TWMPENH.fdsp.Buffer[x, k]);
       end;
     end;
-    f := 0.01;
+    f := 0.0;
     for k := 0 to Channels - 1 do begin
       for x := 0 to Samples - 1 do begin
-        TWMPENH.frng[k].addSample(Sqr(TWMPENH.fdsp.Buffer[x, k]));
+        TWMPENH.frng[k].addSample(TWMPENH.fdsp.Buffer[x, k]);
       end;
       f := Max(f, TWMPENH.frng[k].getAvg());
     end;
-    f := Min(Max(1.0 / Sqrt(9.0 * f), 1.0), Power(10, TWMPENH.ffrm.Info.Preamp / 200));
-    TWMPENH.ffrm.Info.Size := Round(200 * Log10(f));
-    TWMPENH.ffrm.Update();
+    f := Min(Max(1.0 / f, 1.0), Power(10, TWMPENH.ffrm.Info.Preamp / 200));
     for k := 0 to Channels - 1 do begin
       for x := 0 to Samples - 1 do begin
         TWMPENH.fdsp.Buffer[x, k] := TWMPENH.fdsp.Buffer[x, k] * f;
       end;
     end;
+    TWMPENH.ffrm.Info.Size := Round(200 * Log10(f));
+    TWMPENH.ffrm.Update();
     TWMPENH.fdsp.Done();
   end;
   Result := Samples;
