@@ -7,73 +7,38 @@ type
   PQMPRNG = ^TQMPRNG;
   TQMPRNG = record
   private
-    var fdata: array of Double;
-    var fcurr: Integer;
+    var fvalue: Double;
+    var fcount: Integer;
+  public
+    procedure Init();
+    procedure Done();
     procedure addSample(const Value: Double);
     function getAvg(): Double;
-    procedure setScale(const Value: Double);
-  public
-    procedure Init(const Size: Integer);
-    procedure Done();
-    function getSample(const Value: Double): Double;
   end;
 
 implementation
 
-procedure TQMPRNG.Init(const Size: Integer);
-var
-  i: Integer;
+procedure TQMPRNG.Init();
 begin
-  self.fcurr := -1;
-  SetLength(self.fdata, Size);
-  for i := 0 to Length(self.fdata) - 1 do begin
-    self.fdata[i] := 1.0;
-  end;
+  self.fcount := 0;
+  self.fvalue := 0.0;
 end;
 
 procedure TQMPRNG.Done();
-var
-  i: Integer;
 begin
-  self.fcurr := -1;
-  SetLength(self.fdata, 0);
-  for i := 0 to Length(self.fdata) - 1 do begin
-    self.fdata[i] := 1.0;
-  end;
+  self.fcount := 0;
+  self.fvalue := 0.0;
 end;
 
 procedure TQMPRNG.addSample(const Value: Double);
 begin
-  self.fcurr := (self.fcurr + 1) mod Length(self.fdata);
-  self.fdata[self.fcurr] := Value;
+  self.fcount := self.fcount + 1;
+  self.fvalue := self.fvalue + (Sqr(Value) - self.fvalue) / self.fcount;;
 end;
 
 function TQMPRNG.getAvg(): Double;
-var
-  i: Integer;
 begin
-  Result := 0.0;
-  for i := 0 to Length(self.fdata) - 1 do begin
-    Result := Result + (self.fdata[i] - Result) / (i + 1);
-  end;
-end;
-
-procedure TQMPRNG.setScale(const Value: Double);
-var
-  i: Integer;
-begin
-  for i := 0 to Length(self.fdata) - 1 do begin
-    self.fdata[i] := self.fdata[i] * Value;
-  end;
-end;
-
-function TQMPRNG.getSample(const Value: Double): Double;
-begin
-  self.addSample(Value);
-    if (Value / self.getAvg() < 0.50) then begin
-    self.setScale(0.95);
-  end;
-  Result := self.getAvg();
+  Result := Sqrt(10.0 * self.fvalue) + 0.1;
 end;
 
 begin

@@ -17,6 +17,8 @@ type
     class var fbqf: array[0..4] of TQMPBQF;
     class function Init(const Flags: Integer): Integer; cdecl; static;
     class procedure Quit(const Flags: Integer); cdecl; static;
+    class function Open(const Media: PChar; const Format: Pointer; const Flags: Integer): Integer; cdecl; static;
+    class procedure Stop(const Flags: Integer); cdecl; static;
     class function Modify(const Data: PData; const Latency: PInteger; const Flags: Integer): Integer; cdecl; static;
     class function Update(const Info: PInfo; const Flags: Integer): Integer; cdecl; static;
   public
@@ -35,6 +37,8 @@ begin
   Result.Version := $0000;
   Result.Init := TQMPBSS.Init;
   Result.Quit := TQMPBSS.Quit;
+  Result.Open := TQMPBSS.Open;
+  Result.Stop := TQMPBSS.Stop;
   Result.Modify := TQMPBSS.Modify;
   Result.Update := TQMPBSS.Update;
 end;
@@ -45,14 +49,39 @@ var
 begin
   for k := 0 to Length(TQMPBSS.fbqf) - 1 do begin
     TQMPBSS.fbqf[k].Init(ftBass, btOctave, gtDb);
-    TQMPBSS.fbqf[k].Amp := 5.0;
-    TQMPBSS.fbqf[k].Freq := 140.0;
-    TQMPBSS.fbqf[k].Width := 2.5;
+    TQMPBSS.fbqf[k].Amp := 4.5;
+    TQMPBSS.fbqf[k].Freq := 160.0;
+    TQMPBSS.fbqf[k].Width := 3.0;
   end;
   Result := 1;
 end;
 
 class procedure TQMPBSS.Quit(const Flags: Integer); cdecl;
+var
+  k: LongWord;
+begin
+  for k := 0 to Length(TQMPBSS.fbqf) - 1 do begin
+    TQMPBSS.fbqf[k].Amp := 0.0;
+    TQMPBSS.fbqf[k].Freq := 0.0;
+    TQMPBSS.fbqf[k].Width := 0.0;
+    TQMPBSS.fbqf[k].Done();
+  end;
+end;
+
+class function TQMPBSS.Open(const Media: PChar; const Format: Pointer; const Flags: Integer): Integer; cdecl;
+var
+  k: LongWord;
+begin
+  for k := 0 to Length(TQMPBSS.fbqf) - 1 do begin
+    TQMPBSS.fbqf[k].Init(ftBass, btOctave, gtDb);
+    TQMPBSS.fbqf[k].Amp := 4.5;
+    TQMPBSS.fbqf[k].Freq := 160.0;
+    TQMPBSS.fbqf[k].Width := 3.0;
+  end;
+  Result := 1;
+end;
+
+class procedure TQMPBSS.Stop(const Flags: Integer); cdecl;
 var
   k: LongWord;
 begin
@@ -71,7 +100,7 @@ var
 begin
   if (TQMPBSS.finfo.Enabled) then begin
     TQMPBSS.fdsp.Init(Data);
-    for k := 0 to Data.Channels - 1 do begin
+    for k := 0 to Min(Length(TQMPBSS.fbqf), Data.Channels) - 1 do begin
       TQMPBSS.fbqf[k].Rate := Data.Rates;
       for x := 0 to Data.Samples - 1 do begin
         TQMPBSS.fdsp.Buffer[x, k] := TQMPBSS.fbqf[k].Process(TQMPBSS.fdsp.Buffer[x, k]);
