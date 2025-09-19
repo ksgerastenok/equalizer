@@ -47,9 +47,9 @@ uses
   Forms,
   Controls,
   ComCtrls,
+  Interfaces,  
   StdCtrls,
-  SysUtils,
-  Interfaces;
+  SysUtils;
 
 function getComponent(const Clazz: TWinControlClass; const Tag: Integer): TWinControl;
 var
@@ -69,7 +69,6 @@ procedure TWMPFRM.Init();
 var
   f: file;
 begin
-  Application.Initialize();
   try
     Assign(f, 'enhancer.cfg');
     ReSet(f, 1);
@@ -79,6 +78,7 @@ begin
     Close(f)
   except
   end;
+  Application.Initialize();
   self.Create();
   self.finfo.Enabled := True;
 end;
@@ -89,6 +89,7 @@ var
 begin
   self.finfo.Enabled := True;
   self.Destroy();
+  Application.Terminate();
   try
     Assign(f, 'enhancer.cfg');
     ReWrite(f, 1);
@@ -98,7 +99,6 @@ begin
     Close(f);
   except
   end;
-  Application.Terminate();
 end;
 
 procedure TWMPFRM.Show();
@@ -147,6 +147,7 @@ begin
     Height := 265;
     BorderIcons := [biSystemMenu];
     BorderStyle := bsSingle;
+    FormStyle := fsStayOnTop;
     Position := poMainFormCenter;
     ShowHint := True;
     Parent := nil;
