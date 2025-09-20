@@ -38,7 +38,7 @@ end;
 
 function TWMPRNG.getAvg(): Double;
 begin
-  Result := Sqrt(10.0 * self.fvalue) + 0.1;
+  Result := Sqrt(self.fvalue);
 end;
 
 begin

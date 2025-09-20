@@ -105,9 +105,9 @@ begin
     f := 0.0;
     for k := 0 to Channels - 1 do begin
       for x := 0 to Samples - 1 do begin
-        TWMPENH.frng[k].addSample(TWMPENH.fdsp.Buffer[x, k]);
+        TWMPENH.frng[k].addSample(3.15 * TWMPENH.fdsp.Buffer[x, k]);
       end;
-      f := Max(f, TWMPENH.frng[k].getAvg());
+      f := Max(f, TWMPENH.frng[k].getAvg() + 0.1);
     end;
     f := Min(Max(1.0 / f, 1.0), Power(10, TWMPENH.ffrm.Info.Preamp / 200));
     for k := 0 to Channels - 1 do begin
