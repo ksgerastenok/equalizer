@@ -92,9 +92,9 @@ begin
     f := 0.0;
     for k := 0 to Min(Length(TQMPNRM.frng), Data.Channels) - 1 do begin
       for x := 0 to Data.Samples - 1 do begin
-        TQMPNRM.frng[k].addSample(TQMPNRM.fdsp.Buffer[x, k]);
+        TQMPNRM.frng[k].addSample(3.15 * TQMPNRM.fdsp.Buffer[x, k]);
       end;
-      f := Max(f, TQMPNRM.frng[k].getAvg());
+      f := Max(f, TQMPNRM.frng[k].getAvg() + 0.1);
     end;
     f := Min(Max(1.0 / f, 1.0), 10.0);
     for k := 0 to Data.Channels - 1 do begin
