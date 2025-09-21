@@ -108,12 +108,12 @@ var
   i: Integer;
 begin
   with (TForm.Create(Application)) do begin
-    Font.Size := 8;
+    Font.Size := 6;
     Caption := 'Equalizer';
     Tag := 10;
     Top := 120;
     Left := 215;
-    Width := 700;
+    Width := 600;
     Height := 285;
     BorderIcons := [biSystemMenu];
     BorderStyle := bsSingle;
@@ -125,7 +125,7 @@ begin
     OnHide := self.FormHide;
   end;
   with (TStaticText.Create(Application)) do begin
-    Font.Size := 8;
+    Font.Size := 7;
     Caption := '-20 dB';
     Top := 245;
     Left := 30;
@@ -135,7 +135,7 @@ begin
     Parent := getComponent(TForm, 10);
   end;
   with (TStaticText.Create(Application)) do begin
-    Font.Size := 8;
+    Font.Size := 7;
     Caption := '0 dB';
     Top := 125;
     Left := 35;
@@ -145,7 +145,7 @@ begin
     Parent := getComponent(TForm, 10);
   end;
   with (TStaticText.Create(Application)) do begin
-    Font.Size := 8;
+    Font.Size := 7;
     Caption := '+20 dB';
     Top := 5;
     Left := 30;
@@ -155,7 +155,7 @@ begin
     Parent := getComponent(TForm, 10);
   end;
   with (TTrackBar.Create(Application)) do begin
-    Font.Size := 8;
+    Font.Size := 7;
     Orientation := trVertical;
     Top := 5;
     Left := 10;
@@ -171,7 +171,7 @@ begin
     OnChange := self.TrackBarSave;
   end;
   with (TStaticText.Create(Application)) do begin
-    Font.Size := 8;
+    Font.Size := 7;
     Caption := 'Preamp';
     Top := 265;
     Left := 5;
@@ -182,10 +182,10 @@ begin
   end;
   for i := 0 to Length(self.finfo.Bands) - 1 do begin
     with (TTrackBar.Create(Application)) do begin
-      Font.Size := 8;
+      Font.Size := 7;
       Orientation := trVertical;
       Top := 5;
-      Left := 75 + 30 * i;
+      Left := 75 + 25 * i;
       Width := 20;
       Height := 255;
       Tag := i;
@@ -198,10 +198,10 @@ begin
       OnChange := self.TrackBarSave;
     end;
     with (TStaticText.Create(Application)) do begin
-      Font.Size := 8;
-      Caption := IfThen(20 * Power(2, 0.5 * i) < 1000, Format('%4.0f ', [20 * Power(2, 0.5 * i) / 1]), Format('%4.1fk', [20 * Power(2, 0.5 * i) / 1000]));
+      Font.Size := 7;
+      Caption := IfThen(20 * Power(2, 0.5 * i) < 1000, Format('%3.0f ', [20 * Power(2, 0.5 * i) / 1]), Format('%2.1fk', [20 * Power(2, 0.5 * i) / 1000]));
       Top := 265;
-      Left := 70 + 30 * i;
+      Left := 70 + 25 * i;
       Width := 30;
       Height := 20;
       ShowHint := True;
