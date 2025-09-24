@@ -85,21 +85,13 @@ class function TQMPNRM.Modify(const Data: PData; const Latency: PInteger; const 
 var
   k: LongWord;
   x: LongWord;
-  f: Double;
 begin
   if (TQMPNRM.finfo.Enabled) then begin
     TQMPNRM.fdsp.Init(Data);
-    f := 0.0;
     for k := 0 to Min(Length(TQMPNRM.frng), Data.Channels) - 1 do begin
+      TQMPNRM.frng[k].Limit := 10.0;
       for x := 0 to Data.Samples - 1 do begin
-        TQMPNRM.frng[k].addSample(3.15 * TQMPNRM.fdsp.Buffer[x, k]);
-      end;
-      f := Max(f, TQMPNRM.frng[k].getAvg() + 0.1);
-    end;
-    f := Min(Max(1.0 / f, 1.0), 10.0);
-    for k := 0 to Data.Channels - 1 do begin
-      for x := 0 to Data.Samples - 1 do begin
-        TQMPNRM.fdsp.Buffer[x, k] := TQMPNRM.fdsp.Buffer[x, k] * f;
+        TQMPNRM.fdsp.Buffer[x, k] := TQMPNRM.frng[k].Process(TQMPNRM.fdsp.Buffer[x, k]);
       end;
     end;
     TQMPNRM.fdsp.Done();
