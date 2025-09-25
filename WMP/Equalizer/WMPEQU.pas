@@ -75,14 +75,14 @@ end;
 
 class function TWMPEQU.Modify(const Module: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl;
 var
-  k: LongWord;
   i: LongWord;
+  k: LongWord;
   x: LongWord;
 begin
   if (TWMPEQU.ffrm.Info.Enabled) then begin
     TWMPEQU.fdsp.Init(Data, Bits, Rates, Samples, Channels);
-    for k := 0 to Min(Length(TWMPEQU.feqz), Channels) - 1 do begin
-      for i := 0 to Min(Length(TWMPEQU.feqz[k]), 21) - 1 do begin
+    for i := 0 to Length(TWMPEQU.ffrm.Info.Bands) - 1 do begin
+      for k := 0 to Channels - 1 do begin
         TWMPEQU.feqz[k, i].Amp := (TWMPEQU.ffrm.Info.Preamp + TWMPEQU.ffrm.Info.Bands[i]) / 10;
         TWMPEQU.feqz[k, i].Rate := Rates;
         for x := 0 to Samples - 1 do begin
