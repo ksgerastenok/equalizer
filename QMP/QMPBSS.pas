@@ -48,10 +48,14 @@ var
   k: LongWord;
 begin
   for k := 0 to Length(TQMPBSS.fbqf) - 1 do begin
-    TQMPBSS.fbqf[k].Init(ftBass, btOctave, gtDb);
+    //TQMPBSS.fbqf[k].Init(ftBass, btOctave, gtDb);
+    //TQMPBSS.fbqf[k].Amp := 4.5;
+    //TQMPBSS.fbqf[k].Freq := 160.0;
+    //TQMPBSS.fbqf[k].Width := 3.0;
+    TQMPBSS.fbqf[k].Init(ftBass, btSlope, gtDb);
     TQMPBSS.fbqf[k].Amp := 4.5;
-    TQMPBSS.fbqf[k].Freq := 160.0;
-    TQMPBSS.fbqf[k].Width := 3.0;
+    TQMPBSS.fbqf[k].Freq := 250.0;
+    TQMPBSS.fbqf[k].Width := 0.5;
   end;
   Result := 1;
 end;
@@ -73,10 +77,14 @@ var
   k: LongWord;
 begin
   for k := 0 to Length(TQMPBSS.fbqf) - 1 do begin
-    TQMPBSS.fbqf[k].Init(ftBass, btOctave, gtDb);
+    //TQMPBSS.fbqf[k].Init(ftBass, btOctave, gtDb);
+    //TQMPBSS.fbqf[k].Amp := 4.5;
+    //TQMPBSS.fbqf[k].Freq := 160.0;
+    //TQMPBSS.fbqf[k].Width := 3.0;
+    TQMPBSS.fbqf[k].Init(ftBass, btSlope, gtDb);
     TQMPBSS.fbqf[k].Amp := 4.5;
-    TQMPBSS.fbqf[k].Freq := 160.0;
-    TQMPBSS.fbqf[k].Width := 3.0;
+    TQMPBSS.fbqf[k].Freq := 250.0;
+    TQMPBSS.fbqf[k].Width := 0.5;
   end;
   Result := 1;
 end;
@@ -100,7 +108,7 @@ var
 begin
   if (TQMPBSS.finfo.Enabled) then begin
     TQMPBSS.fdsp.Init(Data);
-    for k := 0 to Min(Length(TQMPBSS.fbqf), Data.Channels) - 1 do begin
+    for k := 0 to Data.Channels - 1 do begin
       TQMPBSS.fbqf[k].Rate := Data.Rates;
       for x := 0 to Data.Samples - 1 do begin
         TQMPBSS.fdsp.Buffer[x, k] := TQMPBSS.fbqf[k].Process(TQMPBSS.fdsp.Buffer[x, k]);

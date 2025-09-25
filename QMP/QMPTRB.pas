@@ -74,7 +74,7 @@ var
 begin
   for k := 0 to Length(TQMPTRB.fbqf) - 1 do begin
     TQMPTRB.fbqf[k].Init(ftTreble, btOctave, gtDb);
-    TQMPTRB.fbqf[k].Amp := 15.0;
+    TQMPTRB.fbqf[k].Amp := 16.0;
     TQMPTRB.fbqf[k].Freq := 2500.0;
     TQMPTRB.fbqf[k].Width := 3.0;
   end;
@@ -100,7 +100,7 @@ var
 begin
   if (TQMPTRB.finfo.Enabled) then begin
     TQMPTRB.fdsp.Init(Data);
-    for k := 0 to Min(Length(TQMPTRB.fbqf), Data.Channels) - 1 do begin
+    for k := 0 to Data.Channels - 1 do begin
       TQMPTRB.fbqf[k].Rate := Data.Rates;
       for x := 0 to Data.Samples - 1 do begin
         TQMPTRB.fdsp.Buffer[x, k] := TQMPTRB.fbqf[k].Process(TQMPTRB.fdsp.Buffer[x, k]);

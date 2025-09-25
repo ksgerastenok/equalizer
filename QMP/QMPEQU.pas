@@ -107,14 +107,14 @@ end;
 
 class function TQMPEQU.Modify(const Data: PData; const Latency: PInteger; const Flags: Integer): Integer; cdecl;
 var
-  k: LongWord;
   i: LongWord;
+  k: LongWord;
   x: LongWord;
 begin
   if (TQMPEQU.finfo.Enabled) then begin
     TQMPEQU.fdsp.Init(Data);
-    for k := 0 to Min(Length(TQMPEQU.feqz), Data.Channels) - 1 do begin
-      for i := 0 to Min(Length(TQMPEQU.feqz[k]), 10) - 1 do begin
+    for i := 0 to Length(TQMPEQU.finfo.Bands) - 1 do begin
+      for k := 0 to Data.Channels - 1 do begin
         TQMPEQU.feqz[k, i].Amp := (TQMPEQU.finfo.Preamp + TQMPEQU.finfo.Bands[i]) / 10;
         TQMPEQU.feqz[k, i].Rate := Data.Rates;
         for x := 0 to Data.Samples - 1 do begin

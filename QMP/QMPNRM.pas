@@ -88,7 +88,7 @@ var
 begin
   if (TQMPNRM.finfo.Enabled) then begin
     TQMPNRM.fdsp.Init(Data);
-    for k := 0 to Min(Length(TQMPNRM.frng), Data.Channels) - 1 do begin
+    for k := 0 to Data.Channels - 1 do begin
       TQMPNRM.frng[k].Limit := 10.0;
       for x := 0 to Data.Samples - 1 do begin
         TQMPNRM.fdsp.Buffer[x, k] := TQMPNRM.frng[k].Process(TQMPNRM.fdsp.Buffer[x, k]);
