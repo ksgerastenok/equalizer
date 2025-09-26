@@ -48,7 +48,7 @@ var
   k: Integer;
 begin
   for k := 0 to Length(TQMPNRM.frng) - 1 do begin
-    TQMPNRM.frng[k].Init();
+    TQMPNRM.frng[k].Init(rngDb);
   end;
   Result := 1;
 end;
@@ -67,7 +67,7 @@ var
   k: Integer;
 begin
   for k := 0 to Length(TQMPNRM.frng) - 1 do begin
-    TQMPNRM.frng[k].Init();
+    TQMPNRM.frng[k].Init(rngDb);
   end;
   Result := 1;
 end;
@@ -89,7 +89,7 @@ begin
   if (TQMPNRM.finfo.Enabled) then begin
     TQMPNRM.fdsp.Init(Data);
     for k := 0 to Data.Channels - 1 do begin
-      TQMPNRM.frng[k].Limit := 10.0;
+      TQMPNRM.frng[k].Limit := 20.0;
       for x := 0 to Data.Samples - 1 do begin
         TQMPNRM.fdsp.Buffer[x, k] := TQMPNRM.frng[k].Process(TQMPNRM.fdsp.Buffer[x, k]);
       end;

@@ -4,13 +4,13 @@ unit
 interface
 
 type
-  TBand = (btQ, btSlope, btOctave, btSemitone);
+  TBand = (bqfQ, bqfSlope, bqfOctave, bqfSemitone);
 
 type
-  TGain = (gtDb, gtAmp);
+  TGain = (bqfDb, bqfAmp);
 
 type
-  TFilter = (ftEqu, ftInv, ftLow, ftBand, ftBass, ftHigh, ftPeak, ftNotch, ftTreble);
+  TFilter = (bqfEqu, bqfInv, bqfLow, bqfBand, bqfBass, bqfHigh, bqfPeak, bqfNotch, bqfTreble);
 
 type
   PQMPBQF = ^TQMPBQF;
@@ -27,6 +27,7 @@ type
     var fwidth: Double;
     function calcAmp(): Double;
     function calcAlpha(): Double;
+    function calcOmega(): Double;
     procedure calcConfig();
     function getBand(): TBand;
     function getGain(): TGain;
@@ -82,132 +83,139 @@ end;
 
 function TQMPBQF.calcAmp(): Double;
 begin
-  try
-    case (self.fgain) of
-      gtDb: begin
-        Result := Sqrt(Power(10, self.famp / 20));
-      end;
-      gtAmp: begin
-        Result := Sqrt(self.famp);
-      end;
+  case (self.fgain) of
+    bqfDb: begin
+      Result := Power(10, self.famp / 20);
     end;
-  except
+    bqfAmp: begin
+      Result := self.famp;
+    end;
+    else begin
+      Result := 0.0;
+    end;
   end;
 end;
 
 function TQMPBQF.calcAlpha(): Double;
 begin
-  try
-    case (self.fband) of
-      btQ: begin
-        Result := (Sin(2 * Pi * self.ffreq / self.frate) / 2) * (1 / self.fwidth);
-      end;
-      btSlope: begin
-        Result := (Sin(2 * Pi * self.ffreq / self.frate) / 2) * Sqrt((self.calcAmp() + 1 / self.calcAmp()) * (1 / self.fwidth - 1) + 2);
-      end;
-      btOctave: begin
-        Result := (Sin(2 * Pi * self.ffreq / self.frate) / 2) * 2 * Sinh((Ln(2) / 2) * (self.fwidth / 1) / (Sin(2 * Pi * self.ffreq / self.frate) / (2 * Pi * self.ffreq / self.frate)));
-      end;
-      btSemitone: begin
-        Result := (Sin(2 * Pi * self.ffreq / self.frate) / 2) * 2 * Sinh((Ln(2) / 2) * (self.fwidth / 12) / (Sin(2 * Pi * self.ffreq / self.frate) / (2 * Pi * self.ffreq / self.frate)));
-      end;
+  case (self.fband) of
+    bqfQ: begin
+      Result := (1 / self.fwidth);
     end;
-  except
+    bqfOctave: begin
+      Result := 2 * Sinh((Ln(2) / 2) * (self.fwidth /  1) / (Sin(self.calcOmega()) / (self.calcOmega())));
+    end;
+    bqfSemitone: begin
+      Result := 2 * Sinh((Ln(2) / 2) * (self.fwidth / 12) / (Sin(self.calcOmega()) / (self.calcOmega())));
+    end;
+    bqfSlope: begin
+      Result := Sqrt(((Sqr(Sqrt(self.calcAmp())) + 1) / self.fwidth - Sqr(Sqrt(self.calcAmp()) - 1)) / Sqrt(self.calcAmp()));
+    end;
+    else begin
+      Result := 0.0;
+    end;
   end;
+end;
+
+function TQMPBQF.calcOmega(): Double;
+begin
+  Result := (2 * Pi * self.ffreq / self.frate);
 end;
 
 procedure TQMPBQF.calcConfig();
 begin
-  try
-    case (self.ffilter) of
-      ftEqu: begin
-        self.fconfig[0, 2] := 1 - self.calcAlpha() * self.calcAmp();
-        self.fconfig[0, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
-        self.fconfig[0, 0] := 1 + self.calcAlpha() * self.calcAmp();
-        self.fconfig[1, 2] := 1 - self.calcAlpha() / self.calcAmp();
-        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
-        self.fconfig[1, 0] := 1 + self.calcAlpha() / self.calcAmp();
-      end;
-      ftInv: begin
-        self.fconfig[0, 2] := 1 + self.calcAlpha();
-        self.fconfig[0, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
-        self.fconfig[0, 0] := 1 - self.calcAlpha();
-        self.fconfig[1, 2] := 1 - self.calcAlpha();
-        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
-        self.fconfig[1, 0] := 1 + self.calcAlpha();
-      end;
-      ftLow: begin
-        self.fconfig[0, 2] := (1 - Cos(2 * Pi * self.ffreq / self.frate)) / 2;
-        self.fconfig[0, 1] := (1 - Cos(2 * Pi * self.ffreq / self.frate)) / +1;
-        self.fconfig[0, 0] := (1 - Cos(2 * Pi * self.ffreq / self.frate)) / 2;
-        self.fconfig[1, 2] := 1 - self.calcAlpha();
-        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
-        self.fconfig[1, 0] := 1 + self.calcAlpha();
-      end;
-      ftHigh: begin
-        self.fconfig[0, 2] := (1 + Cos(2 * Pi * self.ffreq / self.frate)) / 2;
-        self.fconfig[0, 1] := (1 + Cos(2 * Pi * self.ffreq / self.frate)) / -1;
-        self.fconfig[0, 0] := (1 + Cos(2 * Pi * self.ffreq / self.frate)) / 2;
-        self.fconfig[1, 2] := 1 - self.calcAlpha();
-        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
-        self.fconfig[1, 0] := 1 + self.calcAlpha();
-      end;
-      ftPeak: begin
-        self.fconfig[0, 2] := -1 * Sin(2 * Pi * self.ffreq / self.frate) / 2;
-        self.fconfig[0, 1] := 0.0;
-        self.fconfig[0, 0] := +1 * Sin(2 * Pi * self.ffreq / self.frate) / 2;
-        self.fconfig[1, 2] := 1 - self.calcAlpha();
-        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
-        self.fconfig[1, 0] := 1 + self.calcAlpha();
-      end;
-      ftBand: begin
-        self.fconfig[0, 2] := -1 * self.calcAlpha();
-        self.fconfig[0, 1] := 0.0;
-        self.fconfig[0, 0] := +1 * self.calcAlpha();
-        self.fconfig[1, 2] := 1 - self.calcAlpha();
-        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
-        self.fconfig[1, 0] := 1 + self.calcAlpha();
-      end;
-      ftNotch: begin
-        self.fconfig[0, 2] := 1;
-        self.fconfig[0, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
-        self.fconfig[0, 0] := 1;
-        self.fconfig[1, 2] := 1 - self.calcAlpha();
-        self.fconfig[1, 1] := -2 * Cos(2 * Pi * self.ffreq / self.frate);
-        self.fconfig[1, 0] := 1 + self.calcAlpha();
-      end;
-      ftBass: begin
-        self.fconfig[0, 2] := +1 * ((self.calcAmp() + 1) - (self.calcAmp() - 1) * Cos(2 * Pi * self.ffreq / self.frate) - 2 * Sqrt(self.calcAmp()) * self.calcAlpha()) * self.calcAmp();
-        self.fconfig[0, 1] := +2 * ((self.calcAmp() - 1) - (self.calcAmp() + 1) * Cos(2 * Pi * self.ffreq / self.frate)) * self.calcAmp();
-        self.fconfig[0, 0] := +1 * ((self.calcAmp() + 1) - (self.calcAmp() - 1) * Cos(2 * Pi * self.ffreq / self.frate) + 2 * Sqrt(self.calcAmp()) * self.calcAlpha()) * self.calcAmp();
-        self.fconfig[1, 2] := +1 * ((self.calcAmp() + 1) + (self.calcAmp() - 1) * Cos(2 * Pi * self.ffreq / self.frate) - 2 * Sqrt(self.calcAmp()) * self.calcAlpha()) * 1;
-        self.fconfig[1, 1] := -2 * ((self.calcAmp() - 1) + (self.calcAmp() + 1) * Cos(2 * Pi * self.ffreq / self.frate)) * 1;
-        self.fconfig[1, 0] := +1 * ((self.calcAmp() + 1) + (self.calcAmp() - 1) * Cos(2 * Pi * self.ffreq / self.frate) + 2 * Sqrt(self.calcAmp()) * self.calcAlpha()) * 1;
-      end;
-      ftTreble: begin
-        self.fconfig[0, 2] := +1 * ((self.calcAmp() + 1) + (self.calcAmp() - 1) * Cos(2 * Pi * self.ffreq / self.frate) - 2 * Sqrt(self.calcAmp()) * self.calcAlpha()) * self.calcAmp();
-        self.fconfig[0, 1] := -2 * ((self.calcAmp() - 1) + (self.calcAmp() + 1) * Cos(2 * Pi * self.ffreq / self.frate)) * self.calcAmp();
-        self.fconfig[0, 0] := +1 * ((self.calcAmp() + 1) + (self.calcAmp() - 1) * Cos(2 * Pi * self.ffreq / self.frate) + 2 * Sqrt(self.calcAmp()) * self.calcAlpha()) * self.calcAmp();
-        self.fconfig[1, 2] := +1 * ((self.calcAmp() + 1) - (self.calcAmp() - 1) * Cos(2 * Pi * self.ffreq / self.frate) - 2 * Sqrt(self.calcAmp()) * self.calcAlpha()) * 1;
-        self.fconfig[1, 1] := +2 * ((self.calcAmp() - 1) - (self.calcAmp() + 1) * Cos(2 * Pi * self.ffreq / self.frate)) * 1;
-        self.fconfig[1, 0] := +1 * ((self.calcAmp() + 1) - (self.calcAmp() - 1) * Cos(2 * Pi * self.ffreq / self.frate) + 2 * Sqrt(self.calcAmp()) * self.calcAlpha()) * 1;
-      end;
+  case (self.ffilter) of
+    bqfLow: begin
+      self.fconfig[0, 2] :=  1 * ((1 - Cos(self.calcOmega())) / 2);
+      self.fconfig[0, 1] := +2 * ((1 - Cos(self.calcOmega())) / 2);
+      self.fconfig[0, 0] :=  1 * ((1 - Cos(self.calcOmega())) / 2);
+      self.fconfig[1, 2] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+      self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
+      self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
     end;
-  except
+    bqfHigh: begin
+      self.fconfig[0, 2] :=  1 * ((1 + Cos(self.calcOmega())) / 2);
+      self.fconfig[0, 1] := -2 * ((1 + Cos(self.calcOmega())) / 2);
+      self.fconfig[0, 0] :=  1 * ((1 + Cos(self.calcOmega())) / 2);
+      self.fconfig[1, 2] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+      self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
+      self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+    end;
+    bqfPeak: begin
+      self.fconfig[0, 2] :=  0 - (Sin(self.calcOmega()) / 2);
+      self.fconfig[0, 1] :=  0;
+      self.fconfig[0, 0] :=  0 + (Sin(self.calcOmega()) / 2);
+      self.fconfig[1, 2] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+      self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
+      self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+    end;
+    bqfBand: begin
+      self.fconfig[0, 2] :=  0 - (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+      self.fconfig[0, 1] :=  0;
+      self.fconfig[0, 0] :=  0 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+      self.fconfig[1, 2] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+      self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
+      self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+    end;
+    bqfNotch: begin
+      self.fconfig[0, 2] :=  1;
+      self.fconfig[0, 1] := -2 * (Cos(self.calcOmega()));
+      self.fconfig[0, 0] :=  1;
+      self.fconfig[1, 2] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+      self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
+      self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+    end;
+    bqfInv: begin
+      self.fconfig[0, 2] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+      self.fconfig[0, 1] := -2 * (Cos(self.calcOmega()));
+      self.fconfig[0, 0] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+      self.fconfig[1, 2] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+      self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
+      self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
+    end;
+    bqfEqu: begin
+      self.fconfig[0, 2] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha() * Sqrt(self.calcAmp());
+      self.fconfig[0, 1] := -2 * (Cos(self.calcOmega()));
+      self.fconfig[0, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha() * Sqrt(self.calcAmp());
+      self.fconfig[1, 2] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha() / Sqrt(self.calcAmp());
+      self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
+      self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha() / Sqrt(self.calcAmp());
+    end;
+    bqfBass: begin
+      self.fconfig[0, 2] :=  1 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1) - (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) - Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
+      self.fconfig[0, 1] := +2 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) - 1) - (Sqrt(self.calcAmp()) + 1) * Cos(self.calcOmega()));
+      self.fconfig[0, 0] :=  1 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1) - (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) + Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
+      self.fconfig[1, 2] :=  1 *           1          * ((Sqrt(self.calcAmp()) + 1) + (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) - Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
+      self.fconfig[1, 1] := -2 *           1          * ((Sqrt(self.calcAmp()) - 1) + (Sqrt(self.calcAmp()) + 1) * Cos(self.calcOmega()));
+      self.fconfig[1, 0] :=  1 *           1          * ((Sqrt(self.calcAmp()) + 1) + (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) + Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
+    end;
+    bqfTreble: begin
+      self.fconfig[0, 2] :=  1 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1) + (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) - Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
+      self.fconfig[0, 1] := -2 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) - 1) + (Sqrt(self.calcAmp()) + 1) * Cos(self.calcOmega()));
+      self.fconfig[0, 0] :=  1 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1) + (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) + Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
+      self.fconfig[1, 2] :=  1 *           1          * ((Sqrt(self.calcAmp()) + 1) - (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) - Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
+      self.fconfig[1, 1] := +2 *           1          * ((Sqrt(self.calcAmp()) - 1) - (Sqrt(self.calcAmp()) + 1) * Cos(self.calcOmega()));
+      self.fconfig[1, 0] :=  1 *           1          * ((Sqrt(self.calcAmp()) + 1) - (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) + Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
+    end;
+    else begin
+      self.fconfig[0, 2] := 0.0;
+      self.fconfig[0, 1] := 0.0;
+      self.fconfig[0, 0] := 0.0;
+      self.fconfig[1, 2] := 0.0;
+      self.fconfig[1, 1] := 0.0;
+      self.fconfig[1, 0] := 0.0;
+    end;
   end;
 end;
 
 function TQMPBQF.Process(const Input: Double): Double;
 begin
-  try
-    self.fsignal[0, 2] := self.fsignal[0, 1];
-    self.fsignal[0, 1] := self.fsignal[0, 0];
-    self.fsignal[0, 0] := Input;
-    self.fsignal[1, 2] := self.fsignal[1, 1];
-    self.fsignal[1, 1] := self.fsignal[1, 0];
-    self.fsignal[1, 0] := ((self.fsignal[0, 0] * self.fconfig[0, 0] + self.fsignal[0, 1] * self.fconfig[0, 1] + self.fsignal[0, 2] * self.fconfig[0, 2]) - (self.fsignal[1, 1] * self.fconfig[1, 1] + self.fsignal[1, 2] * self.fconfig[1, 2])) / self.fconfig[1, 0];
-  except
-  end;
+  self.fsignal[0, 2] := self.fsignal[0, 1];
+  self.fsignal[0, 1] := self.fsignal[0, 0];
+  self.fsignal[0, 0] := Input;
+  self.fsignal[1, 2] := self.fsignal[1, 1];
+  self.fsignal[1, 1] := self.fsignal[1, 0];
+  self.fsignal[1, 0] := ((self.fsignal[0, 0] * self.fconfig[0, 0] + self.fsignal[0, 1] * self.fconfig[0, 1] + self.fsignal[0, 2] * self.fconfig[0, 2]) - (self.fsignal[1, 1] * self.fconfig[1, 1] + self.fsignal[1, 2] * self.fconfig[1, 2])) / self.fconfig[1, 0];
   Result := self.fsignal[1, 0];
 end;
 

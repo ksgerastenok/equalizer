@@ -50,7 +50,7 @@ var
 begin
   for k := 0 to Length(TQMPEQU.feqz) - 1 do begin
     for i := 0 to Length(TQMPEQU.feqz[k]) - 1 do begin
-      TQMPEQU.feqz[k, i].Init(ftEqu, btOctave, gtDb);
+      TQMPEQU.feqz[k, i].Init(bqfEqu, bqfOctave, bqfDb);
       TQMPEQU.feqz[k, i].Amp := 0.0;
       TQMPEQU.feqz[k, i].Freq := 32 * Power(2, 1.0 * i);
       TQMPEQU.feqz[k, i].Width := 1.0;
@@ -81,7 +81,7 @@ var
 begin
   for k := 0 to Length(TQMPEQU.feqz) - 1 do begin
     for i := 0 to Length(TQMPEQU.feqz[k]) - 1 do begin
-      TQMPEQU.feqz[k, i].Init(ftEqu, btOctave, gtDb);
+      TQMPEQU.feqz[k, i].Init(bqfEqu, bqfOctave, bqfDb);
       TQMPEQU.feqz[k, i].Amp := 0.0;
       TQMPEQU.feqz[k, i].Freq := 32 * Power(2, 1.0 * i);
       TQMPEQU.feqz[k, i].Width := 1.0;

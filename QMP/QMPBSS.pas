@@ -48,14 +48,10 @@ var
   k: LongWord;
 begin
   for k := 0 to Length(TQMPBSS.fbqf) - 1 do begin
-    //TQMPBSS.fbqf[k].Init(ftBass, btOctave, gtDb);
-    //TQMPBSS.fbqf[k].Amp := 4.5;
-    //TQMPBSS.fbqf[k].Freq := 160.0;
-    //TQMPBSS.fbqf[k].Width := 3.0;
-    TQMPBSS.fbqf[k].Init(ftBass, btSlope, gtDb);
+    TQMPBSS.fbqf[k].Init(bqfBass, bqfOctave, bqfDb);
     TQMPBSS.fbqf[k].Amp := 4.5;
-    TQMPBSS.fbqf[k].Freq := 250.0;
-    TQMPBSS.fbqf[k].Width := 0.5;
+    TQMPBSS.fbqf[k].Freq := 160.0;
+    TQMPBSS.fbqf[k].Width := 3.0;
   end;
   Result := 1;
 end;
@@ -77,14 +73,10 @@ var
   k: LongWord;
 begin
   for k := 0 to Length(TQMPBSS.fbqf) - 1 do begin
-    //TQMPBSS.fbqf[k].Init(ftBass, btOctave, gtDb);
-    //TQMPBSS.fbqf[k].Amp := 4.5;
-    //TQMPBSS.fbqf[k].Freq := 160.0;
-    //TQMPBSS.fbqf[k].Width := 3.0;
-    TQMPBSS.fbqf[k].Init(ftBass, btSlope, gtDb);
+    TQMPBSS.fbqf[k].Init(bqfBass, bqfOctave, bqfDb);
     TQMPBSS.fbqf[k].Amp := 4.5;
-    TQMPBSS.fbqf[k].Freq := 250.0;
-    TQMPBSS.fbqf[k].Width := 0.5;
+    TQMPBSS.fbqf[k].Freq := 160.0;
+    TQMPBSS.fbqf[k].Width := 3.0;
   end;
   Result := 1;
 end;
