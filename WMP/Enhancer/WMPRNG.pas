@@ -4,9 +4,13 @@ unit
 interface
 
 type
+  TGain = (rngDb, rngAmp);
+
+type
   PWMPRNG = ^TWMPRNG;
   TWMPRNG = record
   private
+    var fgain: TGain;
     var fvalue: Double;
     var flimit: Double;
     var fcount: Integer;
@@ -15,7 +19,7 @@ type
     function getLimit(): Double;
     procedure setLimit(const Value: Double);
   public
-    procedure Init();
+    procedure Init(const Gain: TGain);
     procedure Done();
     function Process(const Value: Double): Double;
     property Value: Double read getValue;
@@ -27,8 +31,9 @@ implementation
 uses
   Math;
 
-procedure TWMPRNG.Init();
+procedure TWMPRNG.Init(const Gain: TGain);
 begin
+  self.fgain := Gain;
   self.fcount := 0;
   self.fvalue := 1.0;
   self.flimit := 10.0;
@@ -45,33 +50,58 @@ procedure TWMPRNG.addSample(const Value: Double);
 begin
   self.fcount := self.fcount + 1;
   self.fvalue := self.fvalue / Sqrt(1.0 + (Sqr(3.5 * self.fvalue * Value) - 1.0) / self.fcount);
-  if (isNan(self.fvalue)) then begin
-    self.fvalue := 1.0;
-  end;
-  if (isInfinite(self.fvalue)) then begin
-    self.fvalue := self.flimit;
-  end;
+  self.fvalue := Min(Max(self.fvalue, 1.0), self.flimit);
 end;
 
 function TWMPRNG.getValue(): Double;
 begin
-  Result := Min(Max(self.fvalue, 1.0), self.flimit);
+  case (self.fgain) of
+    rngDb: begin
+      Result := 20 * Log10(self.fvalue);
+    end;
+    rngAmp: begin
+      Result := self.fvalue;
+    end;
+    else begin
+      Result := 0.0;
+    end;
+  end;
 end;
 
 function TWMPRNG.getLimit(): Double;
 begin
-  Result := self.flimit;
+  case (self.fgain) of
+    rngDb: begin
+      Result := 20 * Log10(self.flimit);
+    end;
+    rngAmp: begin
+      Result := self.flimit;
+    end;
+    else begin
+      Result := 0.0;
+    end;
+  end;
 end;
 
 procedure TWMPRNG.setLimit(const Value: Double);
 begin
-  self.flimit := Value;
+  case (self.fgain) of
+    rngDb: begin
+      self.flimit := Power(10, Value / 20);
+    end;
+    rngAmp: begin
+      self.flimit := Value;
+    end;
+    else begin
+      self.flimit := 0.0;
+    end;
+  end;
 end;
 
 function TWMPRNG.Process(const Value: Double): Double;
 begin
   self.addSample(Value);
-  Result := Value * self.getValue();
+  Result := Value * self.fvalue;
 end;
 
 begin
