@@ -17,8 +17,6 @@ type
     class var fbqf: array[0..4] of TQMPBQF;
     class function Init(const Flags: Integer): Integer; cdecl; static;
     class procedure Quit(const Flags: Integer); cdecl; static;
-    class function Open(const Media: PChar; const Format: Pointer; const Flags: Integer): Integer; cdecl; static;
-    class procedure Stop(const Flags: Integer); cdecl; static;
     class function Modify(const Data: PData; const Latency: PInteger; const Flags: Integer): Integer; cdecl; static;
     class function Update(const Info: PInfo; const Flags: Integer): Integer; cdecl; static;
   public
@@ -37,8 +35,6 @@ begin
   Result.Version := $0000;
   Result.Init := TQMPTRB.Init;
   Result.Quit := TQMPTRB.Quit;
-  Result.Open := TQMPTRB.Open;
-  Result.Stop := TQMPTRB.Stop;
   Result.Modify := TQMPTRB.Modify;
   Result.Update := TQMPTRB.Update;
 end;
@@ -57,31 +53,6 @@ begin
 end;
 
 class procedure TQMPTRB.Quit(const Flags: Integer); cdecl;
-var
-  k: LongWord;
-begin
-  for k := 0 to Length(TQMPTRB.fbqf) - 1 do begin
-    TQMPTRB.fbqf[k].Amp := 0.0;
-    TQMPTRB.fbqf[k].Freq := 0.0;
-    TQMPTRB.fbqf[k].Width := 0.0;
-    TQMPTRB.fbqf[k].Done();
-  end;
-end;
-
-class function TQMPTRB.Open(const Media: PChar; const Format: Pointer; const Flags: Integer): Integer; cdecl;
-var
-  k: LongWord;
-begin
-  for k := 0 to Length(TQMPTRB.fbqf) - 1 do begin
-    TQMPTRB.fbqf[k].Init(bqfTreble, bqfOctave, bqfDb);
-    TQMPTRB.fbqf[k].Amp := 16.0;
-    TQMPTRB.fbqf[k].Freq := 2500.0;
-    TQMPTRB.fbqf[k].Width := 3.0;
-  end;
-  Result := 1;
-end;
-
-class procedure TQMPTRB.Stop(const Flags: Integer); cdecl;
 var
   k: LongWord;
 begin

@@ -17,8 +17,6 @@ type
     class var frng: array[0..4] of TQMPRNG;
     class function Init(const Flags: Integer): Integer; cdecl; static;
     class procedure Quit(const Flags: Integer); cdecl; static;
-    class function Open(const Media: PChar; const Format: Pointer; const Flags: Integer): Integer; cdecl; static;
-    class procedure Stop(const Flags: Integer); cdecl; static;
     class function Modify(const Data: PData; const Latency: PInteger; const Flags: Integer): Integer; cdecl; static;
     class function Update(const Info: PInfo; const Flags: Integer): Integer; cdecl; static;
   public
@@ -37,8 +35,6 @@ begin
   Result.Version := $0000;
   Result.Init := TQMPNRM.Init;
   Result.Quit := TQMPNRM.Quit;
-  Result.Open := TQMPNRM.Open;
-  Result.Stop := TQMPNRM.Stop;
   Result.Modify := TQMPNRM.Modify;
   Result.Update := TQMPNRM.Update;
 end;
@@ -54,25 +50,6 @@ begin
 end;
 
 class procedure TQMPNRM.Quit(const Flags: Integer); cdecl;
-var
-  k: Integer;
-begin
-  for k := 0 to Length(TQMPNRM.frng) - 1 do begin
-    TQMPNRM.frng[k].Done();
-  end;
-end;
-
-class function TQMPNRM.Open(const Media: PChar; const Format: Pointer; const Flags: Integer): Integer; cdecl;
-var
-  k: Integer;
-begin
-  for k := 0 to Length(TQMPNRM.frng) - 1 do begin
-    TQMPNRM.frng[k].Init(rngDb);
-  end;
-  Result := 1;
-end;
-
-class procedure TQMPNRM.Stop(const Flags: Integer); cdecl;
 var
   k: Integer;
 begin
