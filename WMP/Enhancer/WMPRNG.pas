@@ -48,9 +48,9 @@ end;
 
 procedure TWMPRNG.addSample(const Value: Double);
 begin
-  self.fcount := self.fcount + 1;
+  self.fcount := Min(self.fcount + 1, 250000);
   self.fvalue := self.fvalue / Sqrt(1.0 + (Sqr(3.5 * self.fvalue * Value) - 1.0) / self.fcount);
-  self.fvalue := Min(Max(self.fvalue, 1.0), self.flimit);
+  self.fvalue := Min(Max(1.0, self.fvalue), self.flimit);
 end;
 
 function TWMPRNG.getValue(): Double;
