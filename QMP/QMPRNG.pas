@@ -48,7 +48,8 @@ end;
 
 procedure TQMPRNG.addSample(const Value: Double);
 begin
-  self.fcount := Min(self.fcount + 1, 250000);
+  self.fcount := self.fcount + 1;
+  self.fcount := Min(Max(1, self.fcount), 250000);
   self.fvalue := self.fvalue / Sqrt(1.0 + (Sqr(3.5 * self.fvalue * Value) - 1.0) / self.fcount);
   self.fvalue := Min(Max(1.0, self.fvalue), self.flimit);
 end;
