@@ -50,7 +50,7 @@ procedure TWMPRNG.addSample(const Value: Double);
 begin
   self.fcount := self.fcount + 1;
   self.fcount := Min(Max(1, self.fcount), 250000);
-  self.fvalue := self.fvalue / Sqrt(1.0 + (Sqr(3.5 * self.fvalue * Value) - 1.0) / self.fcount);
+  self.fvalue := self.fvalue / Sqrt(1.0 + (Sqr(self.fvalue * Value) - 1.0) / self.fcount);
   self.fvalue := Min(Max(1.0, self.fvalue), self.flimit);
 end;
 
@@ -62,9 +62,6 @@ begin
     end;
     rngAmp: begin
       Result := self.fvalue;
-    end;
-    else begin
-      Result := 0.0;
     end;
   end;
 end;
@@ -78,9 +75,6 @@ begin
     rngAmp: begin
       Result := self.flimit;
     end;
-    else begin
-      Result := 0.0;
-    end;
   end;
 end;
 
@@ -93,16 +87,13 @@ begin
     rngAmp: begin
       self.flimit := Value;
     end;
-    else begin
-      self.flimit := 0.0;
-    end;
   end;
 end;
 
 function TWMPRNG.Process(const Value: Double): Double;
 begin
-  self.addSample(Value);
-  Result := Value * self.fvalue;
+  self.addSample(3.5 * Value);
+  Result := self.fvalue * Value;
 end;
 
 begin

@@ -99,12 +99,12 @@ begin
         TWMPENH.fdsp.Buffer[x, k] := TWMPENH.frng[k].Process(TWMPENH.fdsp.Buffer[x, k]);
       end;
     end;
+    TWMPENH.fdsp.Done();
     TWMPENH.ffrm.Info.Size := 0;
     for k := 0 to Channels - 1 do begin
       TWMPENH.ffrm.Info.Size := Max(TWMPENH.ffrm.Info.Size, Round(10 * TWMPENH.frng[k].Value));
     end;
     TWMPENH.ffrm.Update();
-    TWMPENH.fdsp.Done();
   end;
   Result := Samples;
 end;
