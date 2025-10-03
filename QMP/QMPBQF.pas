@@ -63,22 +63,10 @@ begin
   self.fband := Band;
   self.fgain := Gain;
   self.ffilter := Filter;
-  self.fsignal[0, 2] := 0.0;
-  self.fsignal[0, 1] := 0.0;
-  self.fsignal[0, 0] := 0.0;
-  self.fsignal[1, 2] := 0.0;
-  self.fsignal[1, 1] := 0.0;
-  self.fsignal[1, 0] := 0.0;
 end;
 
 procedure TQMPBQF.Done();
 begin
-  self.fsignal[0, 2] := 0.0;
-  self.fsignal[0, 1] := 0.0;
-  self.fsignal[0, 0] := 0.0;
-  self.fsignal[1, 2] := 0.0;
-  self.fsignal[1, 1] := 0.0;
-  self.fsignal[1, 0] := 0.0;
 end;
 
 function TQMPBQF.calcAmp(): Double;
@@ -89,9 +77,6 @@ begin
     end;
     bqfAmp: begin
       Result := self.famp;
-    end;
-    else begin
-      Result := 0.0;
     end;
   end;
 end;
@@ -110,9 +95,6 @@ begin
     end;
     bqfSlope: begin
       Result := Sqrt((Sqrt(self.calcAmp()) + 1 / Sqrt(self.calcAmp())) * (1 / self.fwidth - 1) + 2);
-    end;
-    else begin
-      Result := 0.0;
     end;
   end;
 end;
@@ -196,14 +178,6 @@ begin
       self.fconfig[1, 2] :=  1 *           1          * ((Sqrt(self.calcAmp()) + 1) - (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) - 2 * Sqrt(Sqrt(self.calcAmp())) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
       self.fconfig[1, 1] := +2 *           1          * ((Sqrt(self.calcAmp()) - 1) - (Sqrt(self.calcAmp()) + 1) * Cos(self.calcOmega()));
       self.fconfig[1, 0] :=  1 *           1          * ((Sqrt(self.calcAmp()) + 1) - (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) + 2 * Sqrt(Sqrt(self.calcAmp())) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
-    end;
-    else begin
-      self.fconfig[0, 2] := 0.0;
-      self.fconfig[0, 1] := 0.0;
-      self.fconfig[0, 0] := 0.0;
-      self.fconfig[1, 2] := 0.0;
-      self.fconfig[1, 1] := 0.0;
-      self.fconfig[1, 0] := 0.0;
     end;
   end;
 end;

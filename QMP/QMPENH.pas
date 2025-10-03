@@ -40,7 +40,7 @@ end;
 
 class function TQMPENH.Init(const Flags: Integer): Integer; cdecl;
 begin
-  TQMPENH.fwidth := Power(10, 5.0 / 20);
+  TQMPENH.fwidth := Power(10, 3.5 / 20);
   Result := 1;
 end;
 
@@ -53,17 +53,17 @@ class function TQMPENH.Modify(const Data: PData; const Latency: PInteger; const 
 var
   k: LongWord;
   x: LongWord;
-  f: Double;
+  s: Double;
 begin
   if (TQMPENH.finfo.Enabled) then begin
     TQMPENH.fdsp.Init(Data);
     for x := 0 to Data.Samples - 1 do begin
-      f := 0;
+      s := 0;
       for k := 0 to Data.Channels - 1 do begin
-        f := f + (TQMPENH.fdsp.Buffer[x, k] - f) / (k + 1);
+        s := s + (TQMPENH.fdsp.Buffer[x, k] - s) / (k + 1);
       end;
       for k := 0 to Data.Channels - 1 do begin
-        TQMPENH.fdsp.Buffer[x, k] := f + TQMPENH.fwidth * (TQMPENH.fdsp.Buffer[x, k] - f);
+        TQMPENH.fdsp.Buffer[x, k] := TQMPENH.fdsp.Buffer[x, k] + TQMPENH.fwidth * (TQMPENH.fdsp.Buffer[x, k] - s);
       end;
     end;
     TQMPENH.fdsp.Done();
