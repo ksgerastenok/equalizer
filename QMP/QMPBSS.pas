@@ -74,7 +74,7 @@ begin
     for k := 0 to Data.Channels - 1 do begin
       TQMPBSS.fbqf[k].Rate := Data.Rates;
       for x := 0 to Data.Samples - 1 do begin
-        TQMPBSS.fdsp.Buffer[x, k] := TQMPBSS.fbqf[k].Process(TQMPBSS.fdsp.Buffer[x, k]);
+        TQMPBSS.fdsp.Data[k, x] := TQMPBSS.fbqf[k].Process(TQMPBSS.fdsp.Data[k, x]);
       end;
     end;
     TQMPBSS.fdsp.Done();

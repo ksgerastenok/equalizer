@@ -68,7 +68,7 @@ begin
     for k := 0 to Data.Channels - 1 do begin
       TQMPNRM.frng[k].Limit := 20.0;
       for x := 0 to Data.Samples - 1 do begin
-        TQMPNRM.fdsp.Buffer[x, k] := TQMPNRM.frng[k].Process(TQMPNRM.fdsp.Buffer[x, k]);
+        TQMPNRM.fdsp.Data[k, x] := TQMPNRM.frng[k].Process(TQMPNRM.fdsp.Data[k, x]);
       end;
     end;
     TQMPNRM.fdsp.Done();

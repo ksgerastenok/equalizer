@@ -60,10 +60,10 @@ begin
     for x := 0 to Data.Samples - 1 do begin
       s := 0;
       for k := 0 to Data.Channels - 1 do begin
-        s := s + (TQMPENH.fdsp.Buffer[x, k] - s) / (k + 1);
+        s := s + (TQMPENH.fdsp.Data[k, x] - s) / (k + 1);
       end;
       for k := 0 to Data.Channels - 1 do begin
-        TQMPENH.fdsp.Buffer[x, k] := TQMPENH.fdsp.Buffer[x, k] + TQMPENH.fwidth * (TQMPENH.fdsp.Buffer[x, k] - s);
+        TQMPENH.fdsp.Data[k, x] := TQMPENH.fdsp.Data[k, x] + TQMPENH.fwidth * (TQMPENH.fdsp.Data[k, x] - s);
       end;
     end;
     TQMPENH.fdsp.Done();

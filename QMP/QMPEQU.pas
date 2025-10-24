@@ -83,7 +83,7 @@ begin
         TQMPEQU.feqz[k, i].Amp := (TQMPEQU.finfo.Preamp + TQMPEQU.finfo.Bands[i]) / 10;
         TQMPEQU.feqz[k, i].Rate := Data.Rates;
         for x := 0 to Data.Samples - 1 do begin
-          TQMPEQU.fdsp.Buffer[x, k] := TQMPEQU.feqz[k, i].Process(TQMPEQU.fdsp.Buffer[x, k]);
+          TQMPEQU.fdsp.Data[k, x] := TQMPEQU.feqz[k, i].Process(TQMPEQU.fdsp.Data[k, x]);
         end;
       end;
     end;

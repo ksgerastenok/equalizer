@@ -30,16 +30,16 @@ begin
       Result := TQMPEQU.Plugin();
     end;
     1: begin
-      Result := TQMPENH.Plugin();
-    end;
-    2: begin
-      Result := TQMPNRM.Plugin();
-    end;
-    3: begin
       Result := TQMPBSS.Plugin();
     end;
-    4: begin
+    2: begin
       Result := TQMPTRB.Plugin();
+    end;
+    3: begin
+      Result := TQMPENH.Plugin();
+    end;
+    4: begin
+      Result := TQMPNRM.Plugin();
     end;
   end;
 end;

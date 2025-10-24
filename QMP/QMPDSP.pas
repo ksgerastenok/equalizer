@@ -11,13 +11,13 @@ type
   TQMPDSP = record
   private
     var fdata: TData;
-    function clip(const Value: Double): Double;
-    function getBuffer(const Sample: LongWord; const Channel: LongWord): Double;
-    procedure setBuffer(const Sample: LongWord; const Channel: LongWord; const Value: Double);
+    function Clip(const Value: Double): Double;
+    function GetData(const Channel: LongWord; const Sample: LongWord): Double;
+    procedure SetData(const Channel: LongWord; const Sample: LongWord; const Value: Double);
   public
     procedure Init(const Data: PData);
     procedure Done();
-    property Buffer[const Sample: LongWord; const Channel: LongWord]: Double read getBuffer write setBuffer;
+    property Data[const Channel: LongWord; const Sample: LongWord]: Double read GetData write SetData;
   end;
 
 implementation
@@ -38,37 +38,37 @@ procedure TQMPDSP.Done();
 begin
 end;
 
-function TQMPDSP.clip(const Value: Double): Double;
+function TQMPDSP.Clip(const Value: Double): Double;
 begin
   Result := Min(Max(-1.0, Value), +1.0);
 end;
 
-function TQMPDSP.getBuffer(const Sample: LongWord; const Channel: LongWord): Double;
+function TQMPDSP.GetData(const Channel: LongWord; const Sample: LongWord): Double;
 begin
   case (self.fdata.Bits) of
     8: begin
-      Result := self.clip(PShortInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] / $0000007F);
+      Result := self.Clip(PShortInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] / $0000007F);
     end;
     16: begin
-      Result := self.clip(PSmallInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] / $00007FFF);
+      Result := self.Clip(PSmallInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] / $00007FFF);
     end;
     32: begin
-      Result := self.clip(PLongInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] / $7FFFFFFF);
+      Result := self.Clip(PLongInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] / $7FFFFFFF);
     end;
   end;
 end;
 
-procedure TQMPDSP.setBuffer(const Sample: LongWord; const Channel: LongWord; const Value: Double);
+procedure TQMPDSP.SetData(const Channel: LongWord; const Sample: LongWord; const Value: Double);
 begin
   case (self.fdata.Bits) of
     8: begin
-      PShortInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.clip(Value) * $0000007F);
+      PShortInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.Clip(Value) * $0000007F);
     end;
     16: begin
-      PSmallInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.clip(Value) * $00007FFF);
+      PSmallInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.Clip(Value) * $00007FFF);
     end;
     32: begin
-      PLongInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.clip(Value) * $7FFFFFFF);
+      PLongInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.Clip(Value) * $7FFFFFFF);
     end;
   end;
 end;
