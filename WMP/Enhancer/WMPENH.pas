@@ -47,7 +47,6 @@ class function TWMPENH.Init(const Module: PPlugin): Integer; cdecl;
 var
   k: Integer;
 begin
-  TWMPENH.ffrm.Init();
   for k := 0 to Length(TWMPENH.fbss) - 1 do begin
     TWMPENH.fbss[k].Init(bqfBass, bqfOctave, bqfDb);
   end;
@@ -57,6 +56,7 @@ begin
   for k := 0 to Length(TWMPENH.frng) - 1 do begin
     TWMPENH.frng[k].Init(rngDb);
   end;
+  TWMPENH.ffrm := TWMPFRM.Create();
   Result := 0;
 end;
 
@@ -73,7 +73,7 @@ begin
   for k := 0 to Length(TWMPENH.frng) - 1 do begin
     TWMPENH.frng[k].Done();
   end;
-  TWMPENH.ffrm.Done();
+  TWMPENH.ffrm.Destroy();
 end;
 
 class function TWMPENH.Modify(const Module: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl;
@@ -94,17 +94,17 @@ begin
       TWMPENH.ftrb[k].Rate := Rates;
       TWMPENH.frng[k].Limit := TWMPENH.ffrm.Info.Preamp / 10;
       for x := 0 to Samples - 1 do begin
-        TWMPENH.fdsp.Buffer[x, k] := TWMPENH.fbss[k].Process(TWMPENH.fdsp.Buffer[x, k]);
-        TWMPENH.fdsp.Buffer[x, k] := TWMPENH.ftrb[k].Process(TWMPENH.fdsp.Buffer[x, k]);
-        TWMPENH.fdsp.Buffer[x, k] := TWMPENH.frng[k].Process(TWMPENH.fdsp.Buffer[x, k]);
+        TWMPENH.fdsp.Buffer[k, x] := TWMPENH.fbss[k].Process(TWMPENH.fdsp.Buffer[k, x]);
+        TWMPENH.fdsp.Buffer[k, x] := TWMPENH.ftrb[k].Process(TWMPENH.fdsp.Buffer[k, x]);
+        TWMPENH.fdsp.Buffer[k, x] := TWMPENH.frng[k].Process(TWMPENH.fdsp.Buffer[k, x]);
       end;
     end;
     TWMPENH.fdsp.Done();
-    TWMPENH.ffrm.Info.Size := 0;
+    x := 0;
     for k := 0 to Channels - 1 do begin
-      TWMPENH.ffrm.Info.Size := Max(TWMPENH.ffrm.Info.Size, Round(10 * TWMPENH.frng[k].Value));
+      x := Max(x, Round(10 * TWMPENH.frng[k].Value));
     end;
-    TWMPENH.ffrm.Update();
+    TWMPENH.ffrm.Refresh(x);
   end;
   Result := Samples;
 end;
