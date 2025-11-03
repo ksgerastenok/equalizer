@@ -19,6 +19,7 @@ object WMPFRM: TWMPFRM
   OnHide = FormHide
   OnShow = FormShow
   object AMPGroupBox: TGroupBox
+    Tag = 10
     Left = 5
     Height = 70
     Top = 0
@@ -55,6 +56,7 @@ object WMPFRM: TWMPFRM
       TabOrder = 1
     end
     object AMPLimitLabel: TLabel
+      Tag = 11
       Left = 0
       Height = 20
       Top = 0
@@ -63,6 +65,7 @@ object WMPFRM: TWMPFRM
       Caption = 'Limit'
     end
     object AMPValueLabel: TLabel
+      Tag = 12
       Left = 0
       Height = 20
       Top = 25
@@ -72,6 +75,7 @@ object WMPFRM: TWMPFRM
     end
   end
   object BSSGroupBox: TGroupBox
+    Tag = 20
     Left = 5
     Height = 95
     Top = 70
@@ -123,6 +127,7 @@ object WMPFRM: TWMPFRM
       TabOrder = 2
     end
     object BSSAmpLabel: TLabel
+      Tag = 21
       Left = 0
       Height = 20
       Top = 0
@@ -131,6 +136,7 @@ object WMPFRM: TWMPFRM
       Caption = 'Amp'
     end
     object BSSFreqLabel: TLabel
+      Tag = 22
       Left = 0
       Height = 20
       Top = 25
@@ -139,6 +145,7 @@ object WMPFRM: TWMPFRM
       Caption = 'Freq'
     end
     object BSSWidthLabel: TLabel
+      Tag = 23
       Left = 0
       Height = 20
       Top = 50
@@ -148,6 +155,7 @@ object WMPFRM: TWMPFRM
     end
   end
   object TRBGroupBox: TGroupBox
+    Tag = 30
     Left = 5
     Height = 95
     Top = 165
@@ -199,6 +207,7 @@ object WMPFRM: TWMPFRM
       TabOrder = 2
     end
     object TRBAmpLabel: TLabel
+      Tag = 31
       Left = 0
       Height = 20
       Top = 0
@@ -207,6 +216,7 @@ object WMPFRM: TWMPFRM
       Caption = 'Amp'
     end
     object TRBFreqLabel: TLabel
+      Tag = 32
       Left = 0
       Height = 20
       Top = 25
@@ -215,6 +225,7 @@ object WMPFRM: TWMPFRM
       Caption = 'Freq'
     end
     object TRBWidthLabel: TLabel
+      Tag = 33
       Left = 0
       Height = 20
       Top = 50
