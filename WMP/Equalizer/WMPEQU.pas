@@ -53,7 +53,7 @@ begin
       TWMPEQU.feqz[k, i].Width := 0.5;
     end;
   end;
-  TWMPEQU.ffrm.Init();
+  TWMPEQU.ffrm := TWMPFRM.Create();
   Result := 0;
 end;
 
@@ -70,7 +70,7 @@ begin
       TWMPEQU.feqz[k, i].Done();
     end;
   end;
-  TWMPEQU.ffrm.Done();
+  TWMPEQU.ffrm.Destroy();
 end;
 
 class function TWMPEQU.Modify(const Module: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl;
@@ -86,7 +86,7 @@ begin
         TWMPEQU.feqz[k, i].Amp := (TWMPEQU.ffrm.Info.Preamp + TWMPEQU.ffrm.Info.Bands[i]) / 10;
         TWMPEQU.feqz[k, i].Rate := Rates;
         for x := 0 to Samples - 1 do begin
-          TWMPEQU.fdsp.Buffer[x, k] := TWMPEQU.feqz[k, i].Process(TWMPEQU.fdsp.Buffer[x, k]);
+          TWMPEQU.fdsp.Buffer[k, x] := TWMPEQU.feqz[k, i].Process(TWMPEQU.fdsp.Buffer[k, x]);
         end;
       end;
     end;

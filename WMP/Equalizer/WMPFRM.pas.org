@@ -1,0 +1,349 @@
+unit
+  WMPFRM;
+
+interface
+
+uses
+  WMPDCL;
+
+type
+  PWMPFRM = ^TWMPFRM;
+  TWMPFRM = record
+  private
+    var finfo: TInfo;
+    function getInfo(): TInfo;
+    function getComponent(ClassType: TClass; Tag: Integer): TObject;
+    procedure Create();
+    procedure Destroy();
+    procedure FormShow(Sender: TObject);
+    procedure FormHide(Sender: TObject);
+    procedure TrackBarLoad(Sender: TObject);
+    procedure TrackBarSave(Sender: TObject);
+  public
+    procedure Init();
+    procedure Done();
+    procedure Show();
+    procedure Hide();
+    property Info: TInfo read getInfo;
+  end;
+
+implementation
+
+uses
+  Math,
+  Forms,
+  Controls,
+  ComCtrls,
+  StdCtrls,
+  SysUtils,
+  StrUtils,
+  Interfaces;
+
+procedure TWMPFRM.Init();
+var
+  f: file;
+begin
+  try
+    System.Assign(f, 'equalizer.cfg');
+    System.ReSet(f, 1);
+    System.BlockRead(f, self.finfo, SizeOf(TInfo) * 1);
+    System.Close(f);
+  except
+  end;
+  self.finfo.Enabled := True;
+  self.Create();
+end;
+
+procedure TWMPFRM.Done();
+var
+  f: file;
+begin
+  self.Destroy();
+  self.finfo.Enabled := True;
+  try
+    System.Assign(f, 'equalizer.cfg');
+    System.ReWrite(f, 1);
+    System.BlockWrite(f, self.finfo, SizeOf(TInfo) * 1);
+    System.Close(f);
+  except
+  end;
+end;
+
+procedure TWMPFRM.Create();
+var
+  i: Integer;
+begin
+  Application.Initialize();
+  with (TForm.Create(Application)) do begin
+    Font.Size := 7;
+    Caption := 'Equalizer';
+    Tag := 10;
+    Top := 120;
+    Left := 215;
+    Width := 600;
+    Height := 290;
+    BorderIcons := [biSystemMenu];
+    BorderStyle := bsSingle;
+    FormStyle := fsStayOnTop;
+    Position := poScreenCenter;
+    ShowHint := True;
+    Parent := nil;
+    OnShow := self.FormShow;
+    OnHide := self.FormHide;
+  end;
+  with (TGroupBox.Create(Application)) do begin
+    Font.Size := 7;
+    Tag := 10;
+    Top := 15;
+    Left := 5;
+    Width := 25;
+    Height := 270;
+    Parent := self.getComponent(TForm, 10) as TWinControl;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 7;
+    Caption := 'Preamp';
+    Tag := 100;
+    Top := 0;
+    Left := 0;
+    Width := 40;
+    Height := 15;
+    AutoSize := False;
+    ShowHint := True;
+    Parent := getComponent(TForm, 10) as TWinControl;
+  end;
+  with (TTrackBar.Create(Application)) do begin
+    Font.Size := 7;
+    Orientation := trVertical;
+    Reversed := True;
+    Tag := 100;
+    Top := -10;
+    Left := 2;
+    Width := 20;
+    Height := 255;
+    Min := -200;
+    Max := +200;
+    Position := 0;
+    ShowHint := True;
+    TickMarks := tmBoth;
+    TickStyle := tsNone;
+    Parent := getComponent(TGroupBox, 10) as TWinControl;
+    OnChange := self.TrackBarSave;
+  end;
+  with (TGroupBox.Create(Application)) do begin
+    Font.Size := 7;
+    Tag := 20;
+    Top := 15;
+    Left := 70;
+    Width := 525;
+    Height := 270;
+    Parent := self.getComponent(TForm, 10) as TWinControl;
+  end;
+  for i := 0 to Length(self.finfo.Bands) - 1 do begin
+    with (TLabel.Create(Application)) do begin
+      Font.Size := 7;
+      Caption := IfThen(20.0 * Power(2, 0.5 * i) < 1000, Format('%3.0f ', [20.0 * Power(2, 0.5 * i) / 1.0]), Format('%2.0fk', [20.0 * Power(2, 0.5 * i) / 1000.0]));
+      Tag := i;
+      Top := 0;
+      Left := 70 + 25 * i;
+      Width := 20;
+      Height := 15;
+      AutoSize := False;
+      ShowHint := True;
+      Parent := getComponent(TForm, 10) as TWinControl;
+    end;
+    with (TTrackBar.Create(Application)) do begin
+      Font.Size := 7;
+      Orientation := trVertical;
+      Reversed := True;
+      Tag := i;
+      Top := -10;
+      Left := 25 * i;
+      Width := 20;
+      Height := 255;
+      Min := -200;
+      Max := +200;
+      Position := 0;
+      ShowHint := True;
+      TickMarks := tmBoth;
+      TickStyle := tsNone;
+      Parent := getComponent(TGroupBox, 20) as TWinControl;
+      OnChange := self.TrackBarSave;
+    end;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 7;
+    Caption := '-20 dB';
+    Tag := 130;
+    Top := 265;
+    Left := 30;
+    Width := 40;
+    Height := 15;
+    AutoSize := False;
+    ShowHint := True;
+    Parent := getComponent(TForm, 10) as TWinControl;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 7;
+    Caption := '0 dB';
+    Tag := 120;
+    Top := 145;
+    Left := 40;
+    Width := 25;
+    Height := 15;
+    AutoSize := False;
+    ShowHint := True;
+    Parent := getComponent(TForm, 10) as TWinControl;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 7;
+    Caption := '+20 dB';
+    Tag := 110;
+    Top := 20;
+    Left := 30;
+    Width := 40;
+    Height := 15;
+    AutoSize := False;
+    ShowHint := True;
+    Parent := getComponent(TForm, 10) as TWinControl;
+  end;
+end;
+
+procedure TWMPFRM.Destroy();
+var
+  i: Integer;
+begin
+  with (getComponent(TLabel, 110) as TWinControl) do begin
+    Destroy();
+  end;
+  with (getComponent(TLabel, 120) as TWinControl) do begin
+    Destroy();
+  end;
+  with (getComponent(TLabel, 130) as TWinControl) do begin
+    Destroy();
+  end;
+  for i := 0 to Length(self.finfo.Bands) - 1 do begin
+    with (getComponent(TTrackBar, i) as TWinControl) do begin
+      Destroy();
+    end;
+    with (getComponent(TLabel, i) as TWinControl) do begin
+      Destroy();
+    end;
+  end;
+  with (getComponent(TGroupBox, 20) as TWinControl) do begin
+    Destroy();
+  end;
+  with (getComponent(TTrackBar, 100) as TWinControl) do begin
+    Destroy();
+  end;
+  with (getComponent(TLabel, 100) as TWinControl) do begin
+    Destroy();
+  end;
+  with (getComponent(TGroupBox, 10) as TWinControl) do begin
+    Destroy();
+  end;
+  with (getComponent(TForm, 10) as TWinControl) do begin
+    Destroy();
+  end;
+  Application.Terminate();
+end;
+
+procedure TWMPFRM.FormShow(Sender: TObject);
+var
+  i: Integer;
+begin
+  if (Sender is TForm) then begin
+    with (Sender as TForm) do begin
+      self.TrackBarLoad(getComponent(TTrackBar, 100));
+      for i := 0 to Length(self.finfo.Bands) - 1 do begin
+        self.TrackBarLoad(getComponent(TTrackBar, i));
+      end;
+    end;
+  end;
+end;
+
+procedure TWMPFRM.FormHide(Sender: TObject);
+var
+  i: Integer;
+begin
+  if (Sender is TForm) then begin
+    with (Sender as TForm) do begin
+      self.TrackBarSave(getComponent(TTrackBar, 100));
+      for i := 0 to Length(self.finfo.Bands) - 1 do begin
+        self.TrackBarSave(getComponent(TTrackBar, i));
+      end;
+    end;
+  end;
+end;
+
+procedure TWMPFRM.TrackBarLoad(Sender: TObject);
+begin
+  if (Sender is TTrackBar) then begin
+    with (Sender as TTrackBar) do begin
+      case (Tag) of
+        100: begin
+          Position := self.finfo.Preamp;
+          Hint := Format('Preamp: %f dB', [self.finfo.Preamp / 10]);
+        end;
+        else begin
+          Position := self.finfo.Bands[Tag];
+          Hint := Format('Band %d: %f dB', [Tag + 1, self.finfo.Bands[Tag] / 10]);
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure TWMPFRM.TrackBarSave(Sender: TObject);
+begin
+  if (Sender is TTrackBar) then begin
+    with (Sender as TTrackBar) do begin
+      case (Tag) of
+        100: begin
+          self.finfo.Preamp := Position;
+          Hint := Format('Preamp: %f dB', [self.finfo.Preamp / 10]);
+        end;
+        else begin
+          self.finfo.Bands[Tag] := Position;
+          Hint := Format('Band %d: %f dB', [Tag + 1, self.finfo.Bands[Tag] / 10]);
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure TWMPFRM.Show();
+begin
+  with (getComponent(TForm, 10) as TForm) do begin
+    Show();
+  end;
+end;
+
+procedure TWMPFRM.Hide();
+begin
+  with (getComponent(TForm, 10) as TForm) do begin
+    Hide();
+  end;
+end;
+
+function TWMPFRM.getInfo(): TInfo;
+begin
+  Result := self.finfo;
+end;
+
+function TWMPFRM.getComponent(ClassType: TClass; Tag: Integer): TObject;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to Application.ComponentCount - 1 do begin
+    if (Application.Components[i].ClassType = ClassType) then begin
+      if (Application.Components[i].Tag = Tag) then begin
+        Result := Application.Components[i];
+      end;
+    end;
+  end;
+end;
+
+begin
+end.

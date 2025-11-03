@@ -4,97 +4,231 @@ unit
 interface
 
 uses
-  WMPDCL;
+  WMPDCL,
+  Forms,
+  Classes,
+  Dialogs,
+  Controls,
+  Graphics,
+  ComCtrls,
+  StdCtrls,
+  SysUtils;
 
 type
-  PWMPFRM = ^TWMPFRM;
-  TWMPFRM = record
+  TWMPFRM = class(TForm)
+  published
+    var PreampLabel: TLabel;
+    var Band01Label: TLabel;
+    var Band04Label: TLabel;
+    var Band02Label: TLabel;
+    var Band03Label: TLabel;
+    var Band06Label: TLabel;
+    var Band05Label: TLabel;
+    var Band13Label: TLabel;
+    var Band10Label: TLabel;
+    var Band11Label: TLabel;
+    var Band12Label: TLabel;
+    var Band07Label: TLabel;
+    var Band08Label: TLabel;
+    var Band09Label: TLabel;
+    var Band14Label: TLabel;
+    var Band15Label: TLabel;
+    var Band16Label: TLabel;
+    var Band17Label: TLabel;
+    var Band18Label: TLabel;
+    var Band19Label: TLabel;
+    var Band20Label: TLabel;
+    var Band21Label: TLabel;
+    var PreampGroupBox: TGroupBox;
+    var PreampTrackBar: TTrackBar;
+    var MinLabel: TLabel;
+    var ZeroLabel: TLabel;
+    var MaxLabel: TLabel;
+    var BandGroupBox: TGroupBox;
+    var Band01TrackBar: TTrackBar;
+    var Band02TrackBar: TTrackBar;
+    var Band03TrackBar: TTrackBar;
+    var Band04TrackBar: TTrackBar;
+    var Band05TrackBar: TTrackBar;
+    var Band06TrackBar: TTrackBar;
+    var Band07TrackBar: TTrackBar;
+    var Band08TrackBar: TTrackBar;
+    var Band09TrackBar: TTrackBar;
+    var Band10TrackBar: TTrackBar;
+    var Band11TrackBar: TTrackBar;
+    var Band12TrackBar: TTrackBar;
+    var Band13TrackBar: TTrackBar;
+    var Band14TrackBar: TTrackBar;
+    var Band15TrackBar: TTrackBar;
+    var Band16TrackBar: TTrackBar;
+    var Band17TrackBar: TTrackBar;
+    var Band18TrackBar: TTrackBar;
+    var Band19TrackBar: TTrackBar;
+    var Band21TrackBar: TTrackBar;
+    var Band20TrackBar: TTrackBar;
+    procedure FormCreate(const Sender: TObject);
+    procedure FormDestroy(const Sender: TObject);
+    procedure FormShow(const Sender: TObject);
+    procedure FormHide(const Sender: TObject);
+    procedure TrackBarLoad(const Sender: TObject);
+    procedure TrackBarSave(const Sender: TObject);
   private
     var finfo: TInfo;
     function getInfo(): TInfo;
-    procedure Create();
-    procedure Destroy();
-    procedure FormShow(Sender: TObject);
-    procedure FormHide(Sender: TObject);
-    procedure TrackBarLoad(Sender: TObject);
-    procedure TrackBarSave(Sender: TObject);
   public
-    procedure Init();
-    procedure Done();
-    procedure Show();
-    procedure Hide();
+    constructor Create(); reintroduce;
+    destructor Destroy(); override;
     property Info: TInfo read getInfo;
   end;
 
 implementation
 
-uses
-  Forms,
-  Controls,
-  ComCtrls,
-  StdCtrls,
-  Interfaces,
-  Math,
-  StrUtils,
-  SysUtils;
+{$R *.lfm}
 
-function getComponent(const Clazz: TWinControlClass; const Tag: Integer): TWinControl;
-var
-  i: Integer;
+uses
+  Interfaces;
+
+constructor TWMPFRM.Create();
 begin
-  Result := nil;
-  for i := 0 to Application.ComponentCount - 1 do begin
-    if (Application.Components[i] is Clazz) then begin
-      if (Application.Components[i].Tag = Tag) then begin
-        Result := (Application.Components[i] as Clazz);
+  Application.Initialize();
+  inherited Create(Application);
+end;
+
+destructor TWMPFRM.Destroy();
+begin
+  inherited Destroy();
+  Application.Terminate();
+end;
+
+procedure TWMPFRM.FormCreate(const Sender: TObject);
+var
+  f: file;
+begin
+  if (Sender is TForm) then begin
+    with (Sender as TForm) do begin
+      try
+        System.Assign(f, 'equalizer.cfg');
+        System.ReSet(f, 1);
+        System.BlockRead(f, self.finfo, SizeOf(TInfo) * 1);
+        System.Close(f);
+      except
+      end;
+      self.finfo.Enabled := True;
+    end;
+  end;
+end;
+
+procedure TWMPFRM.FormDestroy(const Sender: TObject);
+var
+  f: file;
+begin
+  if (Sender is TForm) then begin
+    with (Sender as TForm) do begin
+      self.finfo.Enabled := True;
+      try
+        System.Assign(f, 'equalizer.cfg');
+        System.ReWrite(f, 1);
+        System.BlockWrite(f, self.finfo, SizeOf(TInfo) * 1);
+        System.Close(f);
+      except
       end;
     end;
   end;
 end;
 
-procedure TWMPFRM.Init();
-var
-  f: file;
+procedure TWMPFRM.FormShow(const Sender: TObject);
 begin
-  try
-    Assign(f, 'equalizer.cfg');
-    ReSet(f, 1);
-    BlockRead(f, self.finfo, SizeOf(TInfo) * 1);
-    Close(f);
-  except
-  end;
-  Application.Initialize();
-  self.Create();
-  self.finfo.Enabled := True;
-end;
-
-procedure TWMPFRM.Done();
-var
-  f: file;
-begin
-  self.finfo.Enabled := True;
-  self.Destroy();
-  Application.Terminate();
-  try
-    Assign(f, 'equalizer.cfg');
-    ReWrite(f, 1);
-    BlockWrite(f, self.finfo, SizeOf(TInfo) * 1);
-    Close(f);
-  except
+  if (Sender is TForm) then begin
+    with (Sender as TForm) do begin
+      self.TrackBarLoad(self.PreampTrackBar);
+      self.TrackBarLoad(self.Band01TrackBar);
+      self.TrackBarLoad(self.Band02TrackBar);
+      self.TrackBarLoad(self.Band03TrackBar);
+      self.TrackBarLoad(self.Band04TrackBar);
+      self.TrackBarLoad(self.Band05TrackBar);
+      self.TrackBarLoad(self.Band06TrackBar);
+      self.TrackBarLoad(self.Band07TrackBar);
+      self.TrackBarLoad(self.Band08TrackBar);
+      self.TrackBarLoad(self.Band09TrackBar);
+      self.TrackBarLoad(self.Band10TrackBar);
+      self.TrackBarLoad(self.Band11TrackBar);
+      self.TrackBarLoad(self.Band12TrackBar);
+      self.TrackBarLoad(self.Band13TrackBar);
+      self.TrackBarLoad(self.Band14TrackBar);
+      self.TrackBarLoad(self.Band15TrackBar);
+      self.TrackBarLoad(self.Band16TrackBar);
+      self.TrackBarLoad(self.Band17TrackBar);
+      self.TrackBarLoad(self.Band18TrackBar);
+      self.TrackBarLoad(self.Band19TrackBar);
+      self.TrackBarLoad(self.Band20TrackBar);
+      self.TrackBarLoad(self.Band21TrackBar);
+    end;
   end;
 end;
 
-procedure TWMPFRM.Show();
+procedure TWMPFRM.FormHide(const Sender: TObject);
 begin
-  with (getComponent(TForm, 10) as TForm) do begin
-    Show();
+  if (Sender is TForm) then begin
+    with (Sender as TForm) do begin
+      self.TrackBarSave(self.PreampTrackBar);
+      self.TrackBarSave(self.Band01TrackBar);
+      self.TrackBarSave(self.Band02TrackBar);
+      self.TrackBarSave(self.Band03TrackBar);
+      self.TrackBarSave(self.Band04TrackBar);
+      self.TrackBarSave(self.Band05TrackBar);
+      self.TrackBarSave(self.Band06TrackBar);
+      self.TrackBarSave(self.Band07TrackBar);
+      self.TrackBarSave(self.Band08TrackBar);
+      self.TrackBarSave(self.Band09TrackBar);
+      self.TrackBarSave(self.Band10TrackBar);
+      self.TrackBarSave(self.Band11TrackBar);
+      self.TrackBarSave(self.Band12TrackBar);
+      self.TrackBarSave(self.Band13TrackBar);
+      self.TrackBarSave(self.Band14TrackBar);
+      self.TrackBarSave(self.Band15TrackBar);
+      self.TrackBarSave(self.Band16TrackBar);
+      self.TrackBarSave(self.Band17TrackBar);
+      self.TrackBarSave(self.Band18TrackBar);
+      self.TrackBarSave(self.Band19TrackBar);
+      self.TrackBarSave(self.Band20TrackBar);
+      self.TrackBarSave(self.Band21TrackBar);
+    end;
   end;
 end;
 
-procedure TWMPFRM.Hide();
+procedure TWMPFRM.TrackBarLoad(const Sender: TObject);
 begin
-  with (getComponent(TForm, 10) as TForm) do begin
-    Hide();
+  if (Sender is TTrackBar) then begin
+    with (Sender as TTrackBar) do begin
+      case (Tag) of
+        100: begin
+          Position := self.finfo.Preamp;
+          Hint := Format('Preamp: %f dB', [self.finfo.Preamp / 10]);
+        end;
+        else begin
+          Position := self.finfo.Bands[Tag];
+          Hint := Format('Band %d: %f dB', [Tag + 1, self.finfo.Bands[Tag] / 10]);
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure TWMPFRM.TrackBarSave(const Sender: TObject);
+begin
+  if (Sender is TTrackBar) then begin
+    with (Sender as TTrackBar) do begin
+      case (Tag) of
+        100: begin
+          self.finfo.Preamp := Position;
+          Hint := Format('Preamp: %f dB', [self.finfo.Preamp / 10]);
+        end;
+        else begin
+          self.finfo.Bands[Tag] := Position;
+          Hint := Format('Band %d: %f dB', [Tag + 1, self.finfo.Bands[Tag] / 10]);
+        end;
+      end;
+    end;
   end;
 end;
 
@@ -103,177 +237,6 @@ begin
   Result := self.finfo;
 end;
 
-procedure TWMPFRM.Create();
-var
-  i: Integer;
-begin
-  with (TForm.Create(Application)) do begin
-    Font.Size := 6;
-    Caption := 'Equalizer';
-    Tag := 10;
-    Top := 120;
-    Left := 215;
-    Width := 600;
-    Height := 285;
-    BorderIcons := [biSystemMenu];
-    BorderStyle := bsSingle;
-    FormStyle := fsStayOnTop;
-    Position := poMainFormCenter;
-    ShowHint := True;
-    Parent := nil;
-    OnShow := self.FormShow;
-    OnHide := self.FormHide;
-  end;
-  with (TStaticText.Create(Application)) do begin
-    Font.Size := 7;
-    Caption := '-20 dB';
-    Top := 245;
-    Left := 30;
-    Width := 45;
-    Height := 20;
-    ShowHint := True;
-    Parent := getComponent(TForm, 10);
-  end;
-  with (TStaticText.Create(Application)) do begin
-    Font.Size := 7;
-    Caption := '0 dB';
-    Top := 125;
-    Left := 35;
-    Width := 45;
-    Height := 20;
-    ShowHint := True;
-    Parent := getComponent(TForm, 10);
-  end;
-  with (TStaticText.Create(Application)) do begin
-    Font.Size := 7;
-    Caption := '+20 dB';
-    Top := 5;
-    Left := 30;
-    Width := 45;
-    Height := 20;
-    ShowHint := True;
-    Parent := getComponent(TForm, 10);
-  end;
-  with (TTrackBar.Create(Application)) do begin
-    Font.Size := 7;
-    Orientation := trVertical;
-    Top := 5;
-    Left := 10;
-    Width := 20;
-    Height := 255;
-    Tag := 99;
-    Min := -200;
-    Max := +200;
-    ShowHint := True;
-    TickMarks := tmBoth;
-    TickStyle := tsNone;
-    Parent := getComponent(TForm, 10);
-    OnChange := self.TrackBarSave;
-  end;
-  with (TStaticText.Create(Application)) do begin
-    Font.Size := 7;
-    Caption := 'Preamp';
-    Top := 265;
-    Left := 5;
-    Width := 45;
-    Height := 20;
-    ShowHint := True;
-    Parent := getComponent(TForm, 10);
-  end;
-  for i := 0 to Length(self.finfo.Bands) - 1 do begin
-    with (TTrackBar.Create(Application)) do begin
-      Font.Size := 7;
-      Orientation := trVertical;
-      Top := 5;
-      Left := 75 + 25 * i;
-      Width := 20;
-      Height := 255;
-      Tag := i;
-      Min := -200;
-      Max := +200;
-      ShowHint := True;
-      TickMarks := tmBoth;
-      TickStyle := tsNone;
-      Parent := getComponent(TForm, 10);
-      OnChange := self.TrackBarSave;
-    end;
-    with (TStaticText.Create(Application)) do begin
-      Font.Size := 7;
-      Caption := IfThen(20 * Power(2, 0.5 * i) < 1000, Format('%3.0f ', [20 * Power(2, 0.5 * i) / 1]), Format('%2.1fk', [20 * Power(2, 0.5 * i) / 1000]));
-      Top := 265;
-      Left := 70 + 25 * i;
-      Width := 30;
-      Height := 20;
-      ShowHint := True;
-      Parent := getComponent(TForm, 10);
-    end;
-  end;
-end;
-
-procedure TWMPFRM.Destroy();
-begin
-  with (getComponent(TForm, 10) as TForm) do begin
-    Destroy();
-  end;
-end;
-
-procedure TWMPFRM.FormShow(Sender: TObject);
-var
-  i: Integer;
-begin
-  if (Sender is TForm) then begin
-    with (Sender as TForm) do begin
-      for i := 0 to ControlCount - 1 do begin
-        if (Controls[i] is TTrackBar) then begin
-          self.TrackBarLoad(Controls[i]);
-        end;
-      end;
-    end;
-  end;
-end;
-
-procedure TWMPFRM.FormHide(Sender: TObject);
-var
-  i: Integer;
-begin
-  if (Sender is TForm) then begin
-    with (Sender as TForm) do begin
-      for i := 0 to ControlCount - 1 do begin
-        if (Controls[i] is TTrackBar) then begin
-          self.TrackBarSave(Controls[i]);
-        end;
-      end;
-    end;
-  end;
-end;
-
-procedure TWMPFRM.TrackBarLoad(Sender: TObject);
-begin
-  if (Sender is TTrackBar) then begin
-    with (Sender as TTrackBar) do begin
-      if (Tag = 99) then begin
-        Position := Max - self.finfo.Preamp     + Min;
-      end           else begin
-        Position := Max - self.finfo.Bands[Tag] + Min;
-      end;
-      Hint := Format('Gain: %f dB', [(Max - Position + Min) / 10]);
-    end;
-  end;
-end;
-
-procedure TWMPFRM.TrackBarSave(Sender: TObject);
-begin
-  if (Sender is TTrackBar) then begin
-    with (Sender as TTrackBar) do begin
-      if (Tag = 99) then begin
-        self.finfo.Preamp     := Max - Position + Min;
-      end           else begin
-        self.finfo.Bands[Tag] := Max - Position + Min;
-      end;
-      Hint := Format('Gain: %f dB', [(Max - Position + Min) / 10]);
-    end;
-  end;
-end;
-
 begin
 end.
+
