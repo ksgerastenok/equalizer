@@ -229,8 +229,8 @@ begin
     Left := 35;
     Width := 400;
     Height := 20;
-    Min := 5;
-    Max := 50;
+    Min := 0;
+    Max := 100;
     Enabled := True;
     ShowHint := True;
     TickMarks := tmBoth;
@@ -323,8 +323,8 @@ begin
     Left := 35;
     Width := 400;
     Height := 20;
-    Min := 5;
-    Max := 150;
+    Min := 10;
+    Max := 200;
     Enabled := True;
     ShowHint := True;
     TickMarks := tmBoth;

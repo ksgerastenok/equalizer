@@ -48,10 +48,10 @@ var
   k: Integer;
 begin
   for k := 0 to Length(TWMPENH.fbss) - 1 do begin
-    TWMPENH.fbss[k].Init(bqfBass, bqfOctave, bqfDb);
+    TWMPENH.fbss[k].Init(bqfEqu, bqfOctave, bqfDb);
   end;
   for k := 0 to Length(TWMPENH.ftrb) - 1 do begin
-    TWMPENH.ftrb[k].Init(bqfTreble, bqfOctave, bqfDb);
+    TWMPENH.ftrb[k].Init(bqfEqu, bqfOctave, bqfDb);
   end;
   for k := 0 to Length(TWMPENH.frng) - 1 do begin
     TWMPENH.frng[k].Init(rngDb);
