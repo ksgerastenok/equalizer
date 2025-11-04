@@ -44,9 +44,9 @@ var
   k: LongWord;
 begin
   for k := 0 to Length(TQMPBSS.fbqf) - 1 do begin
-    TQMPBSS.fbqf[k].Init(bqfBass, bqfOctave, bqfDb);
+    TQMPBSS.fbqf[k].Init(bqfEqu, bqfOctave, bqfDb);
     TQMPBSS.fbqf[k].Amp := 4.5;
-    TQMPBSS.fbqf[k].Freq := 320.0;
+    TQMPBSS.fbqf[k].Freq := 50.0;
     TQMPBSS.fbqf[k].Width := 3.0;
   end;
   Result := 1;
