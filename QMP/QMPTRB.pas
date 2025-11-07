@@ -44,10 +44,10 @@ var
   k: LongWord;
 begin
   for k := 0 to Length(TQMPTRB.fbqf) - 1 do begin
-    TQMPTRB.fbqf[k].Init(bqfEqu, bqfOctave, bqfDb);
-    TQMPTRB.fbqf[k].Amp := 15.0;
-    TQMPTRB.fbqf[k].Freq := 15000.0;
-    TQMPTRB.fbqf[k].Width := 3.0;
+    TQMPTRB.fbqf[k].Init(bqfTreble, bqfSlope, bqfDb);
+    TQMPTRB.fbqf[k].Amp := 14.0;
+    TQMPTRB.fbqf[k].Freq := 4500.0;
+    TQMPTRB.fbqf[k].Width := 1.0;
   end;
   Result := 1;
 end;
