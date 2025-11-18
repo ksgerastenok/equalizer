@@ -6,10 +6,10 @@ interface
 uses
   QMPDCL,
   QMPEQU,
-  QMPENH,
-  QMPNRM,
   QMPBSS,
-  QMPTRB;
+  QMPTRB,
+  QMPNRM;
+  //QMPENH;
 
 type
   PQMPMOD = ^TQMPMOD;
@@ -36,11 +36,11 @@ begin
       Result := TQMPTRB.Plugin();
     end;
     3: begin
-      Result := TQMPENH.Plugin();
-    end;
-    4: begin
       Result := TQMPNRM.Plugin();
     end;
+    //4: begin
+    //  Result := TQMPENH.Plugin();
+    //end;
   end;
 end;
 
