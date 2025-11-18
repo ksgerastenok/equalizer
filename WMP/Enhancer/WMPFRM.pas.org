@@ -560,7 +560,7 @@ end;
 procedure TWMPFRM.Refresh(Value: LongWord);
 begin
   self.finfo.Size := Value;
-  self.TrackBarLoad(self.getComponent(TTrackBar, 12));
+  self.FormShow(self.getComponent(TForm, 10));
 end;
 
 function TWMPFRM.getInfo(): TInfo;
