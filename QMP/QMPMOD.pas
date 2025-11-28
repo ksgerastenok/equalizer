@@ -24,7 +24,6 @@ implementation
 
 class function TQMPMOD.Plugin(const Which: Integer): PPlugin; cdecl;
 begin
-  Result := nil;
   case (Which) of
     0: begin
       Result := TQMPEQU.Plugin();
@@ -41,6 +40,9 @@ begin
     //4: begin
     //  Result := TQMPENH.Plugin();
     //end;
+    else begin
+      Result := nil;
+    end;
   end;
 end;
 
