@@ -20,10 +20,12 @@ implementation
 
 class function TWMPMOD.Plugin(const Which: Integer): PPlugin; cdecl;
 begin
-  Result := nil;
   case (Which) of
     0: begin
       Result := TWMPEQU.Plugin();
+    end;
+    else begin
+      Result := nil;
     end;
   end;
 end;
