@@ -11,7 +11,9 @@ type
   TWMPRNG = record
   private
     var fgain: TGain;
-    var fvalue: Double;
+    var favg: Double;
+    var fsqr: Double;
+    var famp: Double;
     var flimit: Double;
     var fcount: Integer;
     procedure addSample(const Value: Double);
@@ -34,35 +36,42 @@ uses
 procedure TWMPRNG.Init(const Gain: TGain);
 begin
   self.fgain := Gain;
+  self.favg := 0.0;
+  self.fsqr := 0.0;
+  self.famp := 0.0;
   self.fcount := 0;
-  self.fvalue := 1.0;
   self.flimit := 10.0;
 end;
 
 procedure TWMPRNG.Done();
 begin
+  self.fgain := self.fgain;
+  self.favg := 0.0;
+  self.fsqr := 0.0;
+  self.famp := 0.0;
   self.fcount := 0;
-  self.fvalue := 1.0;
   self.flimit := 10.0;
 end;
 
 procedure TWMPRNG.addSample(const Value: Double);
 begin
-  self.fcount := self.fcount + 1;
-  self.fcount := Min(Max(1, self.fcount), 250000);
-  self.fvalue := self.fvalue / Sqrt(1.0 + (Sqr(self.fvalue * Value) - 1.0) / self.fcount);
-  //self.fvalue := self.fvalue / (1.0 + ((self.fvalue * Value) - 1.0) / self.fcount);
-  self.fvalue := Min(Max(1.0, self.fvalue), self.flimit);
+  self.fcount := Min(Max(1, self.fcount + 1), 250000);
+  self.fsqr := Sqrt((1 - 1 / self.fcount) * (Sqr(self.fsqr) + Sqr(Abs(Value) - self.favg) / self.fcount));
+  self.favg := self.favg + (Abs(Value) - self.favg) / self.fcount;
+  self.famp := Min(Max(1.0, 1.0 / (1.75 * (self.favg + self.fsqr))), self.flimit);
 end;
 
 function TWMPRNG.getValue(): Double;
 begin
   case (self.fgain) of
     rngDb: begin
-      Result := 20 * Log10(self.fvalue);
+      Result := 20 * Log10(self.famp);
     end;
     rngAmp: begin
-      Result := self.fvalue;
+      Result := self.famp;
+    end;
+    else begin
+      Result := 0.0;
     end;
   end;
 end;
@@ -76,6 +85,9 @@ begin
     rngAmp: begin
       Result := self.flimit;
     end;
+    else begin
+      Result := 0.0;
+    end;
   end;
 end;
 
@@ -88,13 +100,16 @@ begin
     rngAmp: begin
       self.flimit := Value;
     end;
+    else begin
+      self.flimit := 0.0;
+    end;
   end;
 end;
 
 function TWMPRNG.Process(const Value: Double): Double;
 begin
-  self.addSample(3.5 * Abs(Value));
-  Result := self.fvalue * Value;
+  self.addSample(Value);
+  Result := self.famp * Value;
 end;
 
 begin

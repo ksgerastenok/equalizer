@@ -194,6 +194,10 @@ begin
           Position := Round(self.ftrbl.Width * 10.0);
           Hint := Format('Width: %f Octave', [self.ftrbl.Width]);
         end;
+        else begin
+          Position := 0;
+          Hint := Format('Unknown: %f None', [0.0]);
+        end;
       end;
     end;
   end;
@@ -235,6 +239,17 @@ begin
         33: begin
           self.ftrbl.Width := Position / 10.0;
           Hint := Format('Width: %f Octave', [self.ftrbl.Width]);
+        end;
+        else begin
+          self.finfo.Preamp := 0;
+          self.finfo.Size := 0;
+          self.fbass.Amp := 0.0;
+          self.fbass.Freq := 0.0;
+          self.fbass.Width := 0.0;
+          self.ftrbl.Amp := 0.0;
+          self.ftrbl.Freq := 0.0;
+          self.ftrbl.Width := 0.0;
+          Hint := Format('Unknown: %f None', [0.0]);
         end;
       end;
     end;

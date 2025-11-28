@@ -55,6 +55,9 @@ begin
     32: begin
       Result := self.clip(PLongInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] / $7FFFFFFF);
     end;
+    else begin
+      Result := self.clip(PShortInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] / $0000007F);
+    end;
   end;
 end;
 
@@ -69,6 +72,9 @@ begin
     end;
     32: begin
       PLongInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.clip(Value) * $7FFFFFFF);
+    end;
+    else begin
+      PShortInt(self.fdata.Data)[Channel + Sample * self.fdata.Channels] := Round(self.clip(Value) * $0000007F);
     end;
   end;
 end;
