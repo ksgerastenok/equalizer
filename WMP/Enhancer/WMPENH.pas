@@ -54,7 +54,7 @@ begin
     TWMPENH.ftrb[k].Init(bqfTreble, bqfSlope, bqfDb);
   end;
   for k := 0 to Length(TWMPENH.frng) - 1 do begin
-    TWMPENH.frng[k].Init(rngDb);
+    TWMPENH.frng[k].Init();
   end;
   TWMPENH.ffrm := TWMPFRM.Create();
   Result := 0;
@@ -92,7 +92,7 @@ begin
       TWMPENH.ftrb[k].Freq := TWMPENH.ffrm.Treble.Freq;
       TWMPENH.ftrb[k].Width := TWMPENH.ffrm.Treble.Width;
       TWMPENH.ftrb[k].Rate := Rates;
-      TWMPENH.frng[k].Limit := TWMPENH.ffrm.Info.Preamp / 10;
+      TWMPENH.frng[k].Limit := Power(10, (TWMPENH.ffrm.Info.Preamp / 10) / 20);
       for x := 0 to Samples - 1 do begin
         TWMPENH.fdsp.Buffer[k, x] := TWMPENH.fbss[k].Process(TWMPENH.fdsp.Buffer[k, x]);
         TWMPENH.fdsp.Buffer[k, x] := TWMPENH.ftrb[k].Process(TWMPENH.fdsp.Buffer[k, x]);
@@ -102,7 +102,7 @@ begin
     TWMPENH.fdsp.Done();
     x := 0;
     for k := 0 to Channels - 1 do begin
-      x := Max(x, Round(10 * TWMPENH.frng[k].Value));
+      x := Max(x, Round(10 * (20 * Log10(TWMPENH.frng[k].Value))));
     end;
     TWMPENH.ffrm.Refresh(x);
   end;
