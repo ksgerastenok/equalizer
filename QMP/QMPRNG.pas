@@ -4,24 +4,19 @@ unit
 interface
 
 type
-  TGain = (rngDb, rngAmp);
-
-type
   PQMPRNG = ^TQMPRNG;
   TQMPRNG = record
   private
-    var fgain: TGain;
-    var favg: Double;
+    var fcnt: Integer;
     var fsqr: Double;
-    var famp: Double;
-    var flimit: Double;
-    var fcount: Integer;
+    var favg: Double;
+    var fmax: Double;
     procedure addSample(const Value: Double);
     function getValue(): Double;
     function getLimit(): Double;
     procedure setLimit(const Value: Double);
   public
-    procedure Init(const Gain: TGain);
+    procedure Init();
     procedure Done();
     function Process(const Value: Double): Double;
     property Value: Double read getValue;
@@ -33,83 +28,48 @@ implementation
 uses
   Math;
 
-procedure TQMPRNG.Init(const Gain: TGain);
+procedure TQMPRNG.Init();
 begin
-  self.fgain := Gain;
-  self.favg := 0.0;
+  self.fcnt := 0;
   self.fsqr := 0.0;
-  self.famp := 0.0;
-  self.fcount := 0;
-  self.flimit := 10.0;
+  self.favg := 0.0;
+  self.fmax := 10.0;
 end;
 
 procedure TQMPRNG.Done();
 begin
-  self.fgain := self.fgain;
-  self.favg := 0.0;
+  self.fcnt := 0;
   self.fsqr := 0.0;
-  self.famp := 0.0;
-  self.fcount := 0;
-  self.flimit := 10.0;
+  self.favg := 0.0;
+  self.fmax := 10.0;
 end;
 
 procedure TQMPRNG.addSample(const Value: Double);
 begin
-  self.fcount := Min(Max(1, self.fcount + 1), 250000);
-  self.fsqr := Sqrt((1 - 1 / self.fcount) * (Sqr(self.fsqr) + Sqr(Abs(Value) - self.favg) / self.fcount));
-  self.favg := self.favg + (Abs(Value) - self.favg) / self.fcount;
-  self.famp := Min(Max(1.0, 1.0 / (1.75 * (self.favg + self.fsqr))), self.flimit);
+  self.fcnt := Min(Max(1, self.fcnt + 1), 250000);
+  self.fsqr := self.fsqr + (Sqr(Value) - self.fsqr) / self.fcnt;
+  self.favg := self.favg + (Abs(Value) - self.favg) / self.fcnt;
 end;
 
 function TQMPRNG.getValue(): Double;
 begin
-  case (self.fgain) of
-    rngDb: begin
-      Result := 20 * Log10(self.famp);
-    end;
-    rngAmp: begin
-      Result := self.famp;
-    end;
-    else begin
-      Result := 0.0;
-    end;
-  end;
+  Result := Min(Max(1.0, 1.0 / (2.25 * (self.favg + Sqrt(self.fsqr - Sqr(self.favg))))), self.fmax);
 end;
 
 function TQMPRNG.getLimit(): Double;
 begin
-  case (self.fgain) of
-    rngDb: begin
-      Result := 20 * Log10(self.flimit);
-    end;
-    rngAmp: begin
-      Result := self.flimit;
-    end;
-    else begin
-      Result := 0.0;
-    end;
-  end;
+  Result := self.fmax;
 end;
 
 procedure TQMPRNG.setLimit(const Value: Double);
 begin
-  case (self.fgain) of
-    rngDb: begin
-      self.flimit := Power(10, Value / 20);
-    end;
-    rngAmp: begin
-      self.flimit := Value;
-    end;
-    else begin
-      self.flimit := 0.0;
-    end;
-  end;
+  self.fmax := Value;
 end;
 
 function TQMPRNG.Process(const Value: Double): Double;
 begin
   self.addSample(Value);
-  Result := self.famp * Value;
+  Result := self.Value * Value;
 end;
 
 begin

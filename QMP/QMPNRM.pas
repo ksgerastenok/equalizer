@@ -44,7 +44,7 @@ var
   k: Integer;
 begin
   for k := 0 to Length(TQMPNRM.frng) - 1 do begin
-    TQMPNRM.frng[k].Init(rngDb);
+    TQMPNRM.frng[k].Init();
   end;
   Result := 1;
 end;
@@ -66,7 +66,7 @@ begin
   if (TQMPNRM.finfo.Enabled) then begin
     TQMPNRM.fdsp.Init(Data);
     for k := 0 to Data.Channels - 1 do begin
-      TQMPNRM.frng[k].Limit := 20.0;
+      TQMPNRM.frng[k].Limit := Power(10, 20.0 / 20);
       for x := 0 to Data.Samples - 1 do begin
         TQMPNRM.fdsp.Data[k, x] := TQMPNRM.frng[k].Process(TQMPNRM.fdsp.Data[k, x]);
       end;
