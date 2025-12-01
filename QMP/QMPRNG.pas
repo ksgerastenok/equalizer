@@ -7,7 +7,6 @@ type
   PQMPRNG = ^TQMPRNG;
   TQMPRNG = record
   private
-    var fcnt: Integer;
     var fsqr: Double;
     var favg: Double;
     var fmax: Double;
@@ -30,7 +29,6 @@ uses
 
 procedure TQMPRNG.Init();
 begin
-  self.fcnt := 0;
   self.fsqr := 0.0;
   self.favg := 0.0;
   self.fmax := 10.0;
@@ -38,7 +36,6 @@ end;
 
 procedure TQMPRNG.Done();
 begin
-  self.fcnt := 0;
   self.fsqr := 0.0;
   self.favg := 0.0;
   self.fmax := 10.0;
@@ -46,14 +43,13 @@ end;
 
 procedure TQMPRNG.addSample(const Value: Double);
 begin
-  self.fcnt := Min(Max(1, self.fcnt + 1), 250000);
-  self.fsqr := self.fsqr + (Sqr(Value) - self.fsqr) / self.fcnt;
-  self.favg := self.favg + (Abs(Value) - self.favg) / self.fcnt;
+  self.fsqr := self.fsqr + (Sqr(Value) - self.fsqr) / IfThen(self.Value * Abs(Value) <= 1.0, 250000, 25000);
+  self.favg := self.favg + (Abs(Value) - self.favg) / IfThen(self.Value * Abs(Value) <= 1.0, 250000, 25000);
 end;
 
 function TQMPRNG.getValue(): Double;
 begin
-  Result := Min(Max(1.0, 1.0 / (2.25 * (self.favg + Sqrt(self.fsqr - Sqr(self.favg))))), self.fmax);
+  Result := Min(Max(1.0, 1.0 / (1.75 * (self.favg + Sqrt(self.fsqr - Sqr(self.favg))))), self.fmax);
 end;
 
 function TQMPRNG.getLimit(): Double;
