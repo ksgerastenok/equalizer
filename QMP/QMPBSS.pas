@@ -45,7 +45,7 @@ var
 begin
   for k := 0 to Length(TQMPBSS.fbqf) - 1 do begin
     TQMPBSS.fbqf[k].Init(bqfBass, bqfSlope, bqfDb);
-    TQMPBSS.fbqf[k].Amp := 5.0;
+    TQMPBSS.fbqf[k].Amp := 3.5;
     TQMPBSS.fbqf[k].Freq := 500.0;
     TQMPBSS.fbqf[k].Width := 1.0;
   end;
