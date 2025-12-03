@@ -180,7 +180,7 @@ begin
         end;
         23: begin
           Position := Round(self.fbass.Width * 10.0);
-          Hint := Format('Width: %f Octave', [self.fbass.Width]);
+          Hint := Format('Width: %f Slope', [self.fbass.Width]);
         end;
         31: begin
           Position := Round(self.ftrbl.Amp * 10.0);
@@ -192,7 +192,7 @@ begin
         end;
         33: begin
           Position := Round(self.ftrbl.Width * 10.0);
-          Hint := Format('Width: %f Octave', [self.ftrbl.Width]);
+          Hint := Format('Width: %f Slope', [self.ftrbl.Width]);
         end;
         else begin
           Position := 0;
@@ -226,7 +226,7 @@ begin
         end;
         23: begin
           self.fbass.Width := Position / 10.0;
-          Hint := Format('Width: %f Octave', [self.fbass.Width]);
+          Hint := Format('Width: %f Slope', [self.fbass.Width]);
         end;
         31: begin
           self.ftrbl.Amp := Position / 10.0;
@@ -238,7 +238,7 @@ begin
         end;
         33: begin
           self.ftrbl.Width := Position / 10.0;
-          Hint := Format('Width: %f Octave', [self.ftrbl.Width]);
+          Hint := Format('Width: %f Slope', [self.ftrbl.Width]);
         end;
         else begin
           self.finfo.Preamp := 0;
