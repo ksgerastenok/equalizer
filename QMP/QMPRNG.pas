@@ -18,7 +18,6 @@ type
     procedure Init();
     procedure Done();
     function Process(const Value: Double): Double;
-    property Value: Double read getValue;
     property Limit: Double read getLimit write setLimit;
   end;
 
@@ -43,8 +42,8 @@ end;
 
 procedure TQMPRNG.addSample(const Value: Double);
 begin
-  self.fsqr := self.fsqr + (Sqr(Value) - self.fsqr) / IfThen(self.Value * Abs(Value) <= 1.0, 250000, 25000);
-  self.favg := self.favg + (Abs(Value) - self.favg) / IfThen(self.Value * Abs(Value) <= 1.0, 250000, 25000);
+  self.fsqr := self.fsqr + (Sqr(Value) - self.fsqr) / IfThen(self.getValue() * Abs(Value) <= 1.0, 250000, 50000);
+  self.favg := self.favg + (Abs(Value) - self.favg) / IfThen(self.getValue() * Abs(Value) <= 1.0, 250000, 50000);
 end;
 
 function TQMPRNG.getValue(): Double;
@@ -65,7 +64,7 @@ end;
 function TQMPRNG.Process(const Value: Double): Double;
 begin
   self.addSample(Value);
-  Result := self.Value * Value;
+  Result := self.getValue();
 end;
 
 begin
