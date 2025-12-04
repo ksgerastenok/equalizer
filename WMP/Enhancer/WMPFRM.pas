@@ -60,7 +60,7 @@ type
   public
     constructor Create(); reintroduce;
     destructor Destroy(); override;
-    procedure Refresh(const Value: LongWord);
+    procedure Refresh(const Value: Integer);
     property Info: TInfo read getInfo;
     property Bass: TFilter read getBass;
     property Treble: TFilter read getTreble;
@@ -256,7 +256,7 @@ begin
   end;
 end;
 
-procedure TWMPFRM.Refresh(const Value: LongWord);
+procedure TWMPFRM.Refresh(const Value: Integer);
 begin
   self.finfo.Size := Value;
   self.FormShow(self);
