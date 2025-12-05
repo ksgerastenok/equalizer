@@ -4,13 +4,13 @@ unit
 interface
 
 type
-  TBand = (bqfQ, bqfSlope, bqfOctave, bqfSemitone);
+  TBand = (btQ, btSlope, btOctave, btSemitone);
 
 type
-  TGain = (bqfDb, bqfAmp);
+  TGain = (gtDb, gtAmp);
 
 type
-  TFilter = (bqfEqu, bqfInv, bqfLow, bqfBand, bqfBass, bqfHigh, bqfPeak, bqfNotch, bqfTreble);
+  TFilter = (ftEqu, ftInv, ftLow, ftBand, ftBass, ftHigh, ftPeak, ftNotch, ftTreble);
 
 type
   PQMPBQF = ^TQMPBQF;
@@ -25,7 +25,6 @@ type
     var ffreq: Double;
     var frate: Double;
     var fwidth: Double;
-    function calcAmp(): Double;
     function calcAlpha(): Double;
     function calcOmega(): Double;
     procedure calcConfig();
@@ -69,35 +68,20 @@ procedure TQMPBQF.Done();
 begin
 end;
 
-function TQMPBQF.calcAmp(): Double;
-begin
-  case (self.fgain) of
-    bqfDb: begin
-      Result := Power(10, self.famp / 20);
-    end;
-    bqfAmp: begin
-      Result := self.famp;
-    end;
-    else begin
-      Result := 0.0;
-    end;
-  end;
-end;
-
 function TQMPBQF.calcAlpha(): Double;
 begin
   case (self.fband) of
-    bqfQ: begin
+    btQ: begin
       Result := (1 / self.fwidth);
     end;
-    bqfOctave: begin
+    btOctave: begin
       Result := 2 * Sinh((Ln(2) / 2) * (self.fwidth /  1) / (Sin(self.calcOmega()) / self.calcOmega()));
     end;
-    bqfSemitone: begin
+    btSemitone: begin
       Result := 2 * Sinh((Ln(2) / 2) * (self.fwidth / 12) / (Sin(self.calcOmega()) / self.calcOmega()));
     end;
-    bqfSlope: begin
-      Result := Sqrt((Sqrt(self.calcAmp()) + 1 / Sqrt(self.calcAmp())) * (1 / self.fwidth - 1) + 2);
+    btSlope: begin
+      Result := Sqrt((Sqrt(self.famp) + 1 / Sqrt(self.famp)) * (1 / self.fwidth - 1) + 2);
     end;
     else begin
       Result := 0.0;
@@ -113,7 +97,7 @@ end;
 procedure TQMPBQF.calcConfig();
 begin
   case (self.ffilter) of
-    bqfLow: begin
+    ftLow: begin
       self.fconfig[0, 2] :=  1 * ((1 - Cos(self.calcOmega())) / 2);
       self.fconfig[0, 1] := +2 * ((1 - Cos(self.calcOmega())) / 2);
       self.fconfig[0, 0] :=  1 * ((1 - Cos(self.calcOmega())) / 2);
@@ -121,7 +105,7 @@ begin
       self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
       self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
     end;
-    bqfHigh: begin
+    ftHigh: begin
       self.fconfig[0, 2] :=  1 * ((1 + Cos(self.calcOmega())) / 2);
       self.fconfig[0, 1] := -2 * ((1 + Cos(self.calcOmega())) / 2);
       self.fconfig[0, 0] :=  1 * ((1 + Cos(self.calcOmega())) / 2);
@@ -129,7 +113,7 @@ begin
       self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
       self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
     end;
-    bqfPeak: begin
+    ftPeak: begin
       self.fconfig[0, 2] :=  0 - (Sin(self.calcOmega()) / 2) *         1       ;
       self.fconfig[0, 1] :=  0;
       self.fconfig[0, 0] :=  0 + (Sin(self.calcOmega()) / 2) *         1       ;
@@ -137,7 +121,7 @@ begin
       self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
       self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
     end;
-    bqfBand: begin
+    ftBand: begin
       self.fconfig[0, 2] :=  0 - (Sin(self.calcOmega()) / 2) * self.calcAlpha();
       self.fconfig[0, 1] :=  0;
       self.fconfig[0, 0] :=  0 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
@@ -145,7 +129,7 @@ begin
       self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
       self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
     end;
-    bqfNotch: begin
+    ftNotch: begin
       self.fconfig[0, 2] :=  1;
       self.fconfig[0, 1] := -2 * (Cos(self.calcOmega()));
       self.fconfig[0, 0] :=  1;
@@ -153,7 +137,7 @@ begin
       self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
       self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
     end;
-    bqfInv: begin
+    ftInv: begin
       self.fconfig[0, 2] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
       self.fconfig[0, 1] := -2 * (Cos(self.calcOmega()));
       self.fconfig[0, 0] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha();
@@ -161,29 +145,29 @@ begin
       self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
       self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha();
     end;
-    bqfEqu: begin
-      self.fconfig[0, 2] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha() * Sqrt(self.calcAmp());
+    ftEqu: begin
+      self.fconfig[0, 2] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha() * Sqrt(self.famp);
       self.fconfig[0, 1] := -2 * (Cos(self.calcOmega()));
-      self.fconfig[0, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha() * Sqrt(self.calcAmp());
-      self.fconfig[1, 2] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha() / Sqrt(self.calcAmp());
+      self.fconfig[0, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha() * Sqrt(self.famp);
+      self.fconfig[1, 2] :=  1 - (Sin(self.calcOmega()) / 2) * self.calcAlpha() / Sqrt(self.famp);
       self.fconfig[1, 1] := -2 * (Cos(self.calcOmega()));
-      self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha() / Sqrt(self.calcAmp());
+      self.fconfig[1, 0] :=  1 + (Sin(self.calcOmega()) / 2) * self.calcAlpha() / Sqrt(self.famp);
     end;
-    bqfBass: begin
-      self.fconfig[0, 2] :=  1 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1) - (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) - 2 * Sqrt(Sqrt(self.calcAmp())) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
-      self.fconfig[0, 1] := +2 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) - 1) - (Sqrt(self.calcAmp()) + 1) * Cos(self.calcOmega()));
-      self.fconfig[0, 0] :=  1 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1) - (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) + 2 * Sqrt(Sqrt(self.calcAmp())) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
-      self.fconfig[1, 2] :=  1 *           1          * ((Sqrt(self.calcAmp()) + 1) + (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) - 2 * Sqrt(Sqrt(self.calcAmp())) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
-      self.fconfig[1, 1] := -2 *           1          * ((Sqrt(self.calcAmp()) - 1) + (Sqrt(self.calcAmp()) + 1) * Cos(self.calcOmega()));
-      self.fconfig[1, 0] :=  1 *           1          * ((Sqrt(self.calcAmp()) + 1) + (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) + 2 * Sqrt(Sqrt(self.calcAmp())) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
+    ftBass: begin
+      self.fconfig[0, 2] :=  1 * Sqrt(self.famp) * ((Sqrt(self.famp) + 1) - (Sqrt(self.famp) - 1) * Cos(self.calcOmega()) - 2 * Sqrt(Sqrt(self.famp)) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
+      self.fconfig[0, 1] := +2 * Sqrt(self.famp) * ((Sqrt(self.famp) - 1) - (Sqrt(self.famp) + 1) * Cos(self.calcOmega()));
+      self.fconfig[0, 0] :=  1 * Sqrt(self.famp) * ((Sqrt(self.famp) + 1) - (Sqrt(self.famp) - 1) * Cos(self.calcOmega()) + 2 * Sqrt(Sqrt(self.famp)) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
+      self.fconfig[1, 2] :=  1 *        1        * ((Sqrt(self.famp) + 1) + (Sqrt(self.famp) - 1) * Cos(self.calcOmega()) - 2 * Sqrt(Sqrt(self.famp)) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
+      self.fconfig[1, 1] := -2 *        1        * ((Sqrt(self.famp) - 1) + (Sqrt(self.famp) + 1) * Cos(self.calcOmega()));
+      self.fconfig[1, 0] :=  1 *        1        * ((Sqrt(self.famp) + 1) + (Sqrt(self.famp) - 1) * Cos(self.calcOmega()) + 2 * Sqrt(Sqrt(self.famp)) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
     end;
-    bqfTreble: begin
-      self.fconfig[0, 2] :=  1 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1) + (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) - 2 * Sqrt(Sqrt(self.calcAmp())) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
-      self.fconfig[0, 1] := -2 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) - 1) + (Sqrt(self.calcAmp()) + 1) * Cos(self.calcOmega()));
-      self.fconfig[0, 0] :=  1 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1) + (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) + 2 * Sqrt(Sqrt(self.calcAmp())) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
-      self.fconfig[1, 2] :=  1 *           1          * ((Sqrt(self.calcAmp()) + 1) - (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) - 2 * Sqrt(Sqrt(self.calcAmp())) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
-      self.fconfig[1, 1] := +2 *           1          * ((Sqrt(self.calcAmp()) - 1) - (Sqrt(self.calcAmp()) + 1) * Cos(self.calcOmega()));
-      self.fconfig[1, 0] :=  1 *           1          * ((Sqrt(self.calcAmp()) + 1) - (Sqrt(self.calcAmp()) - 1) * Cos(self.calcOmega()) + 2 * Sqrt(Sqrt(self.calcAmp())) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
+    ftTreble: begin
+      self.fconfig[0, 2] :=  1 * Sqrt(self.famp) * ((Sqrt(self.famp) + 1) + (Sqrt(self.famp) - 1) * Cos(self.calcOmega()) - 2 * Sqrt(Sqrt(self.famp)) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
+      self.fconfig[0, 1] := -2 * Sqrt(self.famp) * ((Sqrt(self.famp) - 1) + (Sqrt(self.famp) + 1) * Cos(self.calcOmega()));
+      self.fconfig[0, 0] :=  1 * Sqrt(self.famp) * ((Sqrt(self.famp) + 1) + (Sqrt(self.famp) - 1) * Cos(self.calcOmega()) + 2 * Sqrt(Sqrt(self.famp)) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
+      self.fconfig[1, 2] :=  1 *        1        * ((Sqrt(self.famp) + 1) - (Sqrt(self.famp) - 1) * Cos(self.calcOmega()) - 2 * Sqrt(Sqrt(self.famp)) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
+      self.fconfig[1, 1] := +2 *        1        * ((Sqrt(self.famp) - 1) - (Sqrt(self.famp) + 1) * Cos(self.calcOmega()));
+      self.fconfig[1, 0] :=  1 *        1        * ((Sqrt(self.famp) + 1) - (Sqrt(self.famp) - 1) * Cos(self.calcOmega()) + 2 * Sqrt(Sqrt(self.famp)) * (Sin(self.calcOmega()) / 2) * self.calcAlpha());
     end;
     else begin
       self.fconfig[0, 2] := 0.0;
@@ -224,15 +208,33 @@ end;
 
 function TQMPBQF.getAmp(): Double;
 begin
-  Result := self.famp;
+  case (self.fgain) of
+    gtDb: begin
+      Result := 20 * Log10(self.famp);
+    end;
+    gtAmp: begin
+      Result := self.famp;
+    end;
+    else begin
+      Result := 0.0;
+    end;
+  end;
 end;
 
 procedure TQMPBQF.setAmp(const Value: Double);
 begin
-  if (self.famp <> Value) then begin
-    self.famp := Value;
-    self.calcConfig();
+  case (self.fgain) of
+    gtDb: begin
+      self.famp := Power(10, Value / 20);
+    end;
+    gtAmp: begin
+      self.famp := Value;
+    end;
+    else begin
+      self.famp := 0.0;
+    end;
   end;
+  self.calcConfig();
 end;
 
 function TQMPBQF.getFreq(): Double;
@@ -242,10 +244,8 @@ end;
 
 procedure TQMPBQF.setFreq(const Value: Double);
 begin
-  if (self.ffreq <> Value) then begin
-    self.ffreq := Value;
-    self.calcConfig();
-  end;
+  self.ffreq := Value;
+  self.calcConfig();
 end;
 
 function TQMPBQF.getRate(): Double;
@@ -255,10 +255,8 @@ end;
 
 procedure TQMPBQF.setRate(const Value: Double);
 begin
-  if (self.frate <> Value) then begin
-    self.frate := Value;
-    self.calcConfig();
-  end;
+  self.frate := Value;
+  self.calcConfig();
 end;
 
 function TQMPBQF.getWidth(): Double;
@@ -268,10 +266,8 @@ end;
 
 procedure TQMPBQF.setWidth(const Value: Double);
 begin
-  if (self.fwidth <> Value) then begin
-    self.fwidth := Value;
-    self.calcConfig();
-  end;
+  self.fwidth := Value;
+  self.calcConfig();
 end;
 
 begin

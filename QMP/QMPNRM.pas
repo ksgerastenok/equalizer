@@ -15,7 +15,6 @@ type
   private
     class var finfo: TInfo;
     class var fdsp: TQMPDSP;
-    class var fflt: array[0..4] of TQMPBQF;
     class var frng: array[0..4] of TQMPRNG;
     class function Init(const Flags: Integer): Integer; cdecl; static;
     class procedure Quit(const Flags: Integer); cdecl; static;
@@ -45,11 +44,8 @@ class function TQMPNRM.Init(const Flags: Integer): Integer; cdecl;
 var
   k: Integer;
 begin
-  for k := 0 to Length(TQMPNRM.fflt) - 1 do begin
-    TQMPNRM.fflt[k].Init(bqfBand, bqfOctave, bqfDb);
-  end;
   for k := 0 to Length(TQMPNRM.frng) - 1 do begin
-    TQMPNRM.frng[k].Init();
+    TQMPNRM.frng[k].Init(ftBand, btOctave, gtDb);
   end;
   Result := 1;
 end;
@@ -58,9 +54,6 @@ class procedure TQMPNRM.Quit(const Flags: Integer); cdecl;
 var
   k: Integer;
 begin
-  for k := 0 to Length(TQMPNRM.fflt) - 1 do begin
-    TQMPNRM.fflt[k].Done();
-  end;
   for k := 0 to Length(TQMPNRM.frng) - 1 do begin
     TQMPNRM.frng[k].Done();
   end;
@@ -74,12 +67,12 @@ begin
   if (TQMPNRM.finfo.Enabled) then begin
     TQMPNRM.fdsp.Init(Data);
     for k := 0 to Data.Channels - 1 do begin
-      TQMPNRM.fflt[k].Freq := 640.0;
-      TQMPNRM.fflt[k].Width := 5.0;
-      TQMPNRM.fflt[k].Rate := Data.Rates;
-      TQMPNRM.frng[k].Limit := Power(10, 20.0 / 20);
+      TQMPNRM.frng[k].Amp := Power(10, 20.0 / 20);
+      TQMPNRM.frng[k].Freq := 640.0;
+      TQMPNRM.frng[k].Width := 5.0;
+      TQMPNRM.frng[k].Rate := Data.Rates;
       for x := 0 to Data.Samples - 1 do begin
-        TQMPNRM.fdsp.Data[k, x] := TQMPNRM.frng[k].Process(TQMPNRM.fflt[k].Process(TQMPNRM.fdsp.Data[k, x])) * TQMPNRM.fdsp.Data[k, x];
+        TQMPNRM.fdsp.Data[k, x] := TQMPNRM.frng[k].Process(TQMPNRM.fdsp.Data[k, x]);
       end;
     end;
     TQMPNRM.fdsp.Done();
