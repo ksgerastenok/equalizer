@@ -7,7 +7,6 @@ uses
   QMPDCL;
 
 type
-  PQMPDSP = ^TQMPDSP;
   TQMPDSP = record
   private
     var fdata: TData;

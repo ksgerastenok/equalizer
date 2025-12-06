@@ -9,7 +9,6 @@ uses
   QMPDCL;
 
 type
-  PQMPEQU = ^TQMPEQU;
   TQMPEQU = record
   private
     class var finfo: TInfo;

@@ -10,7 +10,6 @@ uses
   QMPDCL;
 
 type
-  PQMPNRM = ^TQMPNRM;
   TQMPNRM = record
   private
     class var finfo: TInfo;
@@ -45,7 +44,10 @@ var
   k: Integer;
 begin
   for k := 0 to Length(TQMPNRM.frng) - 1 do begin
-    TQMPNRM.frng[k].Init(ftBand, btOctave, gtDb);
+    TQMPNRM.frng[k].Init(ftBand, btSlope, gtDb);
+    TQMPNRM.frng[k].Amp := 20.0;
+    TQMPNRM.frng[k].Freq := 640.0;
+    TQMPNRM.frng[k].Width := 0.1;
   end;
   Result := 1;
 end;
@@ -55,6 +57,9 @@ var
   k: Integer;
 begin
   for k := 0 to Length(TQMPNRM.frng) - 1 do begin
+    TQMPNRM.frng[k].Amp := 0.0;
+    TQMPNRM.frng[k].Freq := 0.0;
+    TQMPNRM.frng[k].Width := 0.0;
     TQMPNRM.frng[k].Done();
   end;
 end;
@@ -67,9 +72,6 @@ begin
   if (TQMPNRM.finfo.Enabled) then begin
     TQMPNRM.fdsp.Init(Data);
     for k := 0 to Data.Channels - 1 do begin
-      TQMPNRM.frng[k].Amp := Power(10, 20.0 / 20);
-      TQMPNRM.frng[k].Freq := 640.0;
-      TQMPNRM.frng[k].Width := 5.0;
       TQMPNRM.frng[k].Rate := Data.Rates;
       for x := 0 to Data.Samples - 1 do begin
         TQMPNRM.fdsp.Data[k, x] := TQMPNRM.frng[k].Process(TQMPNRM.fdsp.Data[k, x]);

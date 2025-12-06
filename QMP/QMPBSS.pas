@@ -9,7 +9,6 @@ uses
   QMPDCL;
 
 type
-  PQMPBSS = ^TQMPBSS;
   TQMPBSS = record
   private
     class var finfo: TInfo;

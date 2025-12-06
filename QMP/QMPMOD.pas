@@ -12,7 +12,6 @@ uses
   //QMPENH;
 
 type
-  PQMPMOD = ^TQMPMOD;
   TQMPMOD = record
   private
     class function Plugin(const Which: Integer): PPlugin; cdecl; static;

@@ -8,7 +8,6 @@ uses
   QMPDCL;
 
 type
-  PQMPENH = ^TQMPENH;
   TQMPENH = record
   private
     class var finfo: TInfo;
