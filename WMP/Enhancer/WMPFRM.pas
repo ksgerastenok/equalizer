@@ -15,7 +15,6 @@ uses
   SysUtils;
 
 type
-  PFilter = ^TFilter;
   TFilter = record
     var Amp: Double;
     var Freq: Double;

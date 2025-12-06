@@ -8,7 +8,6 @@ uses
   WMPENH;
 
 type
-  PWMPMOD = ^TWMPMOD;
   TWMPMOD = record
   private
     class function Plugin(const Which: Integer): PPlugin; cdecl; static;

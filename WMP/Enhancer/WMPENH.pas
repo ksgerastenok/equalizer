@@ -11,7 +11,6 @@ uses
   WMPFRM;
 
 type
-  PWMPENH = ^TWMPENH;
   TWMPENH = record
   private
     class var ffrm: TWMPFRM;
@@ -54,7 +53,7 @@ begin
     TWMPENH.ftrb[k].Init(ftTreble, btSlope, gtDb);
   end;
   for k := 0 to Length(TWMPENH.frng) - 1 do begin
-    TWMPENH.frng[k].Init(ftBand, btOctave, gtDb);
+    TWMPENH.frng[k].Init(ftBand, btSlope, gtDb);
   end;
   TWMPENH.ffrm := TWMPFRM.Create();
   Result := 0;
@@ -94,7 +93,7 @@ begin
       TWMPENH.ftrb[k].Rate := Rates;
       TWMPENH.frng[k].Amp := TWMPENH.ffrm.Info.Preamp / 10;
       TWMPENH.frng[k].Freq := 640.0;
-      TWMPENH.frng[k].Width := 5.0;
+      TWMPENH.frng[k].Width := 0.1;
       TWMPENH.frng[k].Rate := Rates;
       for x := 0 to Samples - 1 do begin
         TWMPENH.fdsp.Buffer[k, x] := TWMPENH.fbss[k].Process(TWMPENH.fdsp.Buffer[k, x]);
