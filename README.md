@@ -1,6 +1,6 @@
 # Equalizer
 This repository contains:
-- Equalizer (21-bands) WinAmp plugin written in Free Pascal (Delphi dialect)
+- Equalizer (20-bands) WinAmp plugin written in Free Pascal (Delphi dialect)
 - Equalizer (10-bands) QMP plugin written in Free Pascal (Delphi dialect)
 - Enhancer QMP plugin written in Free Pascal (Delphi dialect)
 - Normalizer QMP plugin written in Free Pascal (Delphi dialect)
