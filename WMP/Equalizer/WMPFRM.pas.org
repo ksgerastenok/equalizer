@@ -7,7 +7,6 @@ uses
   WMPDCL;
 
 type
-  PWMPFRM = ^TWMPFRM;
   TWMPFRM = record
   private
     var finfo: TInfo;
@@ -142,7 +141,7 @@ begin
   for i := 0 to Length(self.finfo.Bands) - 1 do begin
     with (TLabel.Create(Application)) do begin
       Font.Size := 7;
-      Caption := IfThen(20.0 * Power(2, 0.5 * i) < 1000, Format('%3.0f ', [20.0 * Power(2, 0.5 * i) / 1.0]), Format('%2.0fk', [20.0 * Power(2, 0.5 * i) / 1000.0]));
+      Caption := IfThen(20.0 * Power(2, 0.5 * (i + 0.5)) < 1000, Format('%3.0f ', [20.0 * Power(2, 0.5 * (i + 0.5)) / 1.0]), Format('%2.0fk', [20.0 * Power(2, 0.5 * (i + 0.5)) / 1000.0]));
       Tag := i;
       Top := 0;
       Left := 70 + 25 * i;

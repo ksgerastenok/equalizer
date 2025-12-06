@@ -38,7 +38,6 @@ type
     var Band18Label: TLabel;
     var Band19Label: TLabel;
     var Band20Label: TLabel;
-    var Band21Label: TLabel;
     var PreampGroupBox: TGroupBox;
     var PreampTrackBar: TTrackBar;
     var MinLabel: TLabel;
@@ -64,7 +63,6 @@ type
     var Band17TrackBar: TTrackBar;
     var Band18TrackBar: TTrackBar;
     var Band19TrackBar: TTrackBar;
-    var Band21TrackBar: TTrackBar;
     var Band20TrackBar: TTrackBar;
     procedure FormCreate(const Sender: TObject);
     procedure FormDestroy(const Sender: TObject);
@@ -161,7 +159,6 @@ begin
       self.TrackBarLoad(self.Band18TrackBar);
       self.TrackBarLoad(self.Band19TrackBar);
       self.TrackBarLoad(self.Band20TrackBar);
-      self.TrackBarLoad(self.Band21TrackBar);
     end;
   end;
 end;
@@ -191,7 +188,6 @@ begin
       self.TrackBarSave(self.Band18TrackBar);
       self.TrackBarSave(self.Band19TrackBar);
       self.TrackBarSave(self.Band20TrackBar);
-      self.TrackBarSave(self.Band21TrackBar);
     end;
   end;
 end;

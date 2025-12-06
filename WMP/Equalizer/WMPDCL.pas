@@ -22,7 +22,7 @@ type
     var Size: LongWord;
     var Enabled: Boolean;
     var Preamp: Integer;
-    var Bands: array[0..20] of Integer;
+    var Bands: array[0..19] of Integer;
   end;
 
 type

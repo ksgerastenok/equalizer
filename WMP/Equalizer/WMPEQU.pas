@@ -10,12 +10,11 @@ uses
   WMPFRM;
 
 type
-  PWMPEQU = ^TWMPEQU;
   TWMPEQU = record
   private
     class var ffrm: TWMPFRM;
     class var fdsp: TWMPDSP;
-    class var feqz: array[0..4, 0..20] of TWMPBQF;
+    class var feqz: array[0..4, 0..19] of TWMPBQF;
     class function Init(const Module: PPlugin): Integer; cdecl; static;
     class procedure Quit(const Module: PPlugin); cdecl; static;
     class function Modify(const Module: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl; static;
@@ -49,7 +48,7 @@ begin
     for i := 0 to Length(TWMPEQU.feqz[k]) - 1 do begin
       TWMPEQU.feqz[k, i].Init(ftEqu, btOctave, gtDb);
       TWMPEQU.feqz[k, i].Amp := 0.0;
-      TWMPEQU.feqz[k, i].Freq := 20 * Power(2, 0.5 * i);
+      TWMPEQU.feqz[k, i].Freq := 20 * Power(2, 0.5 * (i + 0.5));
       TWMPEQU.feqz[k, i].Width := 0.5;
     end;
   end;

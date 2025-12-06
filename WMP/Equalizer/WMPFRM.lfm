@@ -3,17 +3,17 @@ object WMPFRM: TWMPFRM
   Left = 215
   Height = 290
   Top = 120
-  Width = 600
+  Width = 570
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Equalizer'
   ClientHeight = 290
-  ClientWidth = 600
+  ClientWidth = 570
   DesignTimePPI = 120
   FormStyle = fsStayOnTop
   ParentBiDiMode = False
   Position = poScreenCenter
-  LCLVersion = '4.2.0.0'
+  LCLVersion = '4.4.0.0'
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnHide = FormHide
@@ -416,24 +416,6 @@ object WMPFRM: TWMPFRM
       ShowHint = True
       TabOrder = 19
     end
-    object Band21TrackBar: TTrackBar
-      Tag = 20
-      Left = 500
-      Height = 255
-      Top = -10
-      Width = 20
-      Max = 200
-      Min = -200
-      Orientation = trVertical
-      Position = 0
-      Reversed = True
-      TickMarks = tmBoth
-      TickStyle = tsNone
-      OnChange = TrackBarSave
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 20
-    end
   end
   object ZeroLabel: TLabel
     Tag = 120
@@ -485,7 +467,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '20'
+    Caption = '25'
     Font.Height = -12
     ParentFont = False
   end
@@ -496,7 +478,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '30'
+    Caption = '35'
     Font.Height = -12
     ParentFont = False
   end
@@ -507,7 +489,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '40'
+    Caption = '50'
     Font.Height = -12
     ParentFont = False
   end
@@ -518,7 +500,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '60'
+    Caption = '70'
     Font.Height = -12
     ParentFont = False
   end
@@ -529,7 +511,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '80'
+    Caption = '95'
     Font.Height = -12
     ParentFont = False
   end
@@ -540,7 +522,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '110'
+    Caption = '135'
     Font.Height = -12
     ParentFont = False
   end
@@ -551,7 +533,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '160'
+    Caption = '190'
     Font.Height = -12
     ParentFont = False
   end
@@ -562,7 +544,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '230'
+    Caption = '270'
     Font.Height = -12
     ParentFont = False
   end
@@ -573,7 +555,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '320'
+    Caption = '380'
     Font.Height = -12
     ParentFont = False
   end
@@ -584,7 +566,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '450'
+    Caption = '540'
     Font.Height = -12
     ParentFont = False
   end
@@ -595,7 +577,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '640'
+    Caption = '760'
     Font.Height = -12
     ParentFont = False
   end
@@ -606,7 +588,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '910'
+    Caption = '1k'
     Font.Height = -12
     ParentFont = False
   end
@@ -617,7 +599,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '1k'
+    Caption = '1.5k'
     Font.Height = -12
     ParentFont = False
   end
@@ -650,7 +632,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '4k'
+    Caption = '4.5k'
     Font.Height = -12
     ParentFont = False
   end
@@ -661,7 +643,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '5k'
+    Caption = '6k'
     Font.Height = -12
     ParentFont = False
   end
@@ -672,7 +654,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '7k'
+    Caption = '8.5k'
     Font.Height = -12
     ParentFont = False
   end
@@ -683,7 +665,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '10k'
+    Caption = '12k'
     Font.Height = -12
     ParentFont = False
   end
@@ -694,18 +676,7 @@ object WMPFRM: TWMPFRM
     Top = 0
     Width = 20
     AutoSize = False
-    Caption = '14k'
-    Font.Height = -12
-    ParentFont = False
-  end
-  object Band21Label: TLabel
-    Tag = 20
-    Left = 570
-    Height = 15
-    Top = 0
-    Width = 20
-    AutoSize = False
-    Caption = '20k'
+    Caption = '17k'
     Font.Height = -12
     ParentFont = False
   end

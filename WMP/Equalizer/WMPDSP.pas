@@ -7,7 +7,6 @@ uses
   WMPDCL;
 
 type
-  PWMPDSP = ^TWMPDSP;
   TWMPDSP = record
   private
     var fdata: TData;
