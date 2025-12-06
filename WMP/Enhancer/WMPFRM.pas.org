@@ -7,7 +7,6 @@ uses
   WMPDCL;
 
 type
-  PFilter = ^TFilter;
   TFilter = record
     var Amp: Double;
     var Freq: Double;
