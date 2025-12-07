@@ -47,7 +47,7 @@ begin
     for i := 0 to Length(TQMPEQU.feqz[k]) - 1 do begin
       TQMPEQU.feqz[k, i].Init(ftEqu, btOctave, gtDb);
       TQMPEQU.feqz[k, i].Amp := 0.0;
-      TQMPEQU.feqz[k, i].Freq := 32 * Power(2, 1.0 * i);
+      TQMPEQU.feqz[k, i].Freq := 20 * Power(2, 1.0 * (i + 0.5));
       TQMPEQU.feqz[k, i].Width := 1.0;
     end;
   end;
