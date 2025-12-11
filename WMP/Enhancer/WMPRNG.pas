@@ -11,6 +11,7 @@ type
   private
     var fsqr: Double;
     var favg: Double;
+    var fval: Double;
     var famp: Double;
     var fflt: TWMPBQF;
     function getBand(): TBand;
@@ -25,9 +26,8 @@ type
     function getWidth(): Double;
     procedure setWidth(const Value: Double);
     function getValue(): Double;
-    procedure addSample(const Value: Double);
     function calcAmp(): Double;
-    function calcResult(): Double;
+    procedure addSample(const Value: Double);
   public
     procedure Init(const Filter: TFilter; const Band: TBand; const Gain: TGain);
     procedure Done();
@@ -46,8 +46,9 @@ uses
 
 procedure TWMPRNG.Init(const Filter: TFilter; const Band: TBand; const Gain: TGain);
 begin
-  self.fsqr := 0.25;
-  self.favg := 0.25;
+  self.fsqr := 0.0;
+  self.favg := 0.0;
+  self.fval := 0.0;
   self.fflt.Init(Filter, Band, Gain);
 end;
 
@@ -55,6 +56,7 @@ procedure TWMPRNG.Done();
 begin
   self.fsqr := 0.0;
   self.favg := 0.0;
+  self.fval := 0.0;
   self.fflt.Done();
 end;
 
@@ -117,21 +119,15 @@ function TWMPRNG.getValue(): Double;
 begin
   case (self.fflt.Gain) of
     gtDb: begin
-      Result := 20 * Log10(self.calcResult());
+      Result := 20 * Log10(self.fval);
     end;
     gtAmp: begin
-      Result := self.calcResult();
+      Result := self.fval;
     end;
     else begin
       Result := 0.0;
     end;
   end;
-end;
-
-procedure TWMPRNG.addSample(const Value: Double);
-begin
-  self.fsqr := Sqrt(Sqr(self.fsqr) + (Sqr(Value) - Sqr(self.fsqr)) / IfThen(self.calcResult() * Abs(Value) <= 1.0, 250000, 25000));
-  self.favg :=  Abs(Abs(self.favg) + (Abs(Value) - Abs(self.favg)) / IfThen(self.calcResult() * Abs(Value) <= 1.0, 250000, 25000));
 end;
 
 function TWMPRNG.calcAmp(): Double;
@@ -149,15 +145,18 @@ begin
   end;
 end;
 
-function TWMPRNG.calcResult(): Double;
+procedure TWMPRNG.addSample(const Value: Double);
 begin
-  Result := Min(Max(1.0, 1.0 / (1.75 * (self.favg + Sqrt(Sqr(self.fsqr) - Sqr(self.favg))))), self.calcAmp());
+  self.fval := Min(Max(1.0, 1.0 / (1.75 * (self.favg + Sqrt(self.fsqr - Sqr(self.favg))))), self.calcAmp());
+  self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / IfThen(self.fval * Abs(Value) <= 1.0, 250000, 25000);
+  self.favg := self.favg - (self.favg - Abs(Value)) / IfThen(self.fval * Abs(Value) <= 1.0, 250000, 25000);
+  self.fval := Min(Max(1.0, 1.0 / (1.75 * (self.favg + Sqrt(self.fsqr - Sqr(self.favg))))), self.calcAmp());
 end;
 
 function TWMPRNG.Process(const Value: Double): Double;
 begin
   self.addSample(self.fflt.Process(Value));
-  Result := self.calcResult() * Value;
+  Result := self.fval * Value;
 end;
 
 begin
