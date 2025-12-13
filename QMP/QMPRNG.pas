@@ -130,8 +130,8 @@ const
   fsqr: Double = 0.0;
   favg: Double = 0.0;
 begin
-  fsqr := fsqr - (fsqr - Sqr(Value)) / IfThen(Abs(Value) < self.fval, 250000, 25000);
-  favg := favg - (favg - Abs(Value)) / IfThen(Abs(Value) < self.fval, 250000, 25000);
+  fsqr := fsqr - (fsqr - Sqr(Value)) / IfThen(Abs(Value) < self.fval, 5.0 * self.Rate, 0.5 * self.Rate);
+  favg := favg - (favg - Abs(Value)) / IfThen(Abs(Value) < self.fval, 5.0 * self.Rate, 0.5 * self.Rate);
   self.fval := 1.75 * (favg + Sqrt(fsqr - Sqr(favg)));
 end;
 
