@@ -104,7 +104,7 @@ begin
     TWMPENH.fdsp.Done();
     x := 0;
     for k := 0 to Channels - 1 do begin
-      x := Max(x, Round(10 * TWMPENH.frng[k].Value));
+      x := Max(x, Round(10 * TWMPENH.frng[k].Gain));
     end;
     TWMPENH.ffrm.Refresh(x);
   end;
