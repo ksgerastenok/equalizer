@@ -9,9 +9,11 @@ uses
 type
   TWMPRNG = record
   private
-    var fval: Double;
-    var famp: Double;
     var fbqf: TWMPBQF;
+    var famp: Double;
+    var fsqr: Double;
+    var favg: Double;
+    var fval: Double;
     function getAmp(): Double;
     procedure setAmp(const Value: Double);
     function getFreq(): Double;
@@ -22,7 +24,7 @@ type
     procedure setWidth(const Value: Double);
     function getGain(): Double;
     function calcAmp(): Double;
-    function calcGain(const Value: Double): Double;
+    procedure addSample(const Value: Double);
   public
     procedure Init(const Filter: TFilter; const Band: TBand; const Gain: TGain);
     procedure Done();
@@ -119,21 +121,18 @@ begin
   end;
 end;
 
-function TWMPRNG.calcGain(const Value: Double): Double;
-const
-  fsqr: Double = 0.0;
-  favg: Double = 0.0;
-  fval: Double = 0.0;
+procedure TWMPRNG.addSample(const Value: Double);
 begin
-  fsqr := fsqr - (fsqr - Sqr(Value)) / IfThen(Abs(Value) < fval, 5.0 * self.Rate, 0.5 * self.Rate);
-  favg := favg - (favg - Abs(Value)) / IfThen(Abs(Value) < fval, 5.0 * self.Rate, 0.5 * self.Rate);
-  fval := 1.75 * (favg + Sqrt(fsqr - Sqr(favg)));
-  Result := Min(Max(1.0, 1.0 / fval), self.calcAmp());
+  self.fsqr := self.fsqr - self.fsqr  / IfThen(self.fval * Abs(Value) < 1.0, 5.0 * self.Rate, 0.5 * self.Rate);
+  self.favg := self.favg - self.favg  / IfThen(self.fval * Abs(Value) < 1.0, 5.0 * self.Rate, 0.5 * self.Rate);
+  self.fsqr := self.fsqr + Sqr(Value) / IfThen(self.fval * Abs(Value) < 1.0, 5.0 * self.Rate, 0.5 * self.Rate);
+  self.favg := self.favg + Abs(Value) / IfThen(self.fval * Abs(Value) < 1.0, 5.0 * self.Rate, 0.5 * self.Rate);
+  self.fval := Min(Max(1.0, 1.0 / (1.75 * (self.favg + Sqrt(self.fsqr - Sqr(self.favg))))), self.calcAmp());
 end;
 
 function TWMPRNG.Process(const Value: Double): Double;
 begin
-  self.fval := self.calcGain(self.fbqf.Process(Value));
+  self.addSample(self.fbqf.Process(Value));
   Result := self.fval * Value;
 end;
 
