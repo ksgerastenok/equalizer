@@ -11,7 +11,7 @@ type
   private
     var fval: Double;
     var famp: Double;
-    var fflt: TQMPBQF;
+    var fbqf: TQMPBQF;
     function getAmp(): Double;
     procedure setAmp(const Value: Double);
     function getFreq(): Double;
@@ -22,8 +22,7 @@ type
     procedure setWidth(const Value: Double);
     function getGain(): Double;
     function calcAmp(): Double;
-    function calcGain(): Double;
-    procedure addSample(const Value: Double);
+    function calcGain(const Value: Double): Double;
   public
     procedure Init(const Filter: TFilter; const Band: TBand; const Gain: TGain);
     procedure Done();
@@ -42,12 +41,12 @@ uses
 
 procedure TQMPRNG.Init(const Filter: TFilter; const Band: TBand; const Gain: TGain);
 begin
-  self.fflt.Init(Filter, Band, Gain);
+  self.fbqf.Init(Filter, Band, Gain);
 end;
 
 procedure TQMPRNG.Done();
 begin
-  self.fflt.Done();
+  self.fbqf.Done();
 end;
 
 function TQMPRNG.getAmp(): Double;
@@ -62,42 +61,42 @@ end;
 
 function TQMPRNG.getFreq(): Double;
 begin
-  Result := self.fflt.Freq;
+  Result := self.fbqf.Freq;
 end;
 
 procedure TQMPRNG.setFreq(const Value: Double);
 begin
-  self.fflt.Freq := Value;
+  self.fbqf.Freq := Value;
 end;
 
 function TQMPRNG.getRate(): Double;
 begin
-  Result := self.fflt.Rate;
+  Result := self.fbqf.Rate;
 end;
 
 procedure TQMPRNG.setRate(const Value: Double);
 begin
-  self.fflt.Rate := Value;
+  self.fbqf.Rate := Value;
 end;
 
 function TQMPRNG.getWidth(): Double;
 begin
-  Result := self.fflt.Width;
+  Result := self.fbqf.Width;
 end;
 
 procedure TQMPRNG.setWidth(const Value: Double);
 begin
-  self.fflt.Width := Value;
+  self.fbqf.Width := Value;
 end;
 
 function TQMPRNG.getGain(): Double;
 begin
-  case (self.fflt.Gain) of
+  case (self.fbqf.Gain) of
     gtDb: begin
-      Result := 20 * Log10(self.calcGain());
+      Result := 20 * Log10(self.fval);
     end;
     gtAmp: begin
-      Result := self.calcGain();
+      Result := self.fval;
     end;
     else begin
       Result := 0.0;
@@ -107,7 +106,7 @@ end;
 
 function TQMPRNG.calcAmp(): Double;
 begin
-  case (self.fflt.Gain) of
+  case (self.fbqf.Gain) of
     gtDb: begin
       Result := Power(10, self.famp / 20);
     end;
@@ -120,25 +119,22 @@ begin
   end;
 end;
 
-function TQMPRNG.calcGain(): Double;
-begin
-  Result := Min(Max(1.0, 1.0 / self.fval), self.calcAmp());
-end;
-
-procedure TQMPRNG.addSample(const Value: Double);
+function TQMPRNG.calcGain(const Value: Double): Double;
 const
   fsqr: Double = 0.0;
   favg: Double = 0.0;
+  fval: Double = 0.0;
 begin
-  fsqr := fsqr - (fsqr - Sqr(Value)) / IfThen(Abs(Value) < self.fval, 5.0 * self.Rate, 0.5 * self.Rate);
-  favg := favg - (favg - Abs(Value)) / IfThen(Abs(Value) < self.fval, 5.0 * self.Rate, 0.5 * self.Rate);
-  self.fval := 1.75 * (favg + Sqrt(fsqr - Sqr(favg)));
+  fsqr := fsqr - (fsqr - Sqr(Value)) / IfThen(Abs(Value) < fval, 5.0 * self.Rate, 0.5 * self.Rate);
+  favg := favg - (favg - Abs(Value)) / IfThen(Abs(Value) < fval, 5.0 * self.Rate, 0.5 * self.Rate);
+  fval := 1.75 * (favg + Sqrt(fsqr - Sqr(favg)));
+  Result := Min(Max(1.0, 1.0 / fval), self.calcAmp());
 end;
 
 function TQMPRNG.Process(const Value: Double): Double;
 begin
-  self.addSample(self.fflt.Process(Value));
-  Result := self.calcGain() * Value;
+  self.fval := self.calcGain(self.fbqf.Process(Value));
+  Result := self.fval * Value;
 end;
 
 begin
