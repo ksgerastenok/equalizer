@@ -24,10 +24,6 @@ type
     var ffreq: Double;
     var frate: Double;
     var fwidth: Double;
-    function calcAmp(): Double;
-    function calcAlpha(): Double;
-    function calcOmega(): Double;
-    procedure calcConfig();
     function getBand(): TBand;
     function getGain(): TGain;
     function getFilter(): TFilter;
@@ -39,10 +35,14 @@ type
     procedure setRate(const Value: Double);
     function getWidth(): Double;
     procedure setWidth(const Value: Double);
+    function calcAmp(): Double;
+    function calcAlpha(): Double;
+    function calcOmega(): Double;
+    procedure calcConfig();
   public
     procedure Init(const Filter: TFilter; const Band: TBand; const Gain: TGain);
     procedure Done();
-    function Process(const Input: Double): Double;
+    function Process(const Value: Double): Double;
     property Band: TBand read getBand;
     property Gain: TGain read getGain;
     property Filter: TFilter read getFilter;
@@ -195,11 +195,11 @@ begin
   end;
 end;
 
-function TQMPBQF.Process(const Input: Double): Double;
+function TQMPBQF.Process(const Value: Double): Double;
 begin
   self.fsignal[0, 2] := self.fsignal[0, 1];
   self.fsignal[0, 1] := self.fsignal[0, 0];
-  self.fsignal[0, 0] := Input;
+  self.fsignal[0, 0] := Value;
   self.fsignal[1, 2] := self.fsignal[1, 1];
   self.fsignal[1, 1] := self.fsignal[1, 0];
   self.fsignal[1, 0] := ((self.fsignal[0, 0] * self.fconfig[0, 0] + self.fsignal[0, 1] * self.fconfig[0, 1] + self.fsignal[0, 2] * self.fconfig[0, 2]) - (self.fsignal[1, 1] * self.fconfig[1, 1] + self.fsignal[1, 2] * self.fconfig[1, 2])) / self.fconfig[1, 0];
