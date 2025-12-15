@@ -47,7 +47,7 @@ begin
     TQMPNRM.frng[k].Init(ftBand, btSlope, gtDb);
     TQMPNRM.frng[k].Amp := 20.0;
     TQMPNRM.frng[k].Freq := 640.0;
-    TQMPNRM.frng[k].Width := 0.1;
+    TQMPNRM.frng[k].Width := 0.05;
   end;
   Result := 1;
 end;
