@@ -1,0 +1,610 @@
+unit
+  WMPFRM;
+
+interface
+
+uses
+  WMPDCL;
+
+type
+  TFilter = record
+    var Amp: Double;
+    var Freq: Double;
+    var Width: Double;
+  end;
+
+type
+  PWMPFRM = ^TWMPFRM;
+  TWMPFRM = record
+  private
+    var finfo: TInfo;
+    var fbass: TFilter;
+    var ftrbl: TFilter;
+    function getInfo(): TInfo;
+    function getBass(): TFilter;
+    function getTreble(): TFilter;
+    function getComponent(ClassType: TClass; Tag: Integer): TObject;
+    procedure Create();
+    procedure Destroy();
+    procedure FormShow(Sender: TObject);
+    procedure FormHide(Sender: TObject);
+    procedure TrackBarLoad(Sender: TObject);
+    procedure TrackBarSave(Sender: TObject);
+  public
+    procedure Init();
+    procedure Done();
+    procedure Show();
+    procedure Hide();
+    procedure Refresh(Value: LongWord);
+    property Info: TInfo read getInfo;
+    property Bass: TFilter read getBass;
+    property Treble: TFilter read getTreble;
+  end;
+
+implementation
+
+uses
+  Forms,
+  Controls,
+  ComCtrls,
+  StdCtrls,
+  SysUtils,
+  Interfaces;
+
+procedure TWMPFRM.Init();
+var
+  f: file;
+begin
+  try
+    System.Assign(f, 'enhancer.cfg');
+    System.ReSet(f, 1);
+    System.BlockRead(f, self.finfo, SizeOf(TInfo) * 1);
+    System.BlockRead(f, self.fbass, SizeOf(TFilter) * 1);
+    System.BlockRead(f, self.ftrbl, SizeOf(TFilter) * 1);
+    System.Close(f)
+  except
+  end;
+  self.finfo.Enabled := True;
+  self.Create();
+end;
+
+procedure TWMPFRM.Done();
+var
+  f: file;
+begin
+  self.Destroy();
+  self.finfo.Enabled := True;
+  try
+    System.Assign(f, 'enhancer.cfg');
+    System.ReWrite(f, 1);
+    System.BlockWrite(f, self.finfo, SizeOf(TInfo) * 1);
+    System.BlockWrite(f, self.fbass, SizeOf(TFilter) * 1);
+    System.BlockWrite(f, self.ftrbl, SizeOf(TFilter) * 1);
+    System.Close(f);
+  except
+  end;
+end;
+
+procedure TWMPFRM.Create();
+begin
+  Application.Initialize();
+  with (TForm.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Enhancer';
+    Tag := 10;
+    Top := 120;
+    Left := 215;
+    Width := 450;
+    Height := 265;
+    BorderIcons := [biSystemMenu];
+    BorderStyle := bsSingle;
+    FormStyle := fsStayOnTop;
+    Position := poDesktopCenter;
+    ShowHint := True;
+    Parent := nil;
+    OnShow := self.FormShow;
+    OnHide := self.FormHide;
+  end;
+  with (TGroupBox.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Amp';
+    Tag := 10;
+    Top := 0;
+    Left := 5;
+    Width := 440;
+    Height := 70;
+    Parent := self.getComponent(TForm, 10) as TWinControl;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Limit';
+    Tag := 11;
+    Top := 0;
+    Left := 0;
+    Width := 35;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getComponent(TGroupBox, 10) as TWinControl;
+  end;
+  with (TTrackBar.Create(Application)) do begin
+    Font.Size := 8;
+    Orientation := trHorizontal;
+    Tag := 11;
+    Top := 0;
+    Left := 35;
+    Width := 400;
+    Height := 20;
+    Min := 0;
+    Max := 200;
+    Enabled := True;
+    ShowHint := True;
+    TickMarks := tmBoth;
+    TickStyle := tsNone;
+    Parent := self.getComponent(TGroupBox, 10) as TWinControl;
+    OnChange := self.TrackBarSave;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Value';
+    Tag := 12;
+    Top := 25;
+    Left := 0;
+    Width := 35;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getComponent(TGroupBox, 10) as TWinControl;
+  end;
+  with (TTrackBar.Create(Application)) do begin
+    Font.Size := 8;
+    Orientation := trHorizontal;
+    Tag := 12;
+    Top := 25;
+    Left := 35;
+    Width := 400;
+    Height := 20;
+    Min := 0;
+    Max := 200;
+    Enabled := False;
+    ShowHint := True;
+    TickMarks := tmBoth;
+    TickStyle := tsNone;
+    Parent := self.getComponent(TGroupBox, 10) as TWinControl;
+    OnChange := self.TrackBarSave;
+  end;
+  with (TGroupBox.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Bass';
+    Tag := 20;
+    Top := 70;
+    Left := 5;
+    Width := 440;
+    Height := 95;
+    Parent := self.getComponent(TForm, 10) as TWinControl;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Amp';
+    Tag := 21;
+    Top := 0;
+    Left := 0;
+    Width := 35;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getComponent(TGroupBox, 20) as TWinControl;
+  end;
+  with (TTrackBar.Create(Application)) do begin
+    Font.Size := 8;
+    Orientation := trHorizontal;
+    Tag := 21;
+    Top := 0;
+    Left := 35;
+    Width := 400;
+    Height := 20;
+    Min := -200;
+    Max := +200;
+    Enabled := True;
+    ShowHint := True;
+    TickMarks := tmBoth;
+    TickStyle := tsNone;
+    Parent := self.getComponent(TGroupBox, 20) as TWinControl;
+    OnChange := self.TrackBarSave;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Freq';
+    Tag := 22;
+    Top := 25;
+    Left := 0;
+    Width := 35;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getComponent(TGroupBox, 20) as TWinControl;
+  end;
+  with (TTrackBar.Create(Application)) do begin
+    Font.Size := 8;
+    Orientation := trHorizontal;
+    Tag := 22;
+    Top := 25;
+    Left := 35;
+    Width := 400;
+    Height := 20;
+    Min := 0;
+    Max := 100;
+    Enabled := True;
+    ShowHint := True;
+    TickMarks := tmBoth;
+    TickStyle := tsNone;
+    Parent := self.getComponent(TGroupBox, 20) as TWinControl;
+    OnChange := self.TrackBarSave;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Width';
+    Tag := 23;
+    Top := 50;
+    Left := 0;
+    Width := 35;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getComponent(TGroupBox, 20) as TWinControl;
+  end;
+  with (TTrackBar.Create(Application)) do begin
+    Font.Size := 8;
+    Orientation := trHorizontal;
+    Tag := 23;
+    Top := 50;
+    Left := 35;
+    Width := 400;
+    Height := 20;
+    Min := 1;
+    Max := 35;
+    Enabled := True;
+    ShowHint := True;
+    TickMarks := tmBoth;
+    TickStyle := tsNone;
+    Parent := self.getComponent(TGroupBox, 20) as TWinControl;
+    OnChange := self.TrackBarSave;
+  end;
+  with (TGroupBox.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Treble';
+    Tag := 30;
+    Top := 165;
+    Left := 5;
+    Width := 440;
+    Height := 95;
+    Parent := self.getComponent(TForm, 10) as TWinControl;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Amp';
+    Tag := 31;
+    Top := 0;
+    Left := 0;
+    Width := 35;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getComponent(TGroupBox, 30) as TWinControl;
+  end;
+  with (TTrackBar.Create(Application)) do begin
+    Font.Size := 8;
+    Orientation := trHorizontal;
+    Tag := 31;
+    Top := 0;
+    Left := 35;
+    Width := 400;
+    Height := 20;
+    Min := -200;
+    Max := +200;
+    Enabled := True;
+    ShowHint := True;
+    TickMarks := tmBoth;
+    TickStyle := tsNone;
+    Parent := self.getComponent(TGroupBox, 30) as TWinControl;
+    OnChange := self.TrackBarSave;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Freq';
+    Tag := 32;
+    Top := 25;
+    Left := 0;
+    Width := 35;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getComponent(TGroupBox, 30) as TWinControl;
+  end;
+  with (TTrackBar.Create(Application)) do begin
+    Font.Size := 8;
+    Orientation := trHorizontal;
+    Tag := 32;
+    Top := 25;
+    Left := 35;
+    Width := 400;
+    Height := 20;
+    Min := 10;
+    Max := 200;
+    Enabled := True;
+    ShowHint := True;
+    TickMarks := tmBoth;
+    TickStyle := tsNone;
+    Parent := self.getComponent(TGroupBox, 30) as TWinControl;
+    OnChange := self.TrackBarSave;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Width';
+    Tag := 33;
+    Top := 50;
+    Left := 0;
+    Width := 35;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getComponent(TGroupBox, 30) as TWinControl;
+  end;
+  with (TTrackBar.Create(Application)) do begin
+    Font.Size := 8;
+    Orientation := trHorizontal;
+    Tag := 33;
+    Top := 50;
+    Left := 35;
+    Width := 400;
+    Height := 20;
+    Min := 1;
+    Max := 35;
+    Enabled := True;
+    ShowHint := True;
+    TickMarks := tmBoth;
+    TickStyle := tsNone;
+    Parent := self.getComponent(TGroupBox, 30) as TWinControl;
+    OnChange := self.TrackBarSave;
+  end;
+end;
+
+procedure TWMPFRM.Destroy();
+begin
+  with (self.getComponent(TTrackBar, 33) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TLabel, 33) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TTrackBar, 32) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TLabel, 32) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TTrackBar, 31) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TLabel, 31) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TGroupBox, 30) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TTrackBar, 23) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TLabel, 23) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TTrackBar, 22) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TLabel, 22) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TTrackBar, 21) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TLabel, 21) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TGroupBox, 20) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TTrackBar, 12) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TLabel, 12) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TTrackBar, 11) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TLabel, 11) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TGroupBox, 10) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TForm, 10) as TWinControl) do begin
+    Destroy();
+  end;
+  Application.Terminate();
+end;
+
+procedure TWMPFRM.FormShow(Sender: TObject);
+begin
+  if (Sender is TForm) then begin
+    with (Sender as TForm) do begin
+      self.TrackBarLoad(self.getComponent(TTrackBar, 11));
+      self.TrackBarLoad(self.getComponent(TTrackBar, 12));
+      self.TrackBarLoad(self.getComponent(TTrackBar, 21));
+      self.TrackBarLoad(self.getComponent(TTrackBar, 22));
+      self.TrackBarLoad(self.getComponent(TTrackBar, 23));
+      self.TrackBarLoad(self.getComponent(TTrackBar, 31));
+      self.TrackBarLoad(self.getComponent(TTrackBar, 32));
+      self.TrackBarLoad(self.getComponent(TTrackBar, 33));
+    end;
+  end;
+end;
+
+procedure TWMPFRM.FormHide(Sender: TObject);
+begin
+  if (Sender is TForm) then begin
+    with (Sender as TForm) do begin
+      self.TrackBarSave(self.getComponent(TTrackBar, 11));
+      self.TrackBarSave(self.getComponent(TTrackBar, 12));
+      self.TrackBarSave(self.getComponent(TTrackBar, 21));
+      self.TrackBarSave(self.getComponent(TTrackBar, 22));
+      self.TrackBarSave(self.getComponent(TTrackBar, 23));
+      self.TrackBarSave(self.getComponent(TTrackBar, 31));
+      self.TrackBarSave(self.getComponent(TTrackBar, 32));
+      self.TrackBarSave(self.getComponent(TTrackBar, 33));
+    end;
+  end;
+end;
+
+procedure TWMPFRM.TrackBarLoad(Sender: TObject);
+begin
+  if (Sender is TTrackBar) then begin
+    with (Sender as TTrackBar) do begin
+      case (Tag) of
+        11: begin
+          Position := self.finfo.Preamp;
+          Hint := Format('Limit: %f dB', [self.finfo.Preamp / 10]);
+        end;
+        12: begin
+          Position := self.finfo.Size;
+          Hint := Format('Value: %f dB', [self.finfo.Size / 10]);
+        end;
+        21: begin
+          Position := Round(self.fbass.Amp * 10.0);
+          Hint := Format('Amp: %f dB', [self.fbass.Amp]);
+        end;
+        22: begin
+          Position := Round(self.fbass.Freq / 10.0);
+          Hint := Format('Freq: %f Hz', [self.fbass.Freq]);
+        end;
+        23: begin
+          Position := Round(self.fbass.Width * 10.0);
+          Hint := Format('Width: %f Slope', [self.fbass.Width]);
+        end;
+        31: begin
+          Position := Round(self.ftrbl.Amp * 10.0);
+          Hint := Format('Amp: %f dB', [self.ftrbl.Amp]);
+        end;
+        32: begin
+          Position := Round(self.ftrbl.Freq / 100.0);
+          Hint := Format('Freq: %f Hz', [self.ftrbl.Freq]);
+        end;
+        33: begin
+          Position := Round(self.ftrbl.Width * 10.0);
+          Hint := Format('Width: %f Slope', [self.ftrbl.Width]);
+        end;
+        else begin
+          Position := 0;
+          Hint := Format('Unknown');
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure TWMPFRM.TrackBarSave(Sender: TObject);
+begin
+  if (Sender is TTrackBar) then begin
+    with (Sender as TTrackBar) do begin
+      case (Tag) of
+        11: begin
+          self.finfo.Preamp := Position;
+          Hint := Format('Limit: %f dB', [self.finfo.Preamp / 10]);
+        end;
+        12: begin
+          self.finfo.Size := Position;
+          Hint := Format('Value: %f dB', [self.finfo.Size / 10]);
+        end;
+        21: begin
+          self.fbass.Amp := Position / 10.0;
+          Hint := Format('Amp: %f dB', [self.fbass.Amp]);
+        end;
+        22: begin
+          self.fbass.Freq := Position * 10.0;
+          Hint := Format('Freq: %f Hz', [self.fbass.Freq]);
+        end;
+        23: begin
+          self.fbass.Width := Position / 10.0;
+          Hint := Format('Width: %f Slope', [self.fbass.Width]);
+        end;
+        31: begin
+          self.ftrbl.Amp := Position / 10.0;
+          Hint := Format('Amp: %f dB', [self.ftrbl.Amp]);
+        end;
+        32: begin
+          self.ftrbl.Freq := Position * 100.0;
+          Hint := Format('Freq: %f Hz', [self.ftrbl.Freq]);
+        end;
+        33: begin
+          self.ftrbl.Width := Position / 10.0;
+          Hint := Format('Width: %f Slope', [self.ftrbl.Width]);
+        end;
+        else begin
+          self.finfo.Preamp := 0;
+          self.finfo.Size := 0;
+          self.fbass.Amp := 0.0;
+          self.fbass.Freq := 0.0;
+          self.fbass.Width := 0.0;
+          self.ftrbl.Amp := 0.0;
+          self.ftrbl.Freq := 0.0;
+          self.ftrbl.Width := 0.0;
+          Hint := Format('Unknown');
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure TWMPFRM.Show();
+begin
+  with (self.getComponent(TForm, 10) as TForm) do begin
+    Show();
+  end;
+end;
+
+procedure TWMPFRM.Hide();
+begin
+  with (self.getComponent(TForm, 10) as TForm) do begin
+    Hide();
+  end;
+end;
+
+procedure TWMPFRM.Refresh(Value: LongWord);
+begin
+  self.finfo.Size := Value;
+  self.FormShow(self.getComponent(TForm, 10));
+end;
+
+function TWMPFRM.getInfo(): TInfo;
+begin
+  Result := self.finfo;
+end;
+
+function TWMPFRM.getBass(): TFilter;
+begin
+  Result := self.fbass;
+end;
+
+function TWMPFRM.getTreble(): TFilter;
+begin
+  Result := self.ftrbl;
+end;
+
+function TWMPFRM.getComponent(ClassType: TClass; Tag: Integer): TObject;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to Application.ComponentCount - 1 do begin
+    if (Application.Components[i].ClassType = ClassType) then begin
+      if (Application.Components[i].Tag = Tag) then begin
+        Result := Application.Components[i];
+      end;
+    end;
+  end;
+end;
+
+begin
+end.
