@@ -93,7 +93,7 @@ begin
       TWMPENH.ftrb[k].Rate := Rates;
       TWMPENH.frng[k].Amp := TWMPENH.ffrm.Info.Preamp / 10;
       TWMPENH.frng[k].Freq := 640.0;
-      TWMPENH.frng[k].Width := 0.1;
+      TWMPENH.frng[k].Width := 0.05;
       TWMPENH.frng[k].Rate := Rates;
       for x := 0 to Samples - 1 do begin
         TWMPENH.fdsp.Buffer[k, x] := TWMPENH.fbss[k].Process(TWMPENH.fdsp.Buffer[k, x]);
@@ -102,11 +102,7 @@ begin
       end;
     end;
     TWMPENH.fdsp.Done();
-    x := 0;
-    for k := 0 to Channels - 1 do begin
-      x := Max(x, Round(10 * TWMPENH.frng[k].Gain));
-    end;
-    TWMPENH.ffrm.Refresh(x);
+    TWMPENH.ffrm.Refresh(Round(10 * TWMPENH.frng[0].Gain));
   end;
   Result := Samples;
 end;
