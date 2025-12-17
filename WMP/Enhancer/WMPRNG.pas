@@ -13,7 +13,6 @@ type
     var famp: Double;
     var fsqr: Double;
     var favg: Double;
-    var fval: Double;
     function getAmp(): Double;
     procedure setAmp(const Value: Double);
     function getFreq(): Double;
@@ -44,13 +43,11 @@ uses
 
 procedure TWMPRNG.Init(const Filter: TFilter; const Band: TBand; const Gain: TGain);
 begin
-  self.fval := 1.0;
   self.fbqf.Init(Filter, Band, Gain);
 end;
 
 procedure TWMPRNG.Done();
 begin
-  self.fval := 1.0;
   self.fbqf.Done();
 end;
 
@@ -98,10 +95,10 @@ function TWMPRNG.getGain(): Double;
 begin
   case (self.fbqf.Gain) of
     gtDb: begin
-      Result := 20.0 * Log10(self.fval);
+      Result := 20.0 * Log10(self.calcGain());
     end;
     gtAmp: begin
-      Result := self.fval;
+      Result := self.calcGain();
     end;
     else begin
       Result := 0.0;
@@ -113,7 +110,7 @@ function TWMPRNG.calcAmp(): Double;
 begin
   case (self.fbqf.Gain) of
     gtDb: begin
-      Result := Power(10, self.famp / 20.0);
+      Result := Power(10.0, self.famp / 20.0);
     end;
     gtAmp: begin
       Result := self.famp;
@@ -131,21 +128,19 @@ end;
 
 procedure TWMPRNG.addSample(const Value: Double);
 begin
-  if (self.fval * Abs(Value) < 1.0) then begin
-    self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / 250000;
-    self.favg := self.favg - (self.favg - Abs(Value)) / 250000;
-    self.fval := self.fval - (self.fval - self.calcGain()) / 1000;
-  end                               else begin
-    self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / 25000;
-    self.favg := self.favg - (self.favg - Abs(Value)) / 25000;
-    self.fval := self.fval - (self.fval - self.calcGain()) / 100;
+  if (self.calcGain() * Abs(Value) < 1.0) then begin
+    self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / 250000.0;
+    self.favg := self.favg - (self.favg - Abs(Value)) / 250000.0;
+  end                                     else begin
+    self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / 25000.0;
+    self.favg := self.favg - (self.favg - Abs(Value)) / 25000.0;
   end;
 end;
 
 function TWMPRNG.Process(const Value: Double): Double;
 begin
   self.addSample(self.fbqf.Process(Value));
-  Result := self.fval * Value;
+  Result := self.calcGain() * Value;
 end;
 
 begin

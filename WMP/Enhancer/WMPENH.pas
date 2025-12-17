@@ -28,9 +28,6 @@ type
 
 implementation
 
-uses
-  Math;
-
 class function TWMPENH.Plugin(): PPlugin; cdecl;
 begin
   Result := New(PPlugin);
