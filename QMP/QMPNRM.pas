@@ -25,9 +25,6 @@ type
 
 implementation
 
-uses
-  Math;
-
 class function TQMPNRM.Plugin(): PPlugin; cdecl;
 begin
   Result := New(PPlugin);

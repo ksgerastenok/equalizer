@@ -47,7 +47,7 @@ begin
     for i := 0 to Length(TQMPEQU.feqz[k]) - 1 do begin
       TQMPEQU.feqz[k, i].Init(ftEqu, btOctave, gtDb);
       TQMPEQU.feqz[k, i].Amp := 0.0;
-      TQMPEQU.feqz[k, i].Freq := 20 * Power(2, 1.0 * (i + 0.5));
+      TQMPEQU.feqz[k, i].Freq := 20.0 * Power(2.0, 1.0 * (i + 0.5));
       TQMPEQU.feqz[k, i].Width := 1.0;
     end;
   end;
@@ -79,7 +79,7 @@ begin
     TQMPEQU.fdsp.Init(Data);
     for i := 0 to Length(TQMPEQU.finfo.Bands) - 1 do begin
       for k := 0 to Data.Channels - 1 do begin
-        TQMPEQU.feqz[k, i].Amp := (TQMPEQU.finfo.Preamp + TQMPEQU.finfo.Bands[i]) / 10;
+        TQMPEQU.feqz[k, i].Amp := (TQMPEQU.finfo.Preamp + TQMPEQU.finfo.Bands[i]) / 10.0;
         TQMPEQU.feqz[k, i].Rate := Data.Rates;
         for x := 0 to Data.Samples - 1 do begin
           TQMPEQU.fdsp.Data[k, x] := TQMPEQU.feqz[k, i].Process(TQMPEQU.fdsp.Data[k, x]);
