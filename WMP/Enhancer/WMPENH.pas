@@ -44,13 +44,13 @@ var
   k: Integer;
 begin
   for k := 0 to Length(TWMPENH.fbss) - 1 do begin
-    TWMPENH.fbss[k].Init(ftBass, btSlope, gtDb);
+    TWMPENH.fbss[k].Init(ptSVF, ftBass, btSlope, gtDb);
   end;
   for k := 0 to Length(TWMPENH.ftrb) - 1 do begin
-    TWMPENH.ftrb[k].Init(ftTreble, btSlope, gtDb);
+    TWMPENH.ftrb[k].Init(ptSVF, ftTreble, btSlope, gtDb);
   end;
   for k := 0 to Length(TWMPENH.frng) - 1 do begin
-    TWMPENH.frng[k].Init(ftBand, btSlope, gtDb);
+    TWMPENH.frng[k].Init(ptSVF, ftBand, btSlope, gtDb);
   end;
   TWMPENH.ffrm := TWMPFRM.Create();
   Result := 0;
