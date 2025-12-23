@@ -58,9 +58,11 @@ Then compute a few intermediate variables:
 
     w0 = 2 * pi * F0 / FS
 
-    alpha = 1 / Q                                            (case: Q)
-          = 2 * sinh((ln(2) / 2) * BW / (sin(w0) / w0))      (case: BW)
-          = sqrt((sqrt(A) + 1 / sqrt(A)) * (1 / S - 1) + 2)  (case: S)
+    alpha = 1.0 / Width                                          (case: Q)
+          = 2 * sinh((ln(2) / 2) * Width / (sin(w0) / w0))       (case: BW)
+          = sqrt((sqrt(A) + 1 / sqrt(A)) * (1 / Width - 1) + 2)  (case: S)
+          = Width / F0					         (case: Hz)
+          = (Width * 1000) / F0					 (case: KHz)
 
         The relationship between bandwidth and Q is
              1 / Q = 2 * sinh((ln(2) / 2) * BW / (sin(w0) / w0))
