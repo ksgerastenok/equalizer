@@ -46,7 +46,7 @@ var
 begin
   for k := 0 to Length(TWMPEQU.feqz) - 1 do begin
     for i := 0 to Length(TWMPEQU.feqz[k]) - 1 do begin
-      TWMPEQU.feqz[k, i].Init(ftEqu, btOctave, gtDb);
+      TWMPEQU.feqz[k, i].Init(ptSVF, ftEqu, btOctave, gtDb);
       TWMPEQU.feqz[k, i].Amp := 0.0;
       TWMPEQU.feqz[k, i].Freq := 20.0 * Power(2.0, 0.5 * (i + 0.5));
       TWMPEQU.feqz[k, i].Width := 0.5;
