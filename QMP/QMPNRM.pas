@@ -41,7 +41,7 @@ var
   k: Integer;
 begin
   for k := 0 to Length(TQMPNRM.frng) - 1 do begin
-    TQMPNRM.frng[k].Init(ftBand, btSlope, gtDb);
+    TQMPNRM.frng[k].Init(ptZDF, ftBand, btSlope, gtDb);
     TQMPNRM.frng[k].Amp := 20.0;
     TQMPNRM.frng[k].Freq := 640.0;
     TQMPNRM.frng[k].Width := 0.05;

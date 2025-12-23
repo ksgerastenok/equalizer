@@ -26,7 +26,7 @@ type
     function calcGain(): Double;
     procedure addSample(const Value: Double);
   public
-    procedure Init(const Filter: TFilter; const Band: TBand; const Gain: TGain);
+    procedure Init(const Transform: TTransform; const Filter: TFilter; const Band: TBand; const Gain: TGain);
     procedure Done();
     function Process(const Value: Double): Double;
     property Gain: Double read getGain;
@@ -41,9 +41,9 @@ implementation
 uses
   Math;
 
-procedure TQMPRNG.Init(const Filter: TFilter; const Band: TBand; const Gain: TGain);
+procedure TQMPRNG.Init(const Transform: TTransform; const Filter: TFilter; const Band: TBand; const Gain: TGain);
 begin
-  self.fbqf.Init(Filter, Band, Gain);
+  self.fbqf.Init(Transform, Filter, Band, Gain);
 end;
 
 procedure TQMPRNG.Done();
