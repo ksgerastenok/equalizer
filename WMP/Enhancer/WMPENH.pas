@@ -44,13 +44,13 @@ var
   k: Integer;
 begin
   for k := 0 to Length(TWMPENH.fbss) - 1 do begin
-    TWMPENH.fbss[k].Init(ptSVF, ftBass, btSlope, gtDb);
+    TWMPENH.fbss[k].Init(ptZDF, ftBass, btSlope, gtDb);
   end;
   for k := 0 to Length(TWMPENH.ftrb) - 1 do begin
-    TWMPENH.ftrb[k].Init(ptSVF, ftTreble, btSlope, gtDb);
+    TWMPENH.ftrb[k].Init(ptZDF, ftTreble, btSlope, gtDb);
   end;
   for k := 0 to Length(TWMPENH.frng) - 1 do begin
-    TWMPENH.frng[k].Init(ptSVF, ftBand, btSlope, gtDb);
+    TWMPENH.frng[k].Init(ptZDF, ftBand, btSlope, gtDb);
   end;
   TWMPENH.ffrm := TWMPFRM.Create();
   Result := 0;
@@ -79,7 +79,12 @@ var
 begin
   if (TWMPENH.ffrm.Info.Enabled) then begin
     TWMPENH.fdsp.Init(Data, Bits, Rates, Samples, Channels);
+    Module.Parent := 0;
     for k := 0 to Channels - 1 do begin
+      TWMPENH.frng[k].Amp := TWMPENH.ffrm.Info.Preamp / 10;
+      TWMPENH.frng[k].Freq := 640.0;
+      TWMPENH.frng[k].Width := 0.05;
+      TWMPENH.frng[k].Rate := Rates;
       TWMPENH.fbss[k].Amp := TWMPENH.ffrm.Bass.Amp;
       TWMPENH.fbss[k].Freq := TWMPENH.ffrm.Bass.Freq;
       TWMPENH.fbss[k].Width := TWMPENH.ffrm.Bass.Width;
@@ -88,18 +93,15 @@ begin
       TWMPENH.ftrb[k].Freq := TWMPENH.ffrm.Treble.Freq;
       TWMPENH.ftrb[k].Width := TWMPENH.ffrm.Treble.Width;
       TWMPENH.ftrb[k].Rate := Rates;
-      TWMPENH.frng[k].Amp := TWMPENH.ffrm.Info.Preamp / 10;
-      TWMPENH.frng[k].Freq := 640.0;
-      TWMPENH.frng[k].Width := 0.05;
-      TWMPENH.frng[k].Rate := Rates;
       for x := 0 to Samples - 1 do begin
         TWMPENH.fdsp.Buffer[k, x] := TWMPENH.fbss[k].Process(TWMPENH.fdsp.Buffer[k, x]);
         TWMPENH.fdsp.Buffer[k, x] := TWMPENH.ftrb[k].Process(TWMPENH.fdsp.Buffer[k, x]);
         TWMPENH.fdsp.Buffer[k, x] := TWMPENH.frng[k].Process(TWMPENH.fdsp.Buffer[k, x]);
       end;
+      Module.Parent := Round(Module.Parent - (Module.Parent - 10 * TWMPENH.frng[k].Gain) / (k + 1));
     end;
     TWMPENH.fdsp.Done();
-    TWMPENH.ffrm.Refresh(Round(10 * TWMPENH.frng[0].Gain));
+    TWMPENH.ffrm.Refresh(Module.Parent);
   end;
   Result := Samples;
 end;
