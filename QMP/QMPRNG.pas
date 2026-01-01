@@ -129,11 +129,11 @@ end;
 procedure TQMPRNG.addSample(const Value: Double);
 begin
   if (self.calcGain() * Abs(Value) < 1.0) then begin
-    self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / 250000.0;
-    self.favg := self.favg - (self.favg - Abs(Value)) / 250000.0;
+    self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / (5.0 * self.fbqf.Rate);
+    self.favg := self.favg - (self.favg - Abs(Value)) / (5.0 * self.fbqf.Rate);
   end                                     else begin
-    self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / 25000.0;
-    self.favg := self.favg - (self.favg - Abs(Value)) / 25000.0;
+    self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / (0.5 * self.fbqf.Rate);
+    self.favg := self.favg - (self.favg - Abs(Value)) / (0.5 * self.fbqf.Rate);
   end;
 end;
 
