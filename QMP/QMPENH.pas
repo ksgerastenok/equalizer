@@ -39,7 +39,7 @@ end;
 
 class function TQMPENH.Init(const Flags: Integer): Integer; cdecl;
 begin
-  TQMPENH.fwidth := Power(10, 2.5 / 20);
+  TQMPENH.fwidth := Power(10, 1.25 / 20);
   Result := 1;
 end;
 
