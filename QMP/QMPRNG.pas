@@ -123,7 +123,7 @@ end;
 
 function TQMPRNG.calcGain(): Double;
 begin
-  Result := Min(Max(1.0, 1.0 / (1.75 * (self.favg + Sqrt(self.fsqr - Sqr(self.favg))))), self.calcAmp());
+  Result := Min(Max(1.0, 1.0 / (self.favg + 3.0 * Sqrt(self.fsqr - Sqr(self.favg)))), self.calcAmp());
 end;
 
 procedure TQMPRNG.addSample(const Value: Double);
