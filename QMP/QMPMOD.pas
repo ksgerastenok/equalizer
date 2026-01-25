@@ -8,8 +8,8 @@ uses
   QMPEQU,
   QMPBSS,
   QMPTRB,
-  QMPNRM,
-  QMPENH;
+  QMPNRM;
+  //QMPENH;
 
 type
   TQMPMOD = record
@@ -36,9 +36,9 @@ begin
     3: begin
       Result := TQMPNRM.Plugin();
     end;
-    4: begin
-      Result := TQMPENH.Plugin();
-    end;
+    //4: begin
+    //  Result := TQMPENH.Plugin();
+    //end;
     else begin
       Result := nil;
     end;
