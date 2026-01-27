@@ -42,7 +42,7 @@ begin
   for k := 0 to Length(TQMPTRB.fbqf) - 1 do begin
     TQMPTRB.fbqf[k].Init(ptZDF, ftTreble, btSlope, gtDb);
     TQMPTRB.fbqf[k].Amp := 15.0;
-    TQMPTRB.fbqf[k].Freq := 3500.0;
+    TQMPTRB.fbqf[k].Freq := 4500.0;
     TQMPTRB.fbqf[k].Width := 0.5;
   end;
   Result := 1;

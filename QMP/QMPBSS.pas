@@ -42,7 +42,7 @@ begin
   for k := 0 to Length(TQMPBSS.fbqf) - 1 do begin
     TQMPBSS.fbqf[k].Init(ptZDF, ftBass, btSlope, gtDb);
     TQMPBSS.fbqf[k].Amp := 5.0;
-    TQMPBSS.fbqf[k].Freq := 350.0;
+    TQMPBSS.fbqf[k].Freq := 450.0;
     TQMPBSS.fbqf[k].Width := 0.5;
   end;
   Result := 1;
