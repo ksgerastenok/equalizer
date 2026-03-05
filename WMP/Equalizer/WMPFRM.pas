@@ -72,11 +72,11 @@ type
     procedure TrackBarSave(const Sender: TObject);
   private
     var finfo: TInfo;
-    function getInfo(): TInfo;
+    function getInfo(): PInfo;
   public
     constructor Create(); reintroduce;
     destructor Destroy(); override;
-    property Info: TInfo read getInfo;
+    property Info: PInfo read getInfo;
   end;
 
 implementation
@@ -228,9 +228,9 @@ begin
   end;
 end;
 
-function TWMPFRM.getInfo(): TInfo;
+function TWMPFRM.getInfo(): PInfo;
 begin
-  Result := self.finfo;
+  Result := Addr(self.finfo);
 end;
 
 begin
