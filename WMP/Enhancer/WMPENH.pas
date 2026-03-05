@@ -79,7 +79,7 @@ var
 begin
   if (TWMPENH.ffrm.Info.Enabled) then begin
     TWMPENH.fdsp.Init(Data, Bits, Rates, Samples, Channels);
-    Module.Parent := 0;
+    TWMPENH.ffrm.Info.Size := 0;
     for k := 0 to Channels - 1 do begin
       TWMPENH.frng[k].Amp := TWMPENH.ffrm.Info.Preamp / 10;
       TWMPENH.frng[k].Freq := 640.0;
@@ -98,10 +98,10 @@ begin
         TWMPENH.fdsp.Buffer[k, x] := TWMPENH.ftrb[k].Process(TWMPENH.fdsp.Buffer[k, x]);
         TWMPENH.fdsp.Buffer[k, x] := TWMPENH.frng[k].Process(TWMPENH.fdsp.Buffer[k, x]);
       end;
-      Module.Parent := Round(Module.Parent - (Module.Parent - 10 * TWMPENH.frng[k].Gain) / (k + 1));
+      TWMPENH.ffrm.Info.Size := Round(TWMPENH.ffrm.Info.Size - (TWMPENH.ffrm.Info.Size - 10 * TWMPENH.frng[k].Gain) / (k + 1));
     end;
+    TWMPENH.ffrm.Refresh();
     TWMPENH.fdsp.Done();
-    TWMPENH.ffrm.Refresh(Module.Parent);
   end;
   Result := Samples;
 end;

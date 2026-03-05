@@ -15,6 +15,7 @@ uses
   SysUtils;
 
 type
+  PFilter = ^TFilter;
   TFilter = record
     var Amp: Double;
     var Freq: Double;
@@ -53,16 +54,16 @@ type
     var finfo: TInfo;
     var fbass: TFilter;
     var ftrbl: TFilter;
-    function getInfo(): TInfo;
-    function getBass(): TFilter;
-    function getTreble(): TFilter;
+    function getInfo(): PInfo;
+    function getBass(): PFilter;
+    function getTreble(): PFilter;
   public
     constructor Create(); reintroduce;
     destructor Destroy(); override;
-    procedure Refresh(const Value: Integer);
-    property Info: TInfo read getInfo;
-    property Bass: TFilter read getBass;
-    property Treble: TFilter read getTreble;
+    procedure Refresh();
+    property Info: PInfo read getInfo;
+    property Bass: PFilter read getBass;
+    property Treble: PFilter read getTreble;
   end;
 
 implementation
@@ -255,25 +256,24 @@ begin
   end;
 end;
 
-procedure TWMPFRM.Refresh(const Value: Integer);
+procedure TWMPFRM.Refresh();
 begin
-  self.finfo.Size := Value;
   self.FormShow(self);
 end;
 
-function TWMPFRM.getInfo(): TInfo;
+function TWMPFRM.getInfo(): PInfo;
 begin
-  Result := self.finfo;
+  Result := Addr(self.finfo);
 end;
 
-function TWMPFRM.getBass(): TFilter;
+function TWMPFRM.getBass(): PFilter;
 begin
-  Result := self.fbass;
+  Result := Addr(self.fbass);
 end;
 
-function TWMPFRM.getTreble(): TFilter;
+function TWMPFRM.getTreble(): PFilter;
 begin
-  Result := self.ftrbl;
+  Result := Addr(self.ftrbl);
 end;
 
 begin
