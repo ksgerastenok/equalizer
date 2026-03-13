@@ -10,7 +10,7 @@ type
   TWMPFRM = record
   private
     var finfo: TInfo;
-    function getInfo(): TInfo;
+    function getInfo(): PInfo;
     function getComponent(ClassType: TClass; Tag: Integer): TObject;
     procedure Create();
     procedure Destroy();
@@ -23,7 +23,7 @@ type
     procedure Done();
     procedure Show();
     procedure Hide();
-    property Info: TInfo read getInfo;
+    property Info: PInfo read getInfo;
   end;
 
 implementation
@@ -325,9 +325,9 @@ begin
   end;
 end;
 
-function TWMPFRM.getInfo(): TInfo;
+function TWMPFRM.getInfo(): PInfo;
 begin
-  Result := self.finfo;
+  Result := Addr(self.finfo);
 end;
 
 function TWMPFRM.getComponent(ClassType: TClass; Tag: Integer): TObject;
