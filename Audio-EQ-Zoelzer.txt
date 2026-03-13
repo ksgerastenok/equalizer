@@ -1,0 +1,114 @@
+function calcBiquad(type, Fc, Fs, Q, peakGain) {
+    var a0,a1,a2,b1,b2,norm;
+    
+    var V = Math.pow(10, Math.abs(peakGain) / 20);
+    var K = Math.tan(Math.PI * Fc / Fs);
+    switch (type) {
+        case "lowpass":
+            a0 = K * K;
+            a1 = 2 * K * K;
+            a2 = K * K;
+            b0 = 1 + K / Q + K * K
+            b1 = 2 * (K * K - 1);
+            b2 = 1 - K / Q + K * K;
+            break;
+        
+        case "highpass":
+            a0 = 1;
+            a1 = -2;
+            a2 = 1;
+            b0 = 1 + K / Q + K * K
+            b1 = 2 * (K * K - 1);
+            b2 = 1 - K / Q + K * K;
+            break;
+        
+        case "bandpass":  // (peak gain = 0)
+            a0 = 0 + K / Q;
+            a1 = 0;
+            a2 = 0 - K / Q;
+            b0 = 1 + K / Q + K * K;
+            b1 = 2 * (K * K - 1);
+            b2 = 1 - K / Q + K * K;
+            break;
+
+        case "bandpass":  // (peak gain = Q):
+            a0 = 0 + K;
+            a1 = 0;
+            a2 = 0 - K;
+            b0 = 1 + K / Q + K * K;
+            b1 = 2 * (K * K - 1);
+            b2 = 1 - K / Q + K * K;
+            break;
+        
+        case "notch":
+            a0 = 1 + K * K;
+            a1 = 2 * (K * K - 1);
+            a2 = 1 + K * K;
+            b0 = 1 + K / Q + K * K;
+            b1 = 2 * (K * K - 1);
+            b2 = 1 - K / Q + K * K;
+            break;
+
+        case "allpass"
+            a0 = 1 - K / Q + K * K;
+            a1 = 2 * (K * K - 1);
+            a2 = 1 + K / Q + K * K; 
+            b0 = 1 + K / Q + K * K;
+            b1 = 2 * (K * K - 1);
+            b2 = 1 - K / Q + K * K;
+        
+        case "peak":
+            if (peakGain >= 0) {    // boost
+                a0 = 1 + V * K / Q + K * K;
+                a1 = 2 * (K * K - 1);
+                a2 = 1 - V * K / Q + K * K;
+                b0 = 1 + K / Q + K * K
+                b1 = 2 * (K * K - 1);
+                b2 = 1 - K / Q + K * K;
+            }
+            else {    // cut
+                a0 = 1 + K / Q + K * K;
+                a1 = 2 * (K * K - 1);
+                a2 = 1 - K / Q + K * K;
+                b0 = 1 + V * K / Q + K * K;
+                b1 = 2 * (K * K - 1);
+                b2 = 1 - V * K / Q + K * K;
+            }
+            break;
+        case "lowShelf":
+            if (peakGain >= 0) {    // boost
+                a0 = 1 + sqrt(V) * K / Q + V * K * K;
+                a1 = 2 * (V * K * K - 1);
+                a2 = 1 - sqrt(V) * K / Q + V * K * K;
+                b0 = 1 + K / Q + K * K;
+                b1 = 2 * (K * K - 1);
+                b2 = 1 - K / Q + K * K;
+            }
+            else {    // cut
+                a0 = 1 + K / Q + K * K;
+                a1 = 2 * (K * K - 1);
+                a2 = 1 - K / Q + K * K;
+                b0 = 1 + sqrt(V) * K / Q + V * K * K;
+                b1 = 2 * (V * K * K - 1);
+                b2 = 1 - sqrt(V) * K / Q + V * K * K;
+            }
+            break;
+        case "highShelf":
+            if (peakGain >= 0) {    // boost
+                a0 = V + sqrt(V) * K / Q + K * K;
+                a1 = 2 * (K * K - V);
+                a2 = V - sqrt(V) * K / Q + K * K;
+                b0 = 1 + K / Q + K * K;
+                b1 = 2 * (K * K - 1);
+                b2 = 1 - K / Q + K * K;
+            }
+            else {    // cut
+                a0 = 1 + K / Q + K * K;
+                a1 = 2 * (K * K - 1);
+                a2 = 1 - K / Q + K * K;
+                b0 = V + sqrt(V) * K / Q + K * K;
+                b1 = 2 * (K * K - V);
+                b2 = V - sqrt(V) * K / Q + K * K;
+            }
+            break;
+    }
