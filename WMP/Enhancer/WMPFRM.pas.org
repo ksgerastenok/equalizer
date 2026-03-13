@@ -37,9 +37,9 @@ type
     procedure Show();
     procedure Hide();
     procedure Refresh();
-    property Info: TInfo read getInfo;
-    property Bass: TFilter read getBass;
-    property Treble: TFilter read getTreble;
+    property Info: PInfo read getInfo;
+    property Bass: PFilter read getBass;
+    property Treble: PFilter read getTreble;
   end;
 
 implementation
