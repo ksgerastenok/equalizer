@@ -123,7 +123,7 @@ end;
 
 function TWMPRNG.calcGain(): Double;
 begin
-  Result := Min(Max(1.0, 1.0 / (self.favg + 3.0 * Sqrt(self.fsqr - Sqr(self.favg)))), self.calcAmp());
+  Result := Min(Max(0.75, 1.0 / (self.favg + 3.0 * Sqrt(self.fsqr - Sqr(self.favg)))), self.calcAmp());
 end;
 
 procedure TWMPRNG.addSample(const Value: Double);

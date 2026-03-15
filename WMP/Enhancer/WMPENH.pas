@@ -94,9 +94,7 @@ begin
       TWMPENH.ftrb[k].Width := TWMPENH.ffrm.Treble.Width;
       TWMPENH.ftrb[k].Rate := Rates;
       for x := 0 to Samples - 1 do begin
-        TWMPENH.fdsp.Buffer[k, x] := TWMPENH.fbss[k].Process(TWMPENH.fdsp.Buffer[k, x]);
-        TWMPENH.fdsp.Buffer[k, x] := TWMPENH.ftrb[k].Process(TWMPENH.fdsp.Buffer[k, x]);
-        TWMPENH.fdsp.Buffer[k, x] := TWMPENH.frng[k].Process(TWMPENH.fdsp.Buffer[k, x]);
+        TWMPENH.fdsp.Buffer[k, x] := TWMPENH.frng[k].Process(TWMPENH.ftrb[k].Process(TWMPENH.fbss[k].Process(TWMPENH.fdsp.Buffer[k, x])));
       end;
       TWMPENH.ffrm.Info.Size := Round(TWMPENH.ffrm.Info.Size - (TWMPENH.ffrm.Info.Size - 10 * TWMPENH.frng[k].Gain) / (k + 1));
     end;

@@ -49,6 +49,7 @@ object WMPFRM: TWMPFRM
       Top = 25
       Width = 400
       Max = 200
+      Min = -25
       Position = 0
       TickMarks = tmBoth
       TickStyle = tsNone

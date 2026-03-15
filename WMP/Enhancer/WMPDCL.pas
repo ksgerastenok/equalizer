@@ -19,7 +19,7 @@ type
 type
   PInfo = ^TInfo;
   TInfo = record
-    var Size: LongWord;
+    var Size: Integer;
     var Enabled: Boolean;
     var Preamp: Integer;
     var Bands: array[0..20] of Integer;
