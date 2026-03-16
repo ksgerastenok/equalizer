@@ -30,13 +30,20 @@ type
     var AMPLimitTrackBar: TTrackBar;
     var AMPValueLabel: TLabel;
     var AMPValueTrackBar: TTrackBar;
-    var BSSGroupBox: TGroupBox;
-    var BSSAmpLabel: TLabel;
-    var BSSAmpTrackBar: TTrackBar;
-    var BSSFreqLabel: TLabel;
-    var BSSFreqTrackBar: TTrackBar;
-    var BSSWidthLabel: TLabel;
-    var BSSWidthTrackBar: TTrackBar;
+    var HRMGroupBox: TGroupBox;
+    var HRMAmpLabel: TLabel;
+    var HRMAmpTrackBar: TTrackBar;
+    var HRMFreqLabel: TLabel;
+    var HRMFreqTrackBar: TTrackBar;
+    var HRMWidthLabel: TLabel;
+    var HRMWidthTrackBar: TTrackBar;
+    var DRMGroupBox: TGroupBox;
+    var DRMAmpLabel: TLabel;
+    var DRMAmpTrackBar: TTrackBar;
+    var DRMFreqLabel: TLabel;
+    var DRMFreqTrackBar: TTrackBar;
+    var DRMWidthLabel: TLabel;
+    var DRMWidthTrackBar: TTrackBar;
     var TRBGroupBox: TGroupBox;
     var TRBAmpLabel: TLabel;
     var TRBAmpTrackBar: TTrackBar;
@@ -53,9 +60,11 @@ type
   private
     var finfo: TInfo;
     var fbass: TFilter;
+    var fdrum: TFilter;
     var ftrbl: TFilter;
     function getInfo(): PInfo;
     function getBass(): PFilter;
+    function getDrum(): PFilter;
     function getTreble(): PFilter;
   public
     constructor Create(); reintroduce;
@@ -63,6 +72,7 @@ type
     procedure Refresh();
     property Info: PInfo read getInfo;
     property Bass: PFilter read getBass;
+    property Drum: PFilter read getDrum;
     property Treble: PFilter read getTreble;
   end;
 
@@ -96,6 +106,7 @@ begin
         System.ReSet(f, 1);
         System.BlockRead(f, self.finfo, SizeOf(TInfo) * 1);
         System.BlockRead(f, self.fbass, SizeOf(TFilter) * 1);
+        System.BlockRead(f, self.fdrum, SizeOf(TFilter) * 1);
         System.BlockRead(f, self.ftrbl, SizeOf(TFilter) * 1);
         System.Close(f)
       except
@@ -117,6 +128,7 @@ begin
         System.ReWrite(f, 1);
         System.BlockWrite(f, self.finfo, SizeOf(TInfo) * 1);
         System.BlockWrite(f, self.fbass, SizeOf(TFilter) * 1);
+        System.BlockWrite(f, self.fdrum, SizeOf(TFilter) * 1);
         System.BlockWrite(f, self.ftrbl, SizeOf(TFilter) * 1);
         System.Close(f);
       except
@@ -131,9 +143,12 @@ begin
     with (Sender as TForm) do begin
       self.TrackBarLoad(self.AMPLimitTrackBar);
       self.TrackBarLoad(self.AMPValueTrackBar);
-      self.TrackBarLoad(self.BSSAmpTrackBar);
-      self.TrackBarLoad(self.BSSFreqTrackBar);
-      self.TrackBarLoad(self.BSSWidthTrackBar);
+      self.TrackBarLoad(self.HRMAmpTrackBar);
+      self.TrackBarLoad(self.HRMFreqTrackBar);
+      self.TrackBarLoad(self.HRMWidthTrackBar);
+      self.TrackBarLoad(self.DRMAmpTrackBar);
+      self.TrackBarLoad(self.DRMFreqTrackBar);
+      self.TrackBarLoad(self.DRMWidthTrackBar);
       self.TrackBarLoad(self.TRBAmpTrackBar);
       self.TrackBarLoad(self.TRBFreqTrackBar);
       self.TrackBarLoad(self.TRBWidthTrackBar);
@@ -147,9 +162,12 @@ begin
     with (Sender as TForm) do begin
       self.TrackBarSave(self.AMPLimitTrackBar);
       self.TrackBarSave(self.AMPValueTrackBar);
-      self.TrackBarSave(self.BSSAmpTrackBar);
-      self.TrackBarSave(self.BSSFreqTrackBar);
-      self.TrackBarSave(self.BSSWidthTrackBar);
+      self.TrackBarSave(self.HRMAmpTrackBar);
+      self.TrackBarSave(self.HRMFreqTrackBar);
+      self.TrackBarSave(self.HRMWidthTrackBar);
+      self.TrackBarSave(self.DRMAmpTrackBar);
+      self.TrackBarSave(self.DRMFreqTrackBar);
+      self.TrackBarSave(self.DRMWidthTrackBar);
       self.TrackBarSave(self.TRBAmpTrackBar);
       self.TrackBarSave(self.TRBFreqTrackBar);
       self.TrackBarSave(self.TRBWidthTrackBar);
@@ -183,14 +201,26 @@ begin
           Hint := Format('Width: %f Slope', [self.fbass.Width]);
         end;
         31: begin
+          Position := Round(self.fdrum.Amp * 10.0);
+          Hint := Format('Amp: %f dB', [self.fdrum.Amp]);
+        end;
+        32: begin
+          Position := Round(self.fdrum.Freq / 10.0);
+          Hint := Format('Freq: %f Hz', [self.fdrum.Freq]);
+        end;
+        33: begin
+          Position := Round(self.fdrum.Width * 10.0);
+          Hint := Format('Width: %f Slope', [self.fdrum.Width]);
+        end;
+        41: begin
           Position := Round(self.ftrbl.Amp * 10.0);
           Hint := Format('Amp: %f dB', [self.ftrbl.Amp]);
         end;
-        32: begin
+        42: begin
           Position := Round(self.ftrbl.Freq / 100.0);
           Hint := Format('Freq: %f Hz', [self.ftrbl.Freq]);
         end;
-        33: begin
+        43: begin
           Position := Round(self.ftrbl.Width * 10.0);
           Hint := Format('Width: %f Slope', [self.ftrbl.Width]);
         end;
@@ -229,14 +259,26 @@ begin
           Hint := Format('Width: %f Slope', [self.fbass.Width]);
         end;
         31: begin
+          self.fdrum.Amp := Position / 10.0;
+          Hint := Format('Amp: %f dB', [self.fdrum.Amp]);
+        end;
+        32: begin
+          self.fdrum.Freq := Position * 10.0;
+          Hint := Format('Freq: %f Hz', [self.fdrum.Freq]);
+        end;
+        33: begin
+          self.fdrum.Width := Position / 10.0;
+          Hint := Format('Width: %f Slope', [self.fdrum.Width]);
+        end;
+        41: begin
           self.ftrbl.Amp := Position / 10.0;
           Hint := Format('Amp: %f dB', [self.ftrbl.Amp]);
         end;
-        32: begin
+        42: begin
           self.ftrbl.Freq := Position * 100.0;
           Hint := Format('Freq: %f Hz', [self.ftrbl.Freq]);
         end;
-        33: begin
+        43: begin
           self.ftrbl.Width := Position / 10.0;
           Hint := Format('Width: %f Slope', [self.ftrbl.Width]);
         end;
@@ -246,6 +288,9 @@ begin
           self.fbass.Amp := 0.0;
           self.fbass.Freq := 0.0;
           self.fbass.Width := 0.0;
+          self.fdrum.Amp := 0.0;
+          self.fdrum.Freq := 0.0;
+          self.fdrum.Width := 0.0;
           self.ftrbl.Amp := 0.0;
           self.ftrbl.Freq := 0.0;
           self.ftrbl.Width := 0.0;
@@ -269,6 +314,11 @@ end;
 function TWMPFRM.getBass(): PFilter;
 begin
   Result := Addr(self.fbass);
+end;
+
+function TWMPFRM.getDrum(): PFilter;
+begin
+  Result := Addr(self.fdrum);
 end;
 
 function TWMPFRM.getTreble(): PFilter;
