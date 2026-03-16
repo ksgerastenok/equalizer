@@ -1,13 +1,13 @@
 object WMPFRM: TWMPFRM
   Tag = 10
   Left = 215
-  Height = 265
+  Height = 360
   Top = 120
   Width = 450
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Enhancer'
-  ClientHeight = 265
+  ClientHeight = 360
   ClientWidth = 450
   DesignTimePPI = 120
   Font.Height = -13
@@ -49,7 +49,7 @@ object WMPFRM: TWMPFRM
       Top = 25
       Width = 400
       Max = 200
-      Min = -25
+      Min = -70
       Position = 0
       TickMarks = tmBoth
       TickStyle = tsNone
@@ -76,31 +76,30 @@ object WMPFRM: TWMPFRM
       Caption = 'Value'
     end
   end
-  object BSSGroupBox: TGroupBox
+  object HRMGroupBox: TGroupBox
     Tag = 20
     Left = 5
     Height = 95
     Top = 70
     Width = 440
-    Caption = 'Bass'
+    Caption = 'Harmonic Bass'
     ClientHeight = 73
     ClientWidth = 436
     TabOrder = 1
-    object BSSAmpTrackBar: TTrackBar
+    object HRMAmpTrackBar: TTrackBar
       Tag = 21
       Left = 35
       Height = 20
       Top = 0
       Width = 400
       Max = 200
-      Min = -200
       Position = 0
       TickMarks = tmBoth
       TickStyle = tsNone
       OnChange = TrackBarSave
       TabOrder = 0
     end
-    object BSSFreqTrackBar: TTrackBar
+    object HRMFreqTrackBar: TTrackBar
       Tag = 22
       Left = 35
       Height = 20
@@ -113,7 +112,7 @@ object WMPFRM: TWMPFRM
       OnChange = TrackBarSave
       TabOrder = 1
     end
-    object BSSWidthTrackBar: TTrackBar
+    object HRMWidthTrackBar: TTrackBar
       Tag = 23
       Left = 35
       Height = 20
@@ -127,7 +126,7 @@ object WMPFRM: TWMPFRM
       OnChange = TrackBarSave
       TabOrder = 2
     end
-    object BSSAmpLabel: TLabel
+    object HRMAmpLabel: TLabel
       Tag = 21
       Left = 0
       Height = 20
@@ -136,7 +135,7 @@ object WMPFRM: TWMPFRM
       AutoSize = False
       Caption = 'Amp'
     end
-    object BSSFreqLabel: TLabel
+    object HRMFreqLabel: TLabel
       Tag = 22
       Left = 0
       Height = 20
@@ -145,11 +144,11 @@ object WMPFRM: TWMPFRM
       AutoSize = False
       Caption = 'Freq'
     end
-    object BSSWidthLabel: TLabel
+    object HRMWidthLabel: TLabel
       Tag = 23
       Left = 0
       Height = 20
-      Top = 50
+      Top = 48
       Width = 35
       AutoSize = False
       Caption = 'Width'
@@ -159,20 +158,19 @@ object WMPFRM: TWMPFRM
     Tag = 30
     Left = 5
     Height = 95
-    Top = 165
+    Top = 265
     Width = 440
     Caption = 'Treble'
     ClientHeight = 73
     ClientWidth = 436
-    TabOrder = 2
+    TabOrder = 3
     object TRBAmpTrackBar: TTrackBar
-      Tag = 31
+      Tag = 41
       Left = 35
       Height = 20
       Top = 0
       Width = 400
       Max = 200
-      Min = -200
       Position = 0
       TickMarks = tmBoth
       TickStyle = tsNone
@@ -180,7 +178,7 @@ object WMPFRM: TWMPFRM
       TabOrder = 0
     end
     object TRBFreqTrackBar: TTrackBar
-      Tag = 32
+      Tag = 42
       Left = 35
       Height = 20
       Top = 25
@@ -194,7 +192,7 @@ object WMPFRM: TWMPFRM
       TabOrder = 1
     end
     object TRBWidthTrackBar: TTrackBar
-      Tag = 33
+      Tag = 43
       Left = 35
       Height = 20
       Top = 50
@@ -208,7 +206,7 @@ object WMPFRM: TWMPFRM
       TabOrder = 2
     end
     object TRBAmpLabel: TLabel
-      Tag = 31
+      Tag = 41
       Left = 0
       Height = 20
       Top = 0
@@ -217,7 +215,7 @@ object WMPFRM: TWMPFRM
       Caption = 'Amp'
     end
     object TRBFreqLabel: TLabel
-      Tag = 32
+      Tag = 42
       Left = 0
       Height = 20
       Top = 25
@@ -226,13 +224,90 @@ object WMPFRM: TWMPFRM
       Caption = 'Freq'
     end
     object TRBWidthLabel: TLabel
-      Tag = 33
+      Tag = 43
       Left = 0
       Height = 20
       Top = 50
       Width = 35
       AutoSize = False
       Caption = 'Width'
+    end
+  end
+  object DRMGroupBox: TGroupBox
+    Tag = 30
+    Left = 5
+    Height = 95
+    Top = 165
+    Width = 440
+    Caption = 'Drum Bass'
+    ClientHeight = 73
+    ClientWidth = 436
+    TabOrder = 2
+    object DRMAmpLabel: TLabel
+      Tag = 31
+      Left = 0
+      Height = 20
+      Top = 0
+      Width = 35
+      AutoSize = False
+      Caption = 'Amp'
+    end
+    object DRMFreqLabel: TLabel
+      Tag = 32
+      Left = 0
+      Height = 20
+      Top = 25
+      Width = 35
+      AutoSize = False
+      Caption = 'Freq'
+    end
+    object DRMWidthLabel: TLabel
+      Left = 0
+      Height = 20
+      Top = 50
+      Width = 35
+      AutoSize = False
+      Caption = 'Width'
+    end
+    object DRMAmpTrackBar: TTrackBar
+      Tag = 31
+      Left = 35
+      Height = 20
+      Top = 0
+      Width = 400
+      Max = 200
+      Position = 0
+      TickMarks = tmBoth
+      TickStyle = tsNone
+      OnChange = TrackBarSave
+      TabOrder = 0
+    end
+    object DRMFreqTrackBar: TTrackBar
+      Tag = 32
+      Left = 35
+      Height = 20
+      Top = 25
+      Width = 400
+      Max = 100
+      Position = 0
+      TickMarks = tmBoth
+      TickStyle = tsNone
+      OnChange = TrackBarSave
+      TabOrder = 1
+    end
+    object DRMWidthTrackBar: TTrackBar
+      Tag = 33
+      Left = 35
+      Height = 20
+      Top = 50
+      Width = 400
+      Max = 35
+      Min = 1
+      Position = 1
+      TickMarks = tmBoth
+      TickStyle = tsNone
+      OnChange = TrackBarSave
+      TabOrder = 2
     end
   end
 end
