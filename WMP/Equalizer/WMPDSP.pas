@@ -11,12 +11,12 @@ type
   private
     var fdata: TData;
     function clip(const Value: Double): Double;
-    function getBuffer(const Channel: LongWord; const Sample: LongWord): Double;
-    procedure setBuffer(const Channel: LongWord; const Sample: LongWord; const Value: Double);
+    function getData(const Channel: LongWord; const Sample: LongWord): Double;
+    procedure setData(const Channel: LongWord; const Sample: LongWord; const Value: Double);
   public
     procedure Init(const Data: Pointer; const Bits: LongWord; const Rates: LongWord; const Samples: LongWord; const Channels: LongWord);
     procedure Done();
-    property Buffer[const Channel: LongWord; const Sample: LongWord]: Double read getBuffer write setBuffer;
+    property Data[const Channel: LongWord; const Sample: LongWord]: Double read getData write setData;
   end;
 
 implementation
@@ -42,7 +42,7 @@ begin
   Result := Min(Max(-1.0, Value), +1.0);
 end;
 
-function TWMPDSP.getBuffer(const Channel: LongWord; const Sample: LongWord): Double;
+function TWMPDSP.getData(const Channel: LongWord; const Sample: LongWord): Double;
 begin
   case (self.fdata.Bits) of
     8: begin
@@ -60,7 +60,7 @@ begin
   end;
 end;
 
-procedure TWMPDSP.setBuffer(const Channel: LongWord; const Sample: LongWord; const Value: Double);
+procedure TWMPDSP.setData(const Channel: LongWord; const Sample: LongWord; const Value: Double);
 begin
   case (self.fdata.Bits) of
     8: begin
