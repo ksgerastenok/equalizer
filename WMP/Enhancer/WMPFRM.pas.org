@@ -20,9 +20,11 @@ type
   private
     var finfo: TInfo;
     var fbass: TFilter;
+    var fdrum: TFilter;
     var ftrbl: TFilter;
     function getInfo(): PInfo;
     function getBass(): PFilter;
+    function getDrum(): PFilter;
     function getTreble(): PFilter;
     function getComponent(ClassType: TClass; Tag: Integer): TObject;
     procedure Create();
@@ -39,6 +41,7 @@ type
     procedure Refresh();
     property Info: PInfo read getInfo;
     property Bass: PFilter read getBass;
+    property Drum: PFilter read getDrum;
     property Treble: PFilter read getTreble;
   end;
 
@@ -61,6 +64,7 @@ begin
     System.ReSet(f, 1);
     System.BlockRead(f, self.finfo, SizeOf(TInfo) * 1);
     System.BlockRead(f, self.fbass, SizeOf(TFilter) * 1);
+    System.BlockRead(f, self.fdrum, SizeOf(TFilter) * 1);
     System.BlockRead(f, self.ftrbl, SizeOf(TFilter) * 1);
     System.Close(f)
   except
@@ -80,6 +84,7 @@ begin
     System.ReWrite(f, 1);
     System.BlockWrite(f, self.finfo, SizeOf(TInfo) * 1);
     System.BlockWrite(f, self.fbass, SizeOf(TFilter) * 1);
+    System.BlockWrite(f, self.fdrum, SizeOf(TFilter) * 1);
     System.BlockWrite(f, self.ftrbl, SizeOf(TFilter) * 1);
     System.Close(f);
   except
@@ -163,7 +168,7 @@ begin
     Left := 35;
     Width := 400;
     Height := 20;
-    Min := 0;
+    Min := -70;
     Max := 200;
     Enabled := False;
     ShowHint := True;
@@ -174,7 +179,7 @@ begin
   end;
   with (TGroupBox.Create(Application)) do begin
     Font.Size := 8;
-    Caption := 'Bass';
+    Caption := 'Harmonic Bass';
     Tag := 20;
     Top := 70;
     Left := 5;
@@ -201,8 +206,8 @@ begin
     Left := 35;
     Width := 400;
     Height := 20;
-    Min := -200;
-    Max := +200;
+    Min := 0;
+    Max := 200;
     Enabled := True;
     ShowHint := True;
     TickMarks := tmBoth;
@@ -268,7 +273,7 @@ begin
   end;
   with (TGroupBox.Create(Application)) do begin
     Font.Size := 8;
-    Caption := 'Treble';
+    Caption := 'Drum Bass';
     Tag := 30;
     Top := 165;
     Left := 5;
@@ -295,8 +300,8 @@ begin
     Left := 35;
     Width := 400;
     Height := 20;
-    Min := -200;
-    Max := +200;
+    Min := 0;
+    Max := 200;
     Enabled := True;
     ShowHint := True;
     TickMarks := tmBoth;
@@ -323,8 +328,8 @@ begin
     Left := 35;
     Width := 400;
     Height := 20;
-    Min := 10;
-    Max := 200;
+    Min := 0;
+    Max := 100;
     Enabled := True;
     ShowHint := True;
     TickMarks := tmBoth;
@@ -360,10 +365,125 @@ begin
     Parent := self.getComponent(TGroupBox, 30) as TWinControl;
     OnChange := self.TrackBarSave;
   end;
+  with (TGroupBox.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Harmonic Treble';
+    Tag := 40;
+    Top := 265;
+    Left := 5;
+    Width := 440;
+    Height := 95;
+    Parent := self.getComponent(TForm, 10) as TWinControl;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Amp';
+    Tag := 41;
+    Top := 0;
+    Left := 0;
+    Width := 35;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getComponent(TGroupBox, 40) as TWinControl;
+  end;
+  with (TTrackBar.Create(Application)) do begin
+    Font.Size := 8;
+    Orientation := trHorizontal;
+    Tag := 41;
+    Top := 0;
+    Left := 35;
+    Width := 400;
+    Height := 20;
+    Min := 0;
+    Max := 200;
+    Enabled := True;
+    ShowHint := True;
+    TickMarks := tmBoth;
+    TickStyle := tsNone;
+    Parent := self.getComponent(TGroupBox, 40) as TWinControl;
+    OnChange := self.TrackBarSave;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Freq';
+    Tag := 42;
+    Top := 25;
+    Left := 0;
+    Width := 35;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getComponent(TGroupBox, 40) as TWinControl;
+  end;
+  with (TTrackBar.Create(Application)) do begin
+    Font.Size := 8;
+    Orientation := trHorizontal;
+    Tag := 42;
+    Top := 25;
+    Left := 35;
+    Width := 400;
+    Height := 20;
+    Min := 10;
+    Max := 200;
+    Enabled := True;
+    ShowHint := True;
+    TickMarks := tmBoth;
+    TickStyle := tsNone;
+    Parent := self.getComponent(TGroupBox, 40) as TWinControl;
+    OnChange := self.TrackBarSave;
+  end;
+  with (TLabel.Create(Application)) do begin
+    Font.Size := 8;
+    Caption := 'Width';
+    Tag := 43;
+    Top := 50;
+    Left := 0;
+    Width := 35;
+    Height := 20;
+    ShowHint := True;
+    Parent := self.getComponent(TGroupBox, 40) as TWinControl;
+  end;
+  with (TTrackBar.Create(Application)) do begin
+    Font.Size := 8;
+    Orientation := trHorizontal;
+    Tag := 43;
+    Top := 50;
+    Left := 35;
+    Width := 400;
+    Height := 20;
+    Min := 1;
+    Max := 35;
+    Enabled := True;
+    ShowHint := True;
+    TickMarks := tmBoth;
+    TickStyle := tsNone;
+    Parent := self.getComponent(TGroupBox, 40) as TWinControl;
+    OnChange := self.TrackBarSave;
+  end;
 end;
 
 procedure TWMPFRM.Destroy();
 begin
+  with (self.getComponent(TTrackBar, 43) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TLabel, 43) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TTrackBar, 42) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TLabel, 42) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TTrackBar, 41) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TLabel, 41) as TWinControl) do begin
+    Destroy();
+  end;
+  with (self.getComponent(TGroupBox, 40) as TWinControl) do begin
+    Destroy();
+  end;
   with (self.getComponent(TTrackBar, 33) as TWinControl) do begin
     Destroy();
   end;
@@ -439,6 +559,9 @@ begin
       self.TrackBarLoad(self.getComponent(TTrackBar, 31));
       self.TrackBarLoad(self.getComponent(TTrackBar, 32));
       self.TrackBarLoad(self.getComponent(TTrackBar, 33));
+      self.TrackBarLoad(self.getComponent(TTrackBar, 41));
+      self.TrackBarLoad(self.getComponent(TTrackBar, 42));
+      self.TrackBarLoad(self.getComponent(TTrackBar, 43));
     end;
   end;
 end;
@@ -455,6 +578,9 @@ begin
       self.TrackBarSave(self.getComponent(TTrackBar, 31));
       self.TrackBarSave(self.getComponent(TTrackBar, 32));
       self.TrackBarSave(self.getComponent(TTrackBar, 33));
+      self.TrackBarSave(self.getComponent(TTrackBar, 41));
+      self.TrackBarSave(self.getComponent(TTrackBar, 42));
+      self.TrackBarSave(self.getComponent(TTrackBar, 43));
     end;
   end;
 end;
@@ -485,14 +611,26 @@ begin
           Hint := Format('Width: %f Slope', [self.fbass.Width]);
         end;
         31: begin
+          Position := Round(self.fdrum.Amp * 10.0);
+          Hint := Format('Amp: %f dB', [self.fdrum.Amp]);
+        end;
+        32: begin
+          Position := Round(self.fdrum.Freq / 10.0);
+          Hint := Format('Freq: %f Hz', [self.fdrum.Freq]);
+        end;
+        33: begin
+          Position := Round(self.fdrum.Width * 10.0);
+          Hint := Format('Width: %f Slope', [self.fdrum.Width]);
+        end;
+        41: begin
           Position := Round(self.ftrbl.Amp * 10.0);
           Hint := Format('Amp: %f dB', [self.ftrbl.Amp]);
         end;
-        32: begin
+        42: begin
           Position := Round(self.ftrbl.Freq / 100.0);
           Hint := Format('Freq: %f Hz', [self.ftrbl.Freq]);
         end;
-        33: begin
+        43: begin
           Position := Round(self.ftrbl.Width * 10.0);
           Hint := Format('Width: %f Slope', [self.ftrbl.Width]);
         end;
@@ -531,14 +669,26 @@ begin
           Hint := Format('Width: %f Slope', [self.fbass.Width]);
         end;
         31: begin
+          self.fdrum.Amp := Position / 10.0;
+          Hint := Format('Amp: %f dB', [self.fdrum.Amp]);
+        end;
+        32: begin
+          self.fdrum.Freq := Position * 10.0;
+          Hint := Format('Freq: %f Hz', [self.fdrum.Freq]);
+        end;
+        33: begin
+          self.fdrum.Width := Position / 10.0;
+          Hint := Format('Width: %f Slope', [self.fdrum.Width]);
+        end;
+        41: begin
           self.ftrbl.Amp := Position / 10.0;
           Hint := Format('Amp: %f dB', [self.ftrbl.Amp]);
         end;
-        32: begin
+        42: begin
           self.ftrbl.Freq := Position * 100.0;
           Hint := Format('Freq: %f Hz', [self.ftrbl.Freq]);
         end;
-        33: begin
+        43: begin
           self.ftrbl.Width := Position / 10.0;
           Hint := Format('Width: %f Slope', [self.ftrbl.Width]);
         end;
@@ -548,6 +698,9 @@ begin
           self.fbass.Amp := 0.0;
           self.fbass.Freq := 0.0;
           self.fbass.Width := 0.0;
+          self.fdrum.Amp := 0.0;
+          self.fdrum.Freq := 0.0;
+          self.fdrum.Width := 0.0;
           self.ftrbl.Amp := 0.0;
           self.ftrbl.Freq := 0.0;
           self.ftrbl.Width := 0.0;
@@ -585,6 +738,11 @@ end;
 function TWMPFRM.getBass(): PFilter;
 begin
   Result := Addr(self.fbass);
+end;
+
+function TWMPFRM.getDrum(): PFilter;
+begin
+  Result := Addr(self.fdrum);
 end;
 
 function TWMPFRM.getTreble(): PFilter;

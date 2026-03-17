@@ -148,19 +148,97 @@ object WMPFRM: TWMPFRM
       Tag = 23
       Left = 0
       Height = 20
-      Top = 48
+      Top = 50
+      Width = 35
+      AutoSize = False
+      Caption = 'Width'
+    end
+  end
+  object DRMGroupBox: TGroupBox
+    Tag = 30
+    Left = 5
+    Height = 95
+    Top = 165
+    Width = 440
+    Caption = 'Drum Bass'
+    ClientHeight = 73
+    ClientWidth = 436
+    TabOrder = 2
+    object DRMAmpTrackBar: TTrackBar
+      Tag = 31
+      Left = 35
+      Height = 20
+      Top = 0
+      Width = 400
+      Max = 200
+      Position = 0
+      TickMarks = tmBoth
+      TickStyle = tsNone
+      OnChange = TrackBarSave
+      TabOrder = 0
+    end
+    object DRMFreqTrackBar: TTrackBar
+      Tag = 32
+      Left = 35
+      Height = 20
+      Top = 25
+      Width = 400
+      Max = 100
+      Position = 0
+      TickMarks = tmBoth
+      TickStyle = tsNone
+      OnChange = TrackBarSave
+      TabOrder = 1
+    end
+    object DRMWidthTrackBar: TTrackBar
+      Tag = 33
+      Left = 35
+      Height = 20
+      Top = 50
+      Width = 400
+      Max = 35
+      Min = 1
+      Position = 1
+      TickMarks = tmBoth
+      TickStyle = tsNone
+      OnChange = TrackBarSave
+      TabOrder = 2
+    end
+    object DRMAmpLabel: TLabel
+      Tag = 31
+      Left = 0
+      Height = 20
+      Top = 0
+      Width = 35
+      AutoSize = False
+      Caption = 'Amp'
+    end
+    object DRMFreqLabel: TLabel
+      Tag = 32
+      Left = 0
+      Height = 20
+      Top = 25
+      Width = 35
+      AutoSize = False
+      Caption = 'Freq'
+    end
+    object DRMWidthLabel: TLabel
+      Tag = 33
+      Left = 0
+      Height = 20
+      Top = 50
       Width = 35
       AutoSize = False
       Caption = 'Width'
     end
   end
   object TRBGroupBox: TGroupBox
-    Tag = 30
+    Tag = 40
     Left = 5
     Height = 95
     Top = 265
     Width = 440
-    Caption = 'Treble'
+    Caption = 'Harmonic Treble'
     ClientHeight = 73
     ClientWidth = 436
     TabOrder = 3
@@ -231,83 +309,6 @@ object WMPFRM: TWMPFRM
       Width = 35
       AutoSize = False
       Caption = 'Width'
-    end
-  end
-  object DRMGroupBox: TGroupBox
-    Tag = 30
-    Left = 5
-    Height = 95
-    Top = 165
-    Width = 440
-    Caption = 'Drum Bass'
-    ClientHeight = 73
-    ClientWidth = 436
-    TabOrder = 2
-    object DRMAmpLabel: TLabel
-      Tag = 31
-      Left = 0
-      Height = 20
-      Top = 0
-      Width = 35
-      AutoSize = False
-      Caption = 'Amp'
-    end
-    object DRMFreqLabel: TLabel
-      Tag = 32
-      Left = 0
-      Height = 20
-      Top = 25
-      Width = 35
-      AutoSize = False
-      Caption = 'Freq'
-    end
-    object DRMWidthLabel: TLabel
-      Left = 0
-      Height = 20
-      Top = 50
-      Width = 35
-      AutoSize = False
-      Caption = 'Width'
-    end
-    object DRMAmpTrackBar: TTrackBar
-      Tag = 31
-      Left = 35
-      Height = 20
-      Top = 0
-      Width = 400
-      Max = 200
-      Position = 0
-      TickMarks = tmBoth
-      TickStyle = tsNone
-      OnChange = TrackBarSave
-      TabOrder = 0
-    end
-    object DRMFreqTrackBar: TTrackBar
-      Tag = 32
-      Left = 35
-      Height = 20
-      Top = 25
-      Width = 400
-      Max = 100
-      Position = 0
-      TickMarks = tmBoth
-      TickStyle = tsNone
-      OnChange = TrackBarSave
-      TabOrder = 1
-    end
-    object DRMWidthTrackBar: TTrackBar
-      Tag = 33
-      Left = 35
-      Height = 20
-      Top = 50
-      Width = 400
-      Max = 35
-      Min = 1
-      Position = 1
-      TickMarks = tmBoth
-      TickStyle = tsNone
-      OnChange = TrackBarSave
-      TabOrder = 2
     end
   end
 end
