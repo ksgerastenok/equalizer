@@ -168,8 +168,8 @@ begin
     Left := 35;
     Width := 400;
     Height := 20;
-    Min := -70;
-    Max := 200;
+    Min := -200;
+    Max := +200;
     Enabled := False;
     ShowHint := True;
     TickMarks := tmBoth;

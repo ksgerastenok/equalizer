@@ -33,7 +33,6 @@ class function TWMPENH.Plugin(): PPlugin; cdecl;
 begin
   Result := New(PPlugin);
   Result.Description := 'Nullsoft Enhancer v3.51';
-  Result.Instance := $0000;
   Result.Init := TWMPENH.Init;
   Result.Quit := TWMPENH.Quit;
   Result.Modify := TWMPENH.Modify;
@@ -42,7 +41,7 @@ end;
 
 class function TWMPENH.Init(const Module: PPlugin): Integer; cdecl;
 var
-  k: Integer;
+  k: LongWord;
 begin
   for k := 0 to Length(TWMPENH.fhrm) - 1 do begin
     TWMPENH.fhrm[k].Init(ptZDF, ftBass, btSlope, gtDb);
@@ -62,7 +61,7 @@ end;
 
 class procedure TWMPENH.Quit(const Module: PPlugin); cdecl;
 var
-  k: Integer;
+  k: LongWord;
 begin
   for k := 0 to Length(TWMPENH.fhrm) - 1 do begin
     TWMPENH.fhrm[k].Done();
