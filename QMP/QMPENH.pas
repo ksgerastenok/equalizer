@@ -34,7 +34,6 @@ class function TQMPENH.Plugin(): PPlugin; cdecl;
 begin
   Result := New(PPlugin);
   Result.Description := 'Quinnware Enhancer v3.51';
-  Result.Version := $0000;
   Result.Init := TQMPENH.Init;
   Result.Quit := TQMPENH.Quit;
   Result.Modify := TQMPENH.Modify;
@@ -47,7 +46,7 @@ var
 begin
   for k := 0 to Length(TQMPENH.fhrm) - 1 do begin
     TQMPENH.fhrm[k].Init(ptZDF, ftBass, btSlope, gtDb);
-    TQMPENH.fhrm[k].Amp := 3.5;
+    TQMPENH.fhrm[k].Amp := 5.0;
     TQMPENH.fhrm[k].Freq := 350.0;
     TQMPENH.fhrm[k].Width := 1.0;
   end;
@@ -77,15 +76,27 @@ var
   k: LongWord;
 begin
   for k := 0 to Length(TQMPENH.fhrm) - 1 do begin
+    TQMPENH.fhrm[k].Amp := 0.0;
+    TQMPENH.fhrm[k].Freq := 0.0;
+    TQMPENH.fhrm[k].Width := 0.0;
     TQMPENH.fhrm[k].Done();
   end;
   for k := 0 to Length(TQMPENH.fdrm) - 1 do begin
+    TQMPENH.fdrm[k].Amp := 0.0;
+    TQMPENH.fdrm[k].Freq := 0.0;
+    TQMPENH.fdrm[k].Width := 0.0;
     TQMPENH.fdrm[k].Done();
   end;
   for k := 0 to Length(TQMPENH.ftrb) - 1 do begin
+    TQMPENH.ftrb[k].Amp := 0.0;
+    TQMPENH.ftrb[k].Freq := 0.0;
+    TQMPENH.ftrb[k].Width := 0.0;
     TQMPENH.ftrb[k].Done();
   end;
   for k := 0 to Length(TQMPENH.frng) - 1 do begin
+    TQMPENH.frng[k].Amp := 0.0;
+    TQMPENH.frng[k].Freq := 0.0;
+    TQMPENH.frng[k].Width := 0.0;
     TQMPENH.frng[k].Done();
   end;
 end;

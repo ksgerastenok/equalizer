@@ -31,7 +31,6 @@ class function TQMPEQU.Plugin(): PPlugin; cdecl;
 begin
   Result := New(PPlugin);
   Result.Description := 'Quinnware Equalizer v3.51';
-  Result.Version := $0000;
   Result.Init := TQMPEQU.Init;
   Result.Quit := TQMPEQU.Quit;
   Result.Modify := TQMPEQU.Modify;

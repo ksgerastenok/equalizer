@@ -36,8 +36,6 @@ end;
 class function TQMPMOD.Module(): PModule; cdecl;
 begin
   Result := New(PModule);
-  Result.Instance := $0000;
-  Result.Version := $0050;
   Result.Plugin := TQMPMOD.Plugin;
 end;
 
