@@ -32,7 +32,6 @@ class function TWMPEQU.Plugin(): PPlugin; cdecl;
 begin
   Result := New(PPlugin);
   Result.Description := 'Nullsoft Equalizer v3.51';
-  Result.Instance := $0000;
   Result.Init := TWMPEQU.Init;
   Result.Quit := TWMPEQU.Quit;
   Result.Modify := TWMPEQU.Modify;
