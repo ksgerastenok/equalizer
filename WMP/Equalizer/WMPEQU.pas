@@ -45,10 +45,11 @@ var
   k: LongWord;
   i: LongWord;
 begin
+  TWMPEQU.ffrm := TWMPFRM.Create();
   for k := 0 to Length(TWMPEQU.fequ) - 1 do begin
     for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
       TWMPEQU.fequ[k, i].Init(ptZDF, ftEqu, btOctave, gtDb);
-      TWMPEQU.fequ[k, i].Amp := 0.0;
+      TWMPEQU.fequ[k, i].Amp := (TWMPEQU.ffrm.Info.Preamp + TWMPEQU.ffrm.Info.Bands[i]) / 10.0;
       TWMPEQU.fequ[k, i].Freq := 20.0 * Power(2.0, 0.5 * (i + 0.5));
       TWMPEQU.fequ[k, i].Width := 0.5;
     end;
@@ -59,7 +60,6 @@ begin
     TWMPEQU.frng[k].Freq := 640.0;
     TWMPEQU.frng[k].Width := 0.05;
   end;
-  TWMPEQU.ffrm := TWMPFRM.Create();
   Result := 0;
 end;
 
