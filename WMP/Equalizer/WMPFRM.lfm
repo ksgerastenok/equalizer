@@ -470,10 +470,10 @@ object WMPFRM: TWMPFRM
   end
   object PreampLabel: TLabel
     Tag = 100
-    Left = 0
+    Left = 5
     Height = 15
     Top = 0
-    Width = 40
+    Width = 45
     AutoSize = False
     Caption = 'Preamp'
     Font.Height = -12
