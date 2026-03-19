@@ -82,6 +82,7 @@ class function TWMPENH.Modify(const Module: PPlugin; const Data: Pointer; const 
 var
   k: LongWord;
   x: LongWord;
+  v: Double;
 begin
   if (TWMPENH.ffrm.Info.Enabled) then begin
     TWMPENH.fdsp.Init(Data, Bits, Rates, Samples, Channels);
@@ -104,7 +105,12 @@ begin
       TWMPENH.frng[k].Width := 0.05;
       TWMPENH.frng[k].Rate := Rates;
       for x := 0 to Samples - 1 do begin
-        TWMPENH.fdsp.Data[k, x] := TWMPENH.frng[k].Process(TWMPENH.ftrb[k].Process(TWMPENH.fdrm[k].Process(TWMPENH.fhrm[k].Process(TWMPENH.fdsp.Data[k, x]))));
+        v := TWMPENH.fdsp.Data[k, x];
+        v := TWMPENH.fhrm[k].Process(v);
+        v := TWMPENH.fdrm[k].Process(v);
+        v := TWMPENH.ftrb[k].Process(v);
+        v := TWMPENH.frng[k].Process(v);
+        TWMPENH.fdsp.Data[k, x] := v;
       end;
       TWMPENH.ffrm.Info.Size := Round(TWMPENH.ffrm.Info.Size - (TWMPENH.ffrm.Info.Size - 10 * TWMPENH.frng[k].Gain) / (k + 1));
     end;
