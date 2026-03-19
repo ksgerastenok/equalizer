@@ -32,8 +32,8 @@ end;
 class function TWMPMOD.Module(): PModule; cdecl;
 begin
   Result := New(PModule);
-  Result.Description := 'Nullsoft Enhancer Plugin v3.51';
   Result.Version := $0020;
+  Result.Description := 'Nullsoft Enhancer Plugin v3.51';
   Result.Plugin := TWMPMOD.Plugin;
 end;
 
