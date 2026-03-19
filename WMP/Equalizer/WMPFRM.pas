@@ -40,6 +40,7 @@ type
     var Band20Label: TLabel;
     var PreampGroupBox: TGroupBox;
     var PreampTrackBar: TTrackBar;
+    var ValueTrackBar: TTrackBar;
     var MinLabel: TLabel;
     var ZeroLabel: TLabel;
     var MaxLabel: TLabel;
@@ -76,6 +77,7 @@ type
   public
     constructor Create(); reintroduce;
     destructor Destroy(); override;
+    procedure Refresh();
     property Info: PInfo read getInfo;
   end;
 
@@ -139,6 +141,7 @@ begin
   if (Sender is TForm) then begin
     with (Sender as TForm) do begin
       self.TrackBarLoad(self.PreampTrackBar);
+      self.TrackBarLoad(self.ValueTrackBar);
       self.TrackBarLoad(self.Band01TrackBar);
       self.TrackBarLoad(self.Band02TrackBar);
       self.TrackBarLoad(self.Band03TrackBar);
@@ -168,6 +171,7 @@ begin
   if (Sender is TForm) then begin
     with (Sender as TForm) do begin
       self.TrackBarSave(self.PreampTrackBar);
+      self.TrackBarSave(self.ValueTrackBar);
       self.TrackBarSave(self.Band01TrackBar);
       self.TrackBarSave(self.Band02TrackBar);
       self.TrackBarSave(self.Band03TrackBar);
@@ -197,6 +201,10 @@ begin
   if (Sender is TTrackBar) then begin
     with (Sender as TTrackBar) do begin
       case (Tag) of
+        200: begin
+          Position := self.finfo.Size;
+          Hint := Format('Value: %f dB', [self.finfo.Size / 10]);
+        end;
         100: begin
           Position := self.finfo.Preamp;
           Hint := Format('Preamp: %f dB', [self.finfo.Preamp / 10]);
@@ -215,6 +223,10 @@ begin
   if (Sender is TTrackBar) then begin
     with (Sender as TTrackBar) do begin
       case (Tag) of
+        200: begin
+          self.finfo.Size := Position;
+          Hint := Format('Value: %f dB', [self.finfo.Size / 10]);
+        end;
         100: begin
           self.finfo.Preamp := Position;
           Hint := Format('Preamp: %f dB', [self.finfo.Preamp / 10]);
@@ -226,6 +238,11 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TWMPFRM.Refresh();
+begin
+  self.FormShow(self);
 end;
 
 function TWMPFRM.getInfo(): PInfo;

@@ -3,12 +3,12 @@ object WMPFRM: TWMPFRM
   Left = 215
   Height = 290
   Top = 120
-  Width = 570
+  Width = 600
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Equalizer'
   ClientHeight = 290
-  ClientWidth = 570
+  ClientWidth = 600
   DesignTimePPI = 120
   FormStyle = fsStayOnTop
   ParentBiDiMode = False
@@ -23,9 +23,9 @@ object WMPFRM: TWMPFRM
     Left = 5
     Height = 270
     Top = 15
-    Width = 25
+    Width = 45
     ClientHeight = 245
-    ClientWidth = 21
+    ClientWidth = 41
     ParentFont = False
     TabOrder = 0
     object PreampTrackBar: TTrackBar
@@ -47,15 +47,33 @@ object WMPFRM: TWMPFRM
       ShowHint = True
       TabOrder = 0
     end
+    object ValueTrackBar: TTrackBar
+      Tag = 200
+      Left = 22
+      Height = 255
+      Top = -10
+      Width = 20
+      Max = 200
+      Min = -200
+      Orientation = trVertical
+      Position = 0
+      Reversed = True
+      TickMarks = tmBoth
+      TickStyle = tsNone
+      Enabled = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+    end
   end
   object BandGroupBox: TGroupBox
     Tag = 20
-    Left = 70
+    Left = 100
     Height = 270
     Top = 15
-    Width = 525
+    Width = 500
     ClientHeight = 245
-    ClientWidth = 521
+    ClientWidth = 496
     TabOrder = 1
     object Band01TrackBar: TTrackBar
       Left = 0
@@ -419,7 +437,7 @@ object WMPFRM: TWMPFRM
   end
   object ZeroLabel: TLabel
     Tag = 120
-    Left = 40
+    Left = 65
     Height = 15
     Top = 145
     Width = 25
@@ -430,7 +448,7 @@ object WMPFRM: TWMPFRM
   end
   object MaxLabel: TLabel
     Tag = 110
-    Left = 30
+    Left = 55
     Height = 15
     Top = 20
     Width = 40
@@ -441,9 +459,9 @@ object WMPFRM: TWMPFRM
   end
   object MinLabel: TLabel
     Tag = 130
-    Left = 30
+    Left = 55
     Height = 15
-    Top = 265
+    Top = 270
     Width = 40
     AutoSize = False
     Caption = '-20 dB'
@@ -462,7 +480,7 @@ object WMPFRM: TWMPFRM
     ParentFont = False
   end
   object Band01Label: TLabel
-    Left = 70
+    Left = 100
     Height = 15
     Top = 0
     Width = 20
@@ -473,7 +491,7 @@ object WMPFRM: TWMPFRM
   end
   object Band02Label: TLabel
     Tag = 1
-    Left = 95
+    Left = 125
     Height = 15
     Top = 0
     Width = 20
@@ -484,7 +502,7 @@ object WMPFRM: TWMPFRM
   end
   object Band03Label: TLabel
     Tag = 2
-    Left = 120
+    Left = 150
     Height = 15
     Top = 0
     Width = 20
@@ -495,7 +513,7 @@ object WMPFRM: TWMPFRM
   end
   object Band04Label: TLabel
     Tag = 3
-    Left = 145
+    Left = 175
     Height = 15
     Top = 0
     Width = 20
@@ -506,7 +524,7 @@ object WMPFRM: TWMPFRM
   end
   object Band05Label: TLabel
     Tag = 4
-    Left = 170
+    Left = 200
     Height = 15
     Top = 0
     Width = 20
@@ -517,7 +535,7 @@ object WMPFRM: TWMPFRM
   end
   object Band06Label: TLabel
     Tag = 5
-    Left = 195
+    Left = 225
     Height = 15
     Top = 0
     Width = 20
@@ -528,7 +546,7 @@ object WMPFRM: TWMPFRM
   end
   object Band07Label: TLabel
     Tag = 6
-    Left = 220
+    Left = 250
     Height = 15
     Top = 0
     Width = 20
@@ -539,7 +557,7 @@ object WMPFRM: TWMPFRM
   end
   object Band08Label: TLabel
     Tag = 7
-    Left = 245
+    Left = 275
     Height = 15
     Top = 0
     Width = 20
@@ -550,7 +568,7 @@ object WMPFRM: TWMPFRM
   end
   object Band09Label: TLabel
     Tag = 8
-    Left = 270
+    Left = 300
     Height = 15
     Top = 0
     Width = 20
@@ -561,7 +579,7 @@ object WMPFRM: TWMPFRM
   end
   object Band10Label: TLabel
     Tag = 9
-    Left = 295
+    Left = 325
     Height = 15
     Top = 0
     Width = 20
@@ -572,7 +590,7 @@ object WMPFRM: TWMPFRM
   end
   object Band11Label: TLabel
     Tag = 10
-    Left = 320
+    Left = 350
     Height = 15
     Top = 0
     Width = 20
@@ -583,7 +601,7 @@ object WMPFRM: TWMPFRM
   end
   object Band12Label: TLabel
     Tag = 11
-    Left = 345
+    Left = 375
     Height = 15
     Top = 0
     Width = 20
@@ -594,7 +612,7 @@ object WMPFRM: TWMPFRM
   end
   object Band13Label: TLabel
     Tag = 12
-    Left = 370
+    Left = 400
     Height = 15
     Top = 0
     Width = 20
@@ -605,7 +623,7 @@ object WMPFRM: TWMPFRM
   end
   object Band14Label: TLabel
     Tag = 13
-    Left = 395
+    Left = 425
     Height = 15
     Top = 0
     Width = 20
@@ -616,7 +634,7 @@ object WMPFRM: TWMPFRM
   end
   object Band15Label: TLabel
     Tag = 14
-    Left = 420
+    Left = 450
     Height = 15
     Top = 0
     Width = 20
@@ -627,7 +645,7 @@ object WMPFRM: TWMPFRM
   end
   object Band16Label: TLabel
     Tag = 15
-    Left = 445
+    Left = 475
     Height = 15
     Top = 0
     Width = 20
@@ -638,7 +656,7 @@ object WMPFRM: TWMPFRM
   end
   object Band17Label: TLabel
     Tag = 16
-    Left = 470
+    Left = 500
     Height = 15
     Top = 0
     Width = 20
@@ -649,7 +667,7 @@ object WMPFRM: TWMPFRM
   end
   object Band18Label: TLabel
     Tag = 17
-    Left = 495
+    Left = 525
     Height = 15
     Top = 0
     Width = 20
@@ -660,7 +678,7 @@ object WMPFRM: TWMPFRM
   end
   object Band19Label: TLabel
     Tag = 18
-    Left = 520
+    Left = 550
     Height = 15
     Top = 0
     Width = 20
@@ -671,7 +689,7 @@ object WMPFRM: TWMPFRM
   end
   object Band20Label: TLabel
     Tag = 19
-    Left = 545
+    Left = 575
     Height = 15
     Top = 0
     Width = 20

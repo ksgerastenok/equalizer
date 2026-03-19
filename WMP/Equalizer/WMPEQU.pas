@@ -6,6 +6,7 @@ interface
 uses
   WMPDCL,
   WMPBQF,
+  WMPRNG,
   WMPDSP,
   WMPFRM;
 
@@ -14,7 +15,8 @@ type
   private
     class var ffrm: TWMPFRM;
     class var fdsp: TWMPDSP;
-    class var feqz: array[0..4, 0..19] of TWMPBQF;
+    class var fequ: array[0..4] of array[0..19] of TWMPBQF;
+    class var frng: array[0..4] of TWMPRNG;
     class function Init(const Module: PPlugin): Integer; cdecl; static;
     class procedure Quit(const Module: PPlugin); cdecl; static;
     class function Modify(const Module: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl; static;
@@ -43,13 +45,19 @@ var
   k: LongWord;
   i: LongWord;
 begin
-  for k := 0 to Length(TWMPEQU.feqz) - 1 do begin
-    for i := 0 to Length(TWMPEQU.feqz[k]) - 1 do begin
-      TWMPEQU.feqz[k, i].Init(ptZDF, ftEqu, btOctave, gtDb);
-      TWMPEQU.feqz[k, i].Amp := 0.0;
-      TWMPEQU.feqz[k, i].Freq := 20.0 * Power(2.0, 0.5 * (i + 0.5));
-      TWMPEQU.feqz[k, i].Width := 0.5;
+  for k := 0 to Length(TWMPEQU.fequ) - 1 do begin
+    for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
+      TWMPEQU.fequ[k, i].Init(ptZDF, ftEqu, btOctave, gtDb);
+      TWMPEQU.fequ[k, i].Amp := 0.0;
+      TWMPEQU.fequ[k, i].Freq := 20.0 * Power(2.0, 0.5 * (i + 0.5));
+      TWMPEQU.fequ[k, i].Width := 0.5;
     end;
+  end;
+  for k := 0 to Length(TWMPEQU.frng) - 1 do begin
+    TWMPEQU.frng[k].Init(ptZDF, ftBand, btSlope, gtDb);
+    TWMPEQU.frng[k].Amp := 20.0;
+    TWMPEQU.frng[k].Freq := 640.0;
+    TWMPEQU.frng[k].Width := 0.05;
   end;
   TWMPEQU.ffrm := TWMPFRM.Create();
   Result := 0;
@@ -60,34 +68,50 @@ var
   k: LongWord;
   i: LongWord;
 begin
-  for k := 0 to Length(TWMPEQU.feqz) - 1 do begin
-    for i := 0 to Length(TWMPEQU.feqz[k]) - 1 do begin
-      TWMPEQU.feqz[k, i].Amp := 0.0;
-      TWMPEQU.feqz[k, i].Freq := 0.0;
-      TWMPEQU.feqz[k, i].Width := 0.0;
-      TWMPEQU.feqz[k, i].Done();
+  for k := 0 to Length(TWMPEQU.fequ) - 1 do begin
+    for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
+      TWMPEQU.fequ[k, i].Amp := 0.0;
+      TWMPEQU.fequ[k, i].Freq := 0.0;
+      TWMPEQU.fequ[k, i].Width := 0.0;
+      TWMPEQU.fequ[k, i].Done();
     end;
+  end;
+  for k := 0 to Length(TWMPEQU.frng) - 1 do begin
+    TWMPEQU.frng[k].Amp := 0.0;
+    TWMPEQU.frng[k].Freq := 0.0;
+    TWMPEQU.frng[k].Width := 0.0;
+    TWMPEQU.frng[k].Done();
   end;
   TWMPEQU.ffrm.Destroy();
 end;
 
 class function TWMPEQU.Modify(const Module: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl;
 var
-  i: LongWord;
   k: LongWord;
+  i: LongWord;
   x: LongWord;
+  v: Double;
 begin
   if (TWMPEQU.ffrm.Info.Enabled) then begin
     TWMPEQU.fdsp.Init(Data, Bits, Rates, Samples, Channels);
-    for i := 0 to Length(TWMPEQU.ffrm.Info.Bands) - 1 do begin
-      for k := 0 to Channels - 1 do begin
-        TWMPEQU.feqz[k, i].Amp := (TWMPEQU.ffrm.Info.Preamp + TWMPEQU.ffrm.Info.Bands[i]) / 10.0;
-        TWMPEQU.feqz[k, i].Rate := Rates;
-        for x := 0 to Samples - 1 do begin
-          TWMPEQU.fdsp.Data[k, x] := TWMPEQU.feqz[k, i].Process(TWMPEQU.fdsp.Data[k, x]);
-        end;
+    TWMPEQU.ffrm.Info.Size := 0;
+    for k := 0 to Channels - 1 do begin
+      for i := 0 to Length(TWMPEQU.ffrm.Info.Bands) - 1 do begin
+        TWMPEQU.fequ[k, i].Amp := (TWMPEQU.ffrm.Info.Preamp + TWMPEQU.ffrm.Info.Bands[i]) / 10.0;
+        TWMPEQU.fequ[k, i].Rate := Rates;
       end;
+      TWMPEQU.frng[k].Rate := Rates;
+      for x := 0 to Samples - 1 do begin
+        v := TWMPEQU.fdsp.Data[k, x];
+        for i := 0 to Length(TWMPEQU.ffrm.Info.Bands) - 1 do begin
+          v := TWMPEQU.fequ[k, i].Process(v);
+        end;
+        v := TWMPEQU.frng[k].Process(v);
+        TWMPEQU.fdsp.Data[k, x] := v;
+      end;
+      TWMPEQU.ffrm.Info.Size := Round(TWMPEQU.ffrm.Info.Size - (TWMPEQU.ffrm.Info.Size - 10 * TWMPEQU.frng[k].Gain) / (k + 1));
     end;
+    TWMPEQU.ffrm.Refresh();
     TWMPEQU.fdsp.Done();
   end;
   Result := Samples;
