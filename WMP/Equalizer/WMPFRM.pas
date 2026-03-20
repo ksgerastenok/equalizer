@@ -91,16 +91,12 @@ uses
 constructor TWMPFRM.Create();
 begin
   Application.Initialize();
-  self.FormCreate(self);
   inherited Create(Application);
-  self.FormShow(self);
 end;
 
 destructor TWMPFRM.Destroy();
 begin
-  self.FormHide(self);
   inherited Destroy();
-  self.FormDestroy(self);
   Application.Terminate();
 end;
 
