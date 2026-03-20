@@ -46,11 +46,11 @@ var
 begin
   for k := 0 to Length(TQMPEQU.fequ) - 1 do begin
     for i := 0 to Length(TQMPEQU.fequ[k]) - 1 do begin
-      TQMPEQU.fequ[k, i].Init(ptZDF, ftEqu, btOctave, gtDb);
+      TQMPEQU.fequ[k, i].Init(ptSVF, ftEqu, btOctave, gtDb);
     end;
   end;
   for k := 0 to Length(TQMPEQU.frng) - 1 do begin
-    TQMPEQU.frng[k].Init(ptZDF, ftBand, btSlope, gtDb);
+    TQMPEQU.frng[k].Init(ptSVF, ftBand, btSlope, gtDb);
   end;
   Result := 1;
 end;
