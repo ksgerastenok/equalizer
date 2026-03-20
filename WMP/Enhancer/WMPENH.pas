@@ -46,27 +46,15 @@ begin
   TWMPENH.ffrm := TWMPFRM.Create();
   for k := 0 to Length(TWMPENH.fhrm) - 1 do begin
     TWMPENH.fhrm[k].Init(ptZDF, ftBass, btSlope, gtDb);
-    TWMPENH.fhrm[k].Amp := +1.0 * TWMPENH.ffrm.Bass.Amp;
-    TWMPENH.fhrm[k].Freq := +1.0 * TWMPENH.ffrm.Bass.Freq;
-    TWMPENH.fhrm[k].Width := +1.0 * TWMPENH.ffrm.Bass.Width;
   end;
   for k := 0 to Length(TWMPENH.fdrm) - 1 do begin
     TWMPENH.fdrm[k].Init(ptZDF, ftBass, btSlope, gtDb);
-    TWMPENH.fdrm[k].Amp := -1.0 * TWMPENH.ffrm.Drum.Amp;
-    TWMPENH.fdrm[k].Freq := +1.0 * TWMPENH.ffrm.Drum.Freq;
-    TWMPENH.fdrm[k].Width := +1.0 * TWMPENH.ffrm.Drum.Width;
   end;
   for k := 0 to Length(TWMPENH.ftrb) - 1 do begin
     TWMPENH.ftrb[k].Init(ptZDF, ftTreble, btSlope, gtDb);
-    TWMPENH.ftrb[k].Amp := +1.0 * TWMPENH.ffrm.Treble.Amp;
-    TWMPENH.ftrb[k].Freq := +1.0 * TWMPENH.ffrm.Treble.Freq;
-    TWMPENH.ftrb[k].Width := +1.0 * TWMPENH.ffrm.Treble.Width;
   end;
   for k := 0 to Length(TWMPENH.frng) - 1 do begin
     TWMPENH.frng[k].Init(ptZDF, ftBand, btSlope, gtDb);
-    TWMPENH.frng[k].Amp := TWMPENH.ffrm.Info.Preamp / 10;
-    TWMPENH.frng[k].Freq := 640.0;
-    TWMPENH.frng[k].Width := 0.05;
   end;
   Result := 0;
 end;
@@ -76,27 +64,15 @@ var
   k: LongWord;
 begin
   for k := 0 to Length(TWMPENH.fhrm) - 1 do begin
-    TWMPENH.fhrm[k].Amp := 0.0;
-    TWMPENH.fhrm[k].Freq := 0.0;
-    TWMPENH.fhrm[k].Width := 0.0;
     TWMPENH.fhrm[k].Done();
   end;
   for k := 0 to Length(TWMPENH.fdrm) - 1 do begin
-    TWMPENH.fdrm[k].Amp := 0.0;
-    TWMPENH.fdrm[k].Freq := 0.0;
-    TWMPENH.fdrm[k].Width := 0.0;
     TWMPENH.fdrm[k].Done();
   end;
   for k := 0 to Length(TWMPENH.ftrb) - 1 do begin
-    TWMPENH.ftrb[k].Amp := 0.0;
-    TWMPENH.ftrb[k].Freq := 0.0;
-    TWMPENH.ftrb[k].Width := 0.0;
     TWMPENH.ftrb[k].Done();
   end;
   for k := 0 to Length(TWMPENH.frng) - 1 do begin
-    TWMPENH.frng[k].Amp := 0.0;
-    TWMPENH.frng[k].Freq := 0.0;
-    TWMPENH.frng[k].Width := 0.0;
     TWMPENH.frng[k].Done();
   end;
   TWMPENH.ffrm.Destroy();
