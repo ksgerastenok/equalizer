@@ -5,6 +5,7 @@ interface
 
 uses
   QMPBQF,
+  QMPRNG,
   QMPDSP,
   QMPDCL;
 
@@ -13,7 +14,8 @@ type
   private
     class var finfo: TInfo;
     class var fdsp: TQMPDSP;
-    class var feqz: array[0..4, 0..9] of TQMPBQF;
+    class var fequ: array[0..4] of array[0..9] of TQMPBQF;
+    class var frng: array[0..4] of TQMPRNG;
     class function Init(const Flags: Integer): Integer; cdecl; static;
     class procedure Quit(const Flags: Integer); cdecl; static;
     class function Modify(const Data: PData; const Latency: PInteger; const Flags: Integer): Integer; cdecl; static;
@@ -42,13 +44,13 @@ var
   k: LongWord;
   i: LongWord;
 begin
-  for k := 0 to Length(TQMPEQU.feqz) - 1 do begin
-    for i := 0 to Length(TQMPEQU.feqz[k]) - 1 do begin
-      TQMPEQU.feqz[k, i].Init(ptZDF, ftEqu, btOctave, gtDb);
-      TQMPEQU.feqz[k, i].Amp := 0.0;
-      TQMPEQU.feqz[k, i].Freq := 20.0 * Power(2.0, 1.0 * (i + 0.5));
-      TQMPEQU.feqz[k, i].Width := 1.0;
+  for k := 0 to Length(TQMPEQU.fequ) - 1 do begin
+    for i := 0 to Length(TQMPEQU.fequ[k]) - 1 do begin
+      TQMPEQU.fequ[k, i].Init(ptZDF, ftEqu, btOctave, gtDb);
     end;
+  end;
+  for k := 0 to Length(TQMPEQU.frng) - 1 do begin
+    TQMPEQU.frng[k].Init(ptZDF, ftBand, btSlope, gtDb);
   end;
   Result := 1;
 end;
@@ -58,31 +60,43 @@ var
   k: LongWord;
   i: LongWord;
 begin
-  for k := 0 to Length(TQMPEQU.feqz) - 1 do begin
-    for i := 0 to Length(TQMPEQU.feqz[k]) - 1 do begin
-      TQMPEQU.feqz[k, i].Amp := 0.0;
-      TQMPEQU.feqz[k, i].Freq := 0.0;
-      TQMPEQU.feqz[k, i].Width := 0.0;
-      TQMPEQU.feqz[k, i].Done();
+  for k := 0 to Length(TQMPEQU.fequ) - 1 do begin
+    for i := 0 to Length(TQMPEQU.fequ[k]) - 1 do begin
+      TQMPEQU.fequ[k, i].Done();
     end;
+  end;
+  for k := 0 to Length(TQMPEQU.frng) - 1 do begin
+    TQMPEQU.frng[k].Done();
   end;
 end;
 
 class function TQMPEQU.Modify(const Data: PData; const Latency: PInteger; const Flags: Integer): Integer; cdecl;
 var
-  i: LongWord;
   k: LongWord;
+  i: LongWord;
   x: LongWord;
+  v: Double;
 begin
   if (TQMPEQU.finfo.Enabled) then begin
     TQMPEQU.fdsp.Init(Data);
-    for i := 0 to Length(TQMPEQU.finfo.Bands) - 1 do begin
-      for k := 0 to Data.Channels - 1 do begin
-        TQMPEQU.feqz[k, i].Amp := (TQMPEQU.finfo.Preamp + TQMPEQU.finfo.Bands[i]) / 10.0;
-        TQMPEQU.feqz[k, i].Rate := Data.Rates;
-        for x := 0 to Data.Samples - 1 do begin
-          TQMPEQU.fdsp.Data[k, x] := TQMPEQU.feqz[k, i].Process(TQMPEQU.fdsp.Data[k, x]);
+    for k := 0 to Data.Channels - 1 do begin
+      for i := 0 to Length(TQMPEQU.finfo.Bands) - 1 do begin
+        TQMPEQU.fequ[k, i].Amp := (TQMPEQU.finfo.Preamp + TQMPEQU.finfo.Bands[i]) / 10.0;
+        TQMPEQU.fequ[k, i].Freq := 20.0 * Power(2.0, 1.0 * (i + 0.5));
+        TQMPEQU.fequ[k, i].Width := 1.0;
+        TQMPEQU.fequ[k, i].Rate := Data.Rates;
+      end;
+      TQMPEQU.frng[k].Amp := 20.0;
+      TQMPEQU.frng[k].Freq := 640.0;
+      TQMPEQU.frng[k].Width := 0.05;
+      TQMPEQU.frng[k].Rate := Data.Rates;
+      for x := 0 to Data.Samples - 1 do begin
+        v := TQMPEQU.fdsp.Data[k, x];
+        for i := 0 to Length(TQMPEQU.finfo.Bands) - 1 do begin
+          v := TQMPEQU.fequ[k, i].Process(v);
         end;
+        v := TQMPEQU.frng[k].Process(v);
+        TQMPEQU.fdsp.Data[k, x] := v;
       end;
     end;
     TQMPEQU.fdsp.Done();
