@@ -48,11 +48,11 @@ begin
   TWMPEQU.ffrm := TWMPFRM.Create();
   for k := 0 to Length(TWMPEQU.fequ) - 1 do begin
     for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
-      TWMPEQU.fequ[k, i].Init(ptZDF, ftEqu, btOctave, gtDb);
+      TWMPEQU.fequ[k, i].Init(ptSVF, ftEqu, btOctave, gtDb);
     end;
   end;
   for k := 0 to Length(TWMPEQU.frng) - 1 do begin
-    TWMPEQU.frng[k].Init(ptZDF, ftBand, btSlope, gtDb);
+    TWMPEQU.frng[k].Init(ptSVF, ftBand, btSlope, gtDb);
   end;
   Result := 0;
 end;
