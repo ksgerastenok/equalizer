@@ -94,13 +94,13 @@ begin
       TQMPENH.fdrm[k].Freq := 150.0;
       TQMPENH.fdrm[k].Width := 1.0;
       TQMPENH.fdrm[k].Rate := Data.Rates;
-      TQMPENH.ftrb[k].Amp := 14.0;
+      TQMPENH.ftrb[k].Amp := 12.0;
       TQMPENH.ftrb[k].Freq := 3500.0;
       TQMPENH.ftrb[k].Width := 1.0;
       TQMPENH.ftrb[k].Rate := Data.Rates;
       TQMPENH.frng[k].Amp := 20.0;
       TQMPENH.frng[k].Freq := 640.0;
-      TQMPENH.frng[k].Width := 0.05;
+      TQMPENH.frng[k].Width := 0.002;
       TQMPENH.frng[k].Rate := Data.Rates;
       for x := 0 to Data.Samples - 1 do begin
         v := TQMPENH.fdsp.Data[k, x];
