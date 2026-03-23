@@ -92,7 +92,7 @@ begin
       end;
       TWMPEQU.frng[k].Amp := 20.0;
       TWMPEQU.frng[k].Freq := 640.0;
-      TWMPEQU.frng[k].Width := 0.05;
+      TWMPEQU.frng[k].Width := 0.002;
       TWMPEQU.frng[k].Rate := Rates;
       for x := 0 to Samples - 1 do begin
         v := TWMPEQU.fdsp.Data[k, x];
