@@ -1,5 +1,8 @@
 #pragma once
 #include "windows.h"
+#include <array>
+
+using namespace std;
 
 enum BAND {
     btQ,
@@ -14,44 +17,51 @@ enum GAIN {
 };
 
 enum FILTER {
-    ftEqu,
-    ftInv,
     ftLow,
-    ftBand,
-    ftBass,
     ftHigh,
     ftPeak,
+    ftBand,
     ftNotch,
+    ftAll,
+    ftEqu,
+    ftBass,
     ftTreble
 };
 
+enum TRANSFORM {
+    ptSVF,
+    ptZDF
+};
+
 struct QMPBQF {
-    private:
-        BAND band;
-        GAIN gain;
-        FILTER filter;
-        DOUBLE config[2][3];
-        DOUBLE signal[2][3];
-        DOUBLE amp;
-        DOUBLE freq;
-        DOUBLE rate;
-        DOUBLE width;
-        DOUBLE calcOmega();
-        DOUBLE calcAlpha();
-        VOID calcConfig();
-    public:
-        VOID init(FILTER filter, BAND band, GAIN gain);
-        DOUBLE process(DOUBLE input);
-        BAND getBand();
-        GAIN getGain();
-        FILTER getFilter();
-        DOUBLE getAmp();
-        VOID setAmp(DOUBLE value);
-        DOUBLE getFreq();
-        VOID setFreq(DOUBLE value);
-        DOUBLE getRate();
-        VOID setRate(DOUBLE value);
-        DOUBLE getWidth();
-        VOID setWidth(DOUBLE value);
+private:
+    GAIN gain;
+    BAND band;
+    FILTER filter;
+    TRANSFORM transform;
+    array<array<DOUBLE, 3>, 2> config;
+    array<array<DOUBLE, 3>, 2> signal;
+    DOUBLE amp;
+    DOUBLE freq;
+    DOUBLE rate;
+    DOUBLE width;
+    DOUBLE calcAmp();
+    DOUBLE calcOmega();
+    DOUBLE calcAlpha();
+    VOID calcConfig();
+public:
+    VOID init(const TRANSFORM transform, const FILTER filter, const BAND band, const GAIN gain);
+    DOUBLE process(const DOUBLE input);
+    BAND getBand();
+    GAIN getGain();
+    FILTER getFilter();
+    DOUBLE getAmp();
+    VOID setAmp(const DOUBLE value);
+    DOUBLE getFreq();
+    VOID setFreq(const DOUBLE value);
+    DOUBLE getRate();
+    VOID setRate(const DOUBLE value);
+    DOUBLE getWidth();
+    VOID setWidth(const DOUBLE value);
 };
 typedef QMPBQF* PQMPBQF;

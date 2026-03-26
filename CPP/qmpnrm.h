@@ -1,18 +1,31 @@
 #pragma once
+#include "qmpbqf.h"
 #include "qmpdcl.h"
 #include "qmpdsp.h"
 #include "windows.h"
 
+using namespace std;
+
 struct QMPNRM {
 private:
-	static inline BOOLEAN enabled;
-	static inline DOUBLE amp[5];
-	static inline QMPDSP dsp;
-	static CDECL INT init(INT flags);
-	static CDECL VOID quit(INT flags);
-	static CDECL INT modify(PDATA data, PINT latency, INT flags);
-	static CDECL INT update(PINFO info, INT flags);
+	QMPBQF bqf;
+	DOUBLE amp;
+	DOUBLE sqr;
+	DOUBLE avg;
+    DOUBLE calcAmp();
+    DOUBLE calcGain();
+    VOID addSample(const DOUBLE value);
 public:
-	static CDECL PPLUGIN plugin();
+    VOID init(const TRANSFORM transform, const FILTER filter, const BAND band, const GAIN gain);
+    DOUBLE process(const DOUBLE value);
+    DOUBLE getAmp();
+    VOID setAmp(const DOUBLE value);
+    DOUBLE getFreq();
+    VOID setFreq(const DOUBLE value);
+    DOUBLE getRate();
+    VOID setRate(const DOUBLE value);
+    DOUBLE getWidth();
+    VOID setWidth(const DOUBLE value);
+    DOUBLE getGain();
 };
 typedef QMPNRM* PQMPNRM;

@@ -1,14 +1,15 @@
 #pragma once
 #include "qmpdcl.h"
 #include "qmpenh.h"
-#include "math.h"
 #include "windows.h"
+#include "cmath"
+
+using namespace std;
 
 PPLUGIN QMPENH::plugin() {
 	PPLUGIN	result = new PLUGIN();
 
 	result->description = L"Quinnware Enhancer v3.51";
-	result->version = 0x0000;
 	result->init = QMPENH::init;
 	result->quit = QMPENH::quit;
 	result->update = QMPENH::update;
@@ -17,40 +18,63 @@ PPLUGIN QMPENH::plugin() {
 	return result;
 };
 
-INT QMPENH::init(INT flags) {
-	QMPENH::dsp.init();
-	QMPENH::width = pow(10, 7.5 / 20);
-
-	return 1;
-};
-
-VOID QMPENH::quit(INT flags) {
-	return;
-};
-
-INT QMPENH::modify(PDATA data, PINT latency, INT flags) {
-	QMPENH::dsp.setData(data->data);
-	QMPENH::dsp.setBits(data->bits);
-	QMPENH::dsp.setRates(data->rates);
-	QMPENH::dsp.setSamples(data->samples);
-	QMPENH::dsp.setChannels(data->channels);
-	if (QMPENH::enabled) {
-		for (INT x = 0; x != QMPENH::dsp.getSamples(); x += 1) {
-			DOUBLE f = 0;
-			for (INT k = 0; k != QMPENH::dsp.getChannels(); k += 1) {
-				f += (QMPENH::dsp.getBuffer(x, k) - f) / (k + 1);
-			};
-			for (INT k = 0; k != QMPENH::dsp.getChannels(); k += 1) {
-				QMPENH::dsp.setBuffer(x, k, f + QMPENH::width * (QMPENH::dsp.getBuffer(x, k) - f));
-			};
-		};
+INT QMPENH::init(const INT flags) {
+	for (int k = 0; k != QMPENH::nrm.size(); k += 1) {
+		QMPENH::nrm[k].init(ptZDF, ftBand, btSlope, gtDb);
+	};
+	for (int k = 0; k != QMPENH::hrm.size(); k += 1) {
+		QMPENH::hrm[k].init(ptZDF, ftBass, btSlope, gtDb);
+	};
+	for (int k = 0; k != QMPENH::drm.size(); k += 1) {
+		QMPENH::drm[k].init(ptZDF, ftBass, btSlope, gtDb);
+	};
+	for (int k = 0; k != QMPENH::trb.size(); k += 1) {
+		QMPENH::trb[k].init(ptZDF, ftTreble, btSlope, gtDb);
 	};
 
 	return 1;
 };
 
-INT QMPENH::update(PINFO info, INT flags) {
-	QMPENH::enabled = info->enabled;
+VOID QMPENH::quit(const INT flags) {
+	return;
+};
+
+INT QMPENH::modify(const PDATA data, const PINT latency, const INT flags) {
+    if (QMPENH::info.enabled) {
+        QMPENH::dsp.init(data);
+        for (int k = 0; k != data->channels; k += 1) {
+            QMPENH::hrm[k].setAmp(3.5);
+            QMPENH::hrm[k].setFreq(150.0);
+            QMPENH::hrm[k].setWidth(1.0);
+            QMPENH::hrm[k].setRate(data->rates);
+            QMPENH::drm[k].setAmp(-3.5);
+            QMPENH::drm[k].setFreq(150.0);
+            QMPENH::drm[k].setWidth(1.0);
+            QMPENH::drm[k].setRate(data->rates);
+            QMPENH::trb[k].setAmp(12.0);
+            QMPENH::trb[k].setFreq(3500.0);
+            QMPENH::trb[k].setWidth(1.0);
+            QMPENH::trb[k].setRate(data->rates);
+            QMPENH::nrm[k].setAmp(20.0);
+            QMPENH::nrm[k].setFreq(640.0);
+            QMPENH::nrm[k].setWidth(0.002);
+            QMPENH::nrm[k].setRate(data->rates);
+            for (int x = 0; x != data->samples; x += 1) {
+                DOUBLE v = QMPENH::dsp.getData(k, x);
+                v = QMPENH::hrm[k].process(v);
+                v = QMPENH::drm[k].process(v);
+                v = QMPENH::trb[k].process(v);
+                v = QMPENH::nrm[k].process(v);
+                QMPENH::dsp.setData(k, x, v);
+            };
+        };
+    };
+
+	return 1;
+};
+
+INT QMPENH::update(const PINFO info, const INT flags) {
+	QMPENH::info = *info;
 
 	return 1;
 };

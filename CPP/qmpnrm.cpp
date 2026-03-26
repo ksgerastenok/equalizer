@@ -1,61 +1,85 @@
 #pragma once
 #include "qmpdcl.h"
 #include "qmpnrm.h"
-#include "math.h"
 #include "windows.h"
+#include "cmath"
 
-PPLUGIN QMPNRM::plugin() {
-	PPLUGIN	result = new PLUGIN();
+using namespace std;
 
-	result->description = L"Quinnware Normalizer v3.51";
-	result->version = 0x0000;
-	result->init = QMPNRM::init;
-	result->quit = QMPNRM::quit;
-	result->update = QMPNRM::update;
-	result->modify = QMPNRM::modify;
-
-	return result;
+VOID QMPNRM::init(const TRANSFORM transform, const FILTER filter, const BAND band, const GAIN gain) {
+	this->bqf.init(transform, filter, band, gain);
 };
 
-INT QMPNRM::init(INT flags) {
-	QMPNRM::dsp.init();
-	for (INT k = 0; k != 5; k += 1) {
-		QMPNRM::amp[k] = 1.0;
+DOUBLE QMPNRM::getAmp() {
+	return this->amp;
+};
+
+VOID QMPNRM::setAmp(const DOUBLE value) {
+	this->amp = value;
+};
+
+DOUBLE QMPNRM::getFreq() {
+	return this->bqf.getFreq();
+};
+
+VOID QMPNRM::setFreq(const DOUBLE value) {
+	this->bqf.setFreq(value);
+};
+
+DOUBLE QMPNRM::getRate() {
+	return this->bqf.getRate();
+};
+
+VOID QMPNRM::setRate(const DOUBLE value) {
+	this->bqf.setRate(value);
+};
+
+DOUBLE QMPNRM::getWidth() {
+	return this->bqf.getWidth();
+};
+
+VOID QMPNRM::setWidth(const DOUBLE value) {
+	this->bqf.setWidth(value);
+};
+
+DOUBLE QMPNRM::getGain() {
+	switch (this->bqf.getGain()) {
+	case gtDb:
+		return 20.0 * log10(this->calcGain());
+	case gtAmp:
+		return this->calcGain();
+	default:
+		return 0.0;
 	};
-
-	return 1;
 };
 
-VOID QMPNRM::quit(INT flags) {
-	return;
-};
-
-INT QMPNRM::modify(PDATA data, PINT latency, INT flags) {
-	QMPNRM::dsp.setData(data->data);
-	QMPNRM::dsp.setBits(data->bits);
-	QMPNRM::dsp.setRates(data->rates);
-	QMPNRM::dsp.setSamples(data->samples);
-	QMPNRM::dsp.setChannels(data->channels);
-	if (QMPNRM::enabled) {
-		for (INT k = 0; k != QMPNRM::dsp.getChannels(); k += 1) {
-			DOUBLE f = 1.0;
-			for (INT x = 0; x != QMPNRM::dsp.getSamples(); x += 1) {
-				f /= pow(1.0 + ((4.5 * pow(f * QMPNRM::dsp.getBuffer(x, k), 2.0) - 1.0) / (x + 1)), 0.5);
-			};
-			DOUBLE b = min(max(1.0, f), 10.0);
-			DOUBLE a = min(max(1.0, QMPNRM::amp[k]), 10.0);
-			for (INT x = 0; x != QMPNRM::dsp.getSamples(); x += 1) {
-                                QMPNRM::amp[k] = (b - a) * min(max(0.0, x / (((b <= a) ? 0.5 : 25.0) * QMPNRM::dsp.getRates())), 1.0) + a;
-				QMPNRM::dsp.setBuffer(x, k, QMPNRM::amp[k] * QMPNRM::dsp.getBuffer(x, k));
-			};
-		};
+DOUBLE QMPNRM::calcAmp() {
+	switch (this->bqf.getGain()) {
+	case gtDb:
+		return pow(10.0, this->amp / 20.0);
+	case gtAmp:
+		return this->amp;
+	default:
+		return 0.0;
 	};
-
-	return 1;
 };
 
-INT QMPNRM::update(PINFO info, INT flags) {
-	QMPNRM::enabled = info->enabled;
+DOUBLE QMPNRM::calcGain() {
+	return fmin(fmax(1.0 / this->calcAmp(), 1.0 / (this->avg + 3.0 * sqrt(this->sqr - pow(this->avg, 2.0)))), this->calcAmp());
+};
 
-	return 1;
+VOID QMPNRM::addSample(const DOUBLE value) {
+	if (this->calcGain() * abs(value) < 1.0) {
+		this->sqr -= (this->sqr - pow(value, 2.0)) / (5.0 * this->bqf.getRate());
+		this->avg -= (this->avg - abs(value))      / (5.0 * this->bqf.getRate());
+	}
+	else {
+		this->sqr -= (this->sqr - pow(value, 2.0)) / (0.5 * this->bqf.getRate());
+		this->avg -= (this->avg - abs(value))      / (0.5 * this->bqf.getRate());
+	};
+};
+
+DOUBLE QMPNRM::process(const DOUBLE value) {
+	this->addSample(this->bqf.process(value));
+	return this->calcGain() * value;
 };
