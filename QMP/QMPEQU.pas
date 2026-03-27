@@ -50,7 +50,7 @@ begin
     end;
   end;
   for k := 0 to Length(TQMPEQU.frng) - 1 do begin
-    TQMPEQU.frng[k].Init(ptSVF, ftBand, btSlope, gtDb);
+    TQMPEQU.frng[k].Init(ptSVF, ftBand, btOctave, gtDb);
   end;
   Result := 1;
 end;
@@ -88,7 +88,7 @@ begin
       end;
       TQMPEQU.frng[k].Amp := 20.0;
       TQMPEQU.frng[k].Freq := 640.0;
-      TQMPEQU.frng[k].Width := 0.002;
+      TQMPEQU.frng[k].Width := 10.0;
       TQMPEQU.frng[k].Rate := Data.Rates;
       for x := 0 to Data.Samples - 1 do begin
         v := TQMPEQU.fdsp.Data[k, x];
