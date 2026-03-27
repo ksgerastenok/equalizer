@@ -52,7 +52,7 @@ begin
     end;
   end;
   for k := 0 to Length(TWMPEQU.frng) - 1 do begin
-    TWMPEQU.frng[k].Init(ptSVF, ftBand, btSlope, gtDb);
+    TWMPEQU.frng[k].Init(ptSVF, ftBand, btOctave, gtDb);
   end;
   Result := 0;
 end;
@@ -92,7 +92,7 @@ begin
       end;
       TWMPEQU.frng[k].Amp := 20.0;
       TWMPEQU.frng[k].Freq := 640.0;
-      TWMPEQU.frng[k].Width := 0.002;
+      TWMPEQU.frng[k].Width := 10.0;
       TWMPEQU.frng[k].Rate := Rates;
       for x := 0 to Samples - 1 do begin
         v := TWMPEQU.fdsp.Data[k, x];
