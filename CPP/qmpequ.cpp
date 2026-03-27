@@ -26,7 +26,7 @@ INT QMPEQU::init(const INT flags) {
         };
     };
     for (INT k = 0; k != QMPEQU::nrm.size(); k += 1) {
-        QMPEQU::nrm[k].init(ptSVF, ftBand, btSlope, gtDb);
+        QMPEQU::nrm[k].init(ptSVF, ftBand, btOctave, gtDb);
     };
 
     return 1;
@@ -48,7 +48,7 @@ INT QMPEQU::modify(const PDATA data, const PINT latency, const INT flags) {
             };
             QMPEQU::nrm[k].setAmp(20.0);
             QMPEQU::nrm[k].setFreq(640.0);
-            QMPEQU::nrm[k].setWidth(0.002);
+            QMPEQU::nrm[k].setWidth(10.0);
             QMPEQU::nrm[k].setRate(data->rates);
             for (int x = 0; x != data->samples; x += 1) {
                 DOUBLE v = QMPEQU::dsp.getData(k, x);
