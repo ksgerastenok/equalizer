@@ -45,16 +45,16 @@ var
 begin
   TWMPENH.ffrm := TWMPFRM.Create();
   for k := 0 to Length(TWMPENH.fhrm) - 1 do begin
-    TWMPENH.fhrm[k].Init(ptZDF, ftBass, btSlope, gtDb);
+    TWMPENH.fhrm[k].Init(ptLAT, ftBass, btSlope, gtDb);
   end;
   for k := 0 to Length(TWMPENH.fdrm) - 1 do begin
-    TWMPENH.fdrm[k].Init(ptZDF, ftBass, btSlope, gtDb);
+    TWMPENH.fdrm[k].Init(ptLAT, ftBass, btSlope, gtDb);
   end;
   for k := 0 to Length(TWMPENH.ftrb) - 1 do begin
-    TWMPENH.ftrb[k].Init(ptZDF, ftTreble, btSlope, gtDb);
+    TWMPENH.ftrb[k].Init(ptLAT, ftTreble, btSlope, gtDb);
   end;
   for k := 0 to Length(TWMPENH.frng) - 1 do begin
-    TWMPENH.frng[k].Init(ptZDF, ftBand, btSlope, gtDb);
+    TWMPENH.frng[k].Init(ptLAT, ftBand, btSlope, gtDb);
   end;
   Result := 0;
 end;
@@ -88,17 +88,17 @@ begin
     TWMPENH.fdsp.Init(Data, Bits, Rates, Samples, Channels);
     TWMPENH.ffrm.Info.Size := 0;
     for k := 0 to Channels - 1 do begin
-      TWMPENH.fhrm[k].Amp := +1.0 * TWMPENH.ffrm.Bass.Amp;
-      TWMPENH.fhrm[k].Freq := +1.0 * TWMPENH.ffrm.Bass.Freq;
-      TWMPENH.fhrm[k].Width := +1.0 * TWMPENH.ffrm.Bass.Width;
+      TWMPENH.fhrm[k].Amp := TWMPENH.ffrm.Bass.Amp;
+      TWMPENH.fhrm[k].Freq := TWMPENH.ffrm.Bass.Freq;
+      TWMPENH.fhrm[k].Width := TWMPENH.ffrm.Bass.Width;
       TWMPENH.fhrm[k].Rate := Rates;
-      TWMPENH.fdrm[k].Amp := -1.0 * TWMPENH.ffrm.Drum.Amp;
-      TWMPENH.fdrm[k].Freq := +1.0 * TWMPENH.ffrm.Drum.Freq;
-      TWMPENH.fdrm[k].Width := +1.0 * TWMPENH.ffrm.Drum.Width;
+      TWMPENH.fdrm[k].Amp := TWMPENH.ffrm.Drum.Amp;
+      TWMPENH.fdrm[k].Freq := TWMPENH.ffrm.Drum.Freq;
+      TWMPENH.fdrm[k].Width := TWMPENH.ffrm.Drum.Width;
       TWMPENH.fdrm[k].Rate := Rates;
-      TWMPENH.ftrb[k].Amp := +1.0 * TWMPENH.ffrm.Treble.Amp;
-      TWMPENH.ftrb[k].Freq := +1.0 * TWMPENH.ffrm.Treble.Freq;
-      TWMPENH.ftrb[k].Width := +1.0 * TWMPENH.ffrm.Treble.Width;
+      TWMPENH.ftrb[k].Amp := TWMPENH.ffrm.Treble.Amp;
+      TWMPENH.ftrb[k].Freq := TWMPENH.ffrm.Treble.Freq;
+      TWMPENH.ftrb[k].Width := TWMPENH.ffrm.Treble.Width;
       TWMPENH.ftrb[k].Rate := Rates;
       TWMPENH.frng[k].Amp := TWMPENH.ffrm.Info.Preamp / 10;
       TWMPENH.frng[k].Freq := 640.0;
