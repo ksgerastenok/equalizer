@@ -45,16 +45,16 @@ var
   k: LongWord;
 begin
   for k := 0 to Length(TQMPENH.fhrm) - 1 do begin
-    TQMPENH.fhrm[k].Init(ptZDF, ftBass, btSlope, gtDb);
+    TQMPENH.fhrm[k].Init(ptLAT, ftBass, btSlope, gtDb);
   end;
   for k := 0 to Length(TQMPENH.fdrm) - 1 do begin
-    TQMPENH.fdrm[k].Init(ptZDF, ftBass, btSlope, gtDb);
+    TQMPENH.fdrm[k].Init(ptLAT, ftBass, btSlope, gtDb);
   end;
   for k := 0 to Length(TQMPENH.ftrb) - 1 do begin
-    TQMPENH.ftrb[k].Init(ptZDF, ftTreble, btSlope, gtDb);
+    TQMPENH.ftrb[k].Init(ptLAT, ftTreble, btSlope, gtDb);
   end;
   for k := 0 to Length(TQMPENH.frng) - 1 do begin
-    TQMPENH.frng[k].Init(ptZDF, ftBand, btSlope, gtDb);
+    TQMPENH.frng[k].Init(ptLAT, ftBand, btSlope, gtDb);
   end;
   Result := 1;
 end;
@@ -86,16 +86,16 @@ begin
   if (TQMPENH.finfo.Enabled) then begin
     TQMPENH.fdsp.Init(Data);
     for k := 0 to Data.Channels - 1 do begin
-      TQMPENH.fhrm[k].Amp := 3.5;
-      TQMPENH.fhrm[k].Freq := 150.0;
+      TQMPENH.fhrm[k].Amp := 5.0;
+      TQMPENH.fhrm[k].Freq := 70.0;
       TQMPENH.fhrm[k].Width := 1.0;
       TQMPENH.fhrm[k].Rate := Data.Rates;
-      TQMPENH.fdrm[k].Amp := -3.5;
+      TQMPENH.fdrm[k].Amp := 3.5;
       TQMPENH.fdrm[k].Freq := 150.0;
       TQMPENH.fdrm[k].Width := 1.0;
       TQMPENH.fdrm[k].Rate := Data.Rates;
       TQMPENH.ftrb[k].Amp := 12.0;
-      TQMPENH.ftrb[k].Freq := 3500.0;
+      TQMPENH.ftrb[k].Freq := 3000.0;
       TQMPENH.ftrb[k].Width := 1.0;
       TQMPENH.ftrb[k].Rate := Data.Rates;
       TQMPENH.frng[k].Amp := 20.0;
