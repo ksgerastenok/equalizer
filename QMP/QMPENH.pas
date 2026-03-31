@@ -95,7 +95,7 @@ begin
       TQMPENH.fdrm[k].Width := 1.0;
       TQMPENH.fdrm[k].Rate := Data.Rates;
       TQMPENH.ftrb[k].Amp := 12.0;
-      TQMPENH.ftrb[k].Freq := 3000.0;
+      TQMPENH.ftrb[k].Freq := 2500.0;
       TQMPENH.ftrb[k].Width := 1.0;
       TQMPENH.ftrb[k].Rate := Data.Rates;
       TQMPENH.frng[k].Amp := 20.0;
