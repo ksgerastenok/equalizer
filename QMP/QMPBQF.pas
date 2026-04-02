@@ -102,7 +102,7 @@ begin
       Result := 1.0 / self.fwidth;
     end;
     btOctave: begin
-      Result := 2.0 * Sinh((Ln(2.0) / 2.0) * (self.fwidth /  1.0) / (Sin(self.calcOmega()) / self.calcOmega()));
+      Result := 2.0 * Sinh((Ln(2.0) / 2.0) * self.fwidth / (Sin(self.calcOmega()) / self.calcOmega()));
     end;
     btSlope: begin
       Result := Sqrt(Sqrt(self.calcAmp()) * (1.0 / self.calcAmp() + 1.0) * (1.0 / self.fwidth - 1.0) + 2.0);
