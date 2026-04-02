@@ -15,7 +15,7 @@ public:
     DWORD getRates();
     DWORD getSamples();
     DWORD getChannels();
-    DOUBLE getData(const DWORD channel, const DWORD sample);
-    VOID setData(const DWORD channel, const DWORD sample, const DOUBLE value);
+    DOUBLE getBuffer(const INT channel, const INT sample);
+    VOID setBuffer(const INT channel, const INT sample, const DOUBLE value);
 };
 typedef QMPDSP* PQMPDSP;

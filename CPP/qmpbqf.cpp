@@ -39,13 +39,10 @@ DOUBLE QMPBQF::calcAlpha() {
         return (1.0 / this->width);
         break;
     case btSlope:
-        return pow((this->calcAmp() + 1.0 / this->calcAmp()) * (1.0 / this->width - 1.0) + 2.0, 0.5);
+        return pow(pow(this->calcAmp(), 0.5) * (1.0 / this->calcAmp() + 1.0) * (1.0 / this->width - 1.0) + 2.0, 0.5);
         break;
     case btOctave:
-        return 2.0 * sinh((numbers::ln2 / 2.0) * (this->width / 1.0) / (sin(this->calcOmega()) / this->calcOmega()));
-        break;
-    case btSemitone:
-        return 2.0 * sinh((numbers::ln2 / 2.0) * (this->width / 12.0) / (sin(this->calcOmega()) / this->calcOmega()));
+        return 2.0 * sinh((numbers::ln2 / 2.0) * this->width / (sin(this->calcOmega()) / this->calcOmega()));
         break;
     default:
         return 0.0;
@@ -55,7 +52,7 @@ DOUBLE QMPBQF::calcAlpha() {
 
 VOID QMPBQF::calcConfig() {
     switch (this->transform) {
-    case ptSVF:
+    case ptLAT:
         switch (this->filter) {
         case ftLow:
             this->config[0][2] = 1.0 * ((1.0 - cos(this->calcOmega())) / 2.0);
@@ -139,109 +136,163 @@ VOID QMPBQF::calcConfig() {
             break;
         };
         break;
+    case ptSVF:
+        switch (this->filter) {
+        case ftLow:
+            this->config[0][2] = 1.0 * pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[0][1] = +2.0 * pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[0][0] = 1.0 * pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            break;
+        case ftHigh:
+            this->config[0][2] = 1.0;
+            this->config[0][1] = -2.0;
+            this->config[0][0] = 1.0;
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            break;
+        case ftPeak:
+            this->config[0][2] = 0.0 - tan(this->calcOmega() / 2.0);
+            this->config[0][1] = 0.0;
+            this->config[0][0] = 0.0 + tan(this->calcOmega() / 2.0);
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            break;
+        case ftBand:
+            this->config[0][2] = 0.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha();
+            this->config[0][1] = 0.0;
+            this->config[0][0] = 0.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha();
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            break;
+        case ftNotch:
+            this->config[0][2] = 1.0 + (pow(tan(this->calcOmega() / 2.0), 2.0));
+            this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
+            this->config[0][0] = 1.0 + (pow(tan(this->calcOmega() / 2.0), 2.0));
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            break;
+        case ftAll:
+            this->config[0][2] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
+            this->config[0][0] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            break;
+        case ftEqu:
+            this->config[0][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() * this->calcAmp() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
+            this->config[0][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() * this->calcAmp() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() *       1.0       + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() *       1.0       + pow(tan(this->calcOmega() / 2.0), 2.0);
+            break;
+        case ftBass:
+            this->config[0][2] = (      1.0       - tan(this->calcOmega() / 2.0) * this->calcAlpha() *            1.0            + pow(tan(this->calcOmega() / 2.0), 2.0)) /       1.0      ;
+            this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) -       1.0      ) /       1.0      ;
+            this->config[0][0] = (      1.0       + tan(this->calcOmega() / 2.0) * this->calcAlpha() *            1.0            + pow(tan(this->calcOmega() / 2.0), 2.0)) /       1.0      ;
+            this->config[1][2] = (this->calcAmp() - tan(this->calcOmega() / 2.0) * this->calcAlpha() * pow(this->calcAmp(), 0.5) + pow(tan(this->calcOmega() / 2.0), 2.0)) / this->calcAmp();
+            this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - this->calcAmp()) / this->calcAmp();
+            this->config[1][0] = (this->calcAmp() + tan(this->calcOmega() / 2.0) * this->calcAlpha() * pow(this->calcAmp(), 0.5) + pow(tan(this->calcOmega() / 2.0), 2.0)) / this->calcAmp();
+            break;
+        case ftTreble:
+            this->config[0][2] = (this->calcAmp() - tan(this->calcOmega() / 2.0) * this->calcAlpha() * pow(this->calcAmp(), 0.5) + pow(tan(this->calcOmega() / 2.0), 2.0));
+            this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - this->calcAmp());
+            this->config[0][0] = (this->calcAmp() + tan(this->calcOmega() / 2.0) * this->calcAlpha() * pow(this->calcAmp(), 0.5) + pow(tan(this->calcOmega() / 2.0), 2.0));
+            this->config[1][2] = (      1.0       - tan(this->calcOmega() / 2.0) * this->calcAlpha() *            1.0            + pow(tan(this->calcOmega() / 2.0), 2.0));
+            this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) -       1.0      );
+            this->config[1][0] = (      1.0       + tan(this->calcOmega() / 2.0) * this->calcAlpha() *            1.0            + pow(tan(this->calcOmega() / 2.0), 2.0));
+            break;
+        default:
+            this->config[0][2] = 0.0;
+            this->config[0][1] = 0.0;
+            this->config[0][0] = 0.0;
+            this->config[1][2] = 0.0;
+            this->config[1][1] = 0.0;
+            this->config[1][0] = 0.0;
+            break;
+        };
+        break;
     case ptZDF:
         switch (this->filter) {
         case ftLow:
             this->config[0][2] = 1.0 * pow(tan(this->calcOmega() / 2.0), 2.0);
             this->config[0][1] = +2.0 * pow(tan(this->calcOmega() / 2.0), 2.0);
             this->config[0][0] = 1.0 * pow(tan(this->calcOmega() / 2.0), 2.0);
-            this->config[1][2] = 1.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
             this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-            this->config[1][0] = 1.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
             break;
         case ftHigh:
             this->config[0][2] = 1.0;
             this->config[0][1] = -2.0;
             this->config[0][0] = 1.0;
-            this->config[1][2] = 1.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
             this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-            this->config[1][0] = 1.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
             break;
         case ftPeak:
             this->config[0][2] = 0.0 - tan(this->calcOmega() / 2.0);
             this->config[0][1] = 0.0;
             this->config[0][0] = 0.0 + tan(this->calcOmega() / 2.0);
-            this->config[1][2] = 1.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
             this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-            this->config[1][0] = 1.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
             break;
         case ftBand:
-            this->config[0][2] = 0.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0);
+            this->config[0][2] = 0.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha();
             this->config[0][1] = 0.0;
-            this->config[0][0] = 0.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0);
-            this->config[1][2] = 1.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[0][0] = 0.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha();
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
             this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-            this->config[1][0] = 1.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
             break;
         case ftNotch:
             this->config[0][2] = 1.0 + (pow(tan(this->calcOmega() / 2.0), 2.0));
             this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
             this->config[0][0] = 1.0 + (pow(tan(this->calcOmega() / 2.0), 2.0));
-            this->config[1][2] = 1.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
             this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-            this->config[1][0] = 1.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
             break;
         case ftAll:
-            this->config[0][2] = 1.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[0][2] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
             this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-            this->config[0][0] = 1.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-            this->config[1][2] = 1.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[0][0] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
             this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-            this->config[1][0] = 1.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() + pow(tan(this->calcOmega() / 2.0), 2.0);
             break;
         case ftEqu:
-            if (this->calcAmp() <= 1.0) {
-                this->config[0][2] = 1.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-                this->config[0][0] = 1.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[1][2] = 1.0 - this->calcAmp() * this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-                this->config[1][0] = 1.0 + this->calcAmp() * this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-            }
-            else {
-                this->config[0][2] = 1.0 - this->calcAmp() * this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-                this->config[0][0] = 1.0 + this->calcAmp() * this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[1][2] = 1.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-                this->config[1][0] = 1.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-            };
+            this->config[0][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() /       1.0       + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
+            this->config[0][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() /       1.0       + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][2] = 1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() / this->calcAmp() + pow(tan(this->calcOmega() / 2.0), 2.0);
+            this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
+            this->config[1][0] = 1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() / this->calcAmp() + pow(tan(this->calcOmega() / 2.0), 2.0);
             break;
         case ftBass:
-            if (this->calcAmp() <= 1.0) {
-                this->config[0][2] = 1.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-                this->config[0][0] = 1.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[1][2] = 1.0 - pow(this->calcAmp(), 0.5) * this->calcAlpha() * tan(this->calcOmega() / 2.0) + this->calcAmp() * pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[1][1] = +2.0 * (this->calcAmp() * pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-                this->config[1][0] = 1.0 + pow(this->calcAmp(), 0.5) * this->calcAlpha() * tan(this->calcOmega() / 2.0) + this->calcAmp() * pow(tan(this->calcOmega() / 2.0), 2.0);
-            }
-            else {
-                this->config[0][2] = 1.0 - pow(this->calcAmp(), 0.5) * this->calcAlpha() * tan(this->calcOmega() / 2.0) + this->calcAmp() * pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[0][1] = +2.0 * (this->calcAmp() * pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-                this->config[0][0] = 1.0 + pow(this->calcAmp(), 0.5) * this->calcAlpha() * tan(this->calcOmega() / 2.0) + this->calcAmp() * pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[1][2] = 1.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-                this->config[1][0] = 1.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-            };
+            this->config[0][2] = (1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() * pow(this->calcAmp(), 0.5) + pow(tan(this->calcOmega() / 2.0), 2.0) * this->calcAmp());
+            this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) * this->calcAmp() - 1.0);
+            this->config[0][0] = (1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() * pow(this->calcAmp(), 0.5) + pow(tan(this->calcOmega() / 2.0), 2.0) * this->calcAmp());
+            this->config[1][2] = (1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() *             1.0           + pow(tan(this->calcOmega() / 2.0), 2.0) *       1.0      );
+            this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) *       1.0       - 1.0);
+            this->config[1][0] = (1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() *             1.0           + pow(tan(this->calcOmega() / 2.0), 2.0) *       1.0      );
             break;
         case ftTreble:
-            if (this->calcAmp() <= 1.0) {
-                this->config[0][2] = 1.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-                this->config[0][0] = 1.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[1][2] = this->calcAmp() - pow(this->calcAmp(), 0.5) * this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - this->calcAmp());
-                this->config[1][0] = this->calcAmp() + pow(this->calcAmp(), 0.5) * this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-            }
-            else {
-                this->config[0][2] = this->calcAmp() - pow(this->calcAmp(), 0.5) * this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - this->calcAmp());
-                this->config[0][0] = this->calcAmp() + pow(this->calcAmp(), 0.5) * this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[1][2] = 1.0 - this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-                this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) - 1.0);
-                this->config[1][0] = 1.0 + this->calcAlpha() * tan(this->calcOmega() / 2.0) + pow(tan(this->calcOmega() / 2.0), 2.0);
-            };
+            this->config[0][2] = (1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() *             1.0           + pow(tan(this->calcOmega() / 2.0), 2.0) *       1.0      ) /       1.0      ;
+            this->config[0][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) *       1.0       - 1.0) /       1.0      ;
+            this->config[0][0] = (1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() *             1.0           + pow(tan(this->calcOmega() / 2.0), 2.0) *       1.0      ) /       1.0      ;
+            this->config[1][2] = (1.0 - tan(this->calcOmega() / 2.0) * this->calcAlpha() * pow(this->calcAmp(), 0.5) + pow(tan(this->calcOmega() / 2.0), 2.0) * this->calcAmp()) / this->calcAmp();
+            this->config[1][1] = +2.0 * (pow(tan(this->calcOmega() / 2.0), 2.0) * this->calcAmp() - 1.0) / this->calcAmp();
+            this->config[1][0] = (1.0 + tan(this->calcOmega() / 2.0) * this->calcAlpha() * pow(this->calcAmp(), 0.5) + pow(tan(this->calcOmega() / 2.0), 2.0) * this->calcAmp()) / this->calcAmp();
             break;
         default:
             this->config[0][2] = 0.0;
@@ -268,6 +319,14 @@ VOID QMPBQF::calcConfig() {
 
 DOUBLE QMPBQF::process(const DOUBLE input) {
     switch (this->transform) {
+    case ptLAT:
+        this->signal[0][2] = this->signal[0][1];
+        this->signal[0][1] = this->signal[0][0];
+        this->signal[0][0] = input;
+        this->signal[1][2] = this->signal[1][1];
+        this->signal[1][1] = this->signal[1][0];
+        this->signal[1][0] = ((this->signal[0][0] * this->config[0][0] + this->signal[0][1] * this->config[0][1] + this->signal[0][2] * this->config[0][2]) - (this->signal[1][1] * this->config[1][1] + this->signal[1][2] * this->config[1][2])) / this->config[1][0];
+        break;
     case ptSVF:
         this->signal[0][2] = this->signal[0][1];
         this->signal[0][1] = this->signal[0][0];

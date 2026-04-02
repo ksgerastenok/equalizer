@@ -18,6 +18,10 @@ private:
 public:
     VOID init(const TRANSFORM transform, const FILTER filter, const BAND band, const GAIN gain);
     DOUBLE process(const DOUBLE value);
+    BAND getBand();
+    GAIN getGain();
+    FILTER getFilter();
+    DOUBLE getValue();
     DOUBLE getAmp();
     VOID setAmp(const DOUBLE value);
     DOUBLE getFreq();
@@ -26,6 +30,5 @@ public:
     VOID setRate(const DOUBLE value);
     DOUBLE getWidth();
     VOID setWidth(const DOUBLE value);
-    DOUBLE getGain();
 };
 typedef QMPNRM* PQMPNRM;

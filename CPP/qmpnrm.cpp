@@ -10,6 +10,18 @@ VOID QMPNRM::init(const TRANSFORM transform, const FILTER filter, const BAND ban
 	this->bqf.init(transform, filter, band, gain);
 };
 
+BAND QMPNRM::getBand() {
+	return this->bqf.getBand();
+};
+
+GAIN QMPNRM::getGain() {
+	return this->bqf.getGain();
+};
+
+FILTER QMPNRM::getFilter() {
+	return this->bqf.getFilter();
+};
+
 DOUBLE QMPNRM::getAmp() {
 	return this->amp;
 };
@@ -42,7 +54,7 @@ VOID QMPNRM::setWidth(const DOUBLE value) {
 	this->bqf.setWidth(value);
 };
 
-DOUBLE QMPNRM::getGain() {
+DOUBLE QMPNRM::getValue() {
 	switch (this->bqf.getGain()) {
 	case gtDb:
 		return 20.0 * log10(this->calcGain());

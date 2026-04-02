@@ -36,7 +36,7 @@ DWORD QMPDSP::getChannels() {
     return this->data.channels;
 };
 
-DOUBLE QMPDSP::getData(const DWORD channel, const DWORD sample) {
+DOUBLE QMPDSP::getBuffer(const INT channel, const INT sample) {
     switch (this->data.bits) {
     case 8:
         return this->clip(1.0 * ((PCHAR)(this->data.data))[channel + sample * this->data.channels] / 0x0000007F);
@@ -52,7 +52,7 @@ DOUBLE QMPDSP::getData(const DWORD channel, const DWORD sample) {
     return 0.0;
 };
 
-VOID QMPDSP::setData(const DWORD channel, const DWORD sample, const DOUBLE value) {
+VOID QMPDSP::setBuffer(const INT channel, const INT sample, const DOUBLE value) {
     switch (this->data.bits) {
     case 8:
         ((PCHAR)(this->data.data))[channel + sample * this->data.channels] = (CHAR)(this->clip(value) * 0x0000007F);

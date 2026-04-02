@@ -7,8 +7,7 @@ using namespace std;
 enum BAND {
     btQ,
     btSlope,
-    btOctave,
-    btSemitone
+    btOctave
 };
 
 enum GAIN {
@@ -29,6 +28,7 @@ enum FILTER {
 };
 
 enum TRANSFORM {
+    ptLAT,
     ptSVF,
     ptZDF
 };
