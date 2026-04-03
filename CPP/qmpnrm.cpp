@@ -23,11 +23,11 @@ FILTER QMPNRM::getFilter() {
 };
 
 DOUBLE QMPNRM::getAmp() {
-	return this->amp;
+	return this->bqf.getAmp();
 };
 
 VOID QMPNRM::setAmp(const DOUBLE value) {
-	this->amp = value;
+	this->bqf.setAmp(value);
 };
 
 DOUBLE QMPNRM::getFreq() {
@@ -57,9 +57,9 @@ VOID QMPNRM::setWidth(const DOUBLE value) {
 DOUBLE QMPNRM::getValue() {
 	switch (this->bqf.getGain()) {
 	case gtDb:
-		return 20.0 * log10(this->calcGain());
+		return 20.0 * log10(this->calcValue());
 	case gtAmp:
-		return this->calcGain();
+		return this->calcValue();
 	default:
 		return 0.0;
 	};
@@ -68,20 +68,20 @@ DOUBLE QMPNRM::getValue() {
 DOUBLE QMPNRM::calcAmp() {
 	switch (this->bqf.getGain()) {
 	case gtDb:
-		return pow(10.0, this->amp / 20.0);
+		return pow(10.0, this->bqf.getAmp() / 20.0);
 	case gtAmp:
-		return this->amp;
+		return this->bqf.getAmp();
 	default:
 		return 0.0;
 	};
 };
 
-DOUBLE QMPNRM::calcGain() {
+DOUBLE QMPNRM::calcValue() {
 	return fmin(fmax(1.0 / this->calcAmp(), 1.0 / (this->avg + 3.0 * sqrt(this->sqr - pow(this->avg, 2.0)))), this->calcAmp());
 };
 
 VOID QMPNRM::addSample(const DOUBLE value) {
-	if (this->calcGain() * abs(value) < 1.0) {
+	if (this->calcValue() * abs(value) < 1.0) {
 		this->sqr -= (this->sqr - pow(value, 2.0)) / (5.0 * this->bqf.getRate());
 		this->avg -= (this->avg - abs(value))      / (5.0 * this->bqf.getRate());
 	}
@@ -93,5 +93,5 @@ VOID QMPNRM::addSample(const DOUBLE value) {
 
 DOUBLE QMPNRM::process(const DOUBLE value) {
 	this->addSample(this->bqf.process(value));
-	return this->calcGain() * value;
+	return this->calcValue() * value;
 };

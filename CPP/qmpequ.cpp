@@ -47,16 +47,16 @@ INT QMPEQU::modify(const PDATA data, const PINT latency, const INT flags) {
                 QMPEQU::equ[k][i].setRate(data->rates);
             };
             QMPEQU::nrm[k].setAmp(20.0);
-            QMPEQU::nrm[k].setFreq(640.0);
-            QMPEQU::nrm[k].setWidth(10.0);
+            QMPEQU::nrm[k].setFreq(160.0);
+            QMPEQU::nrm[k].setWidth(6.0);
             QMPEQU::nrm[k].setRate(data->rates);
             for (INT x = 0; x != data->samples; x += 1) {
-                DOUBLE v = QMPEQU::dsp.getBuffer(k, x);
+                DOUBLE v = QMPEQU::dsp.getData(k, x);
                 for (INT i = 0; i != QMPEQU::equ[k].size(); i += 1) {
                     v = QMPEQU::equ[k][i].process(v);
                 };
                 v = QMPEQU::nrm[k].process(v);
-                QMPEQU::dsp.setBuffer(k, x, v);
+                QMPEQU::dsp.setData(k, x, v);
             };
         };
     };

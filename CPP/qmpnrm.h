@@ -9,11 +9,10 @@ using namespace std;
 struct QMPNRM {
 private:
 	QMPBQF bqf;
-	DOUBLE amp;
 	DOUBLE sqr;
 	DOUBLE avg;
     DOUBLE calcAmp();
-    DOUBLE calcGain();
+    DOUBLE calcValue();
     VOID addSample(const DOUBLE value);
 public:
     VOID init(const TRANSFORM transform, const FILTER filter, const BAND band, const GAIN gain);
@@ -21,7 +20,6 @@ public:
     BAND getBand();
     GAIN getGain();
     FILTER getFilter();
-    DOUBLE getValue();
     DOUBLE getAmp();
     VOID setAmp(const DOUBLE value);
     DOUBLE getFreq();
@@ -30,5 +28,6 @@ public:
     VOID setRate(const DOUBLE value);
     DOUBLE getWidth();
     VOID setWidth(const DOUBLE value);
+    DOUBLE getValue();
 };
 typedef QMPNRM* PQMPNRM;
