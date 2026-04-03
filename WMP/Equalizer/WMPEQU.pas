@@ -91,8 +91,8 @@ begin
         TWMPEQU.fequ[k, i].Rate := Rates;
       end;
       TWMPEQU.frng[k].Amp := 20.0;
-      TWMPEQU.frng[k].Freq := 640.0;
-      TWMPEQU.frng[k].Width := 10.0;
+      TWMPEQU.frng[k].Freq := 160.0;
+      TWMPEQU.frng[k].Width := 6.0;
       TWMPEQU.frng[k].Rate := Rates;
       for x := 0 to Samples - 1 do begin
         v := TWMPEQU.fdsp.Data[k, x];
@@ -102,7 +102,7 @@ begin
         v := TWMPEQU.frng[k].Process(v);
         TWMPEQU.fdsp.Data[k, x] := v;
       end;
-      TWMPEQU.ffrm.Info.Size := Round(TWMPEQU.ffrm.Info.Size - (TWMPEQU.ffrm.Info.Size - 10 * TWMPEQU.frng[k].Gain) / (k + 1));
+      TWMPEQU.ffrm.Info.Size := Round(TWMPEQU.ffrm.Info.Size - (TWMPEQU.ffrm.Info.Size - 10 * TWMPEQU.frng[k].Value) / (k + 1));
     end;
     TWMPEQU.ffrm.Refresh();
     TWMPEQU.fdsp.Done();
