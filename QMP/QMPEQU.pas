@@ -87,8 +87,8 @@ begin
         TQMPEQU.fequ[k, i].Rate := Data.Rates;
       end;
       TQMPEQU.frng[k].Amp := 20.0;
-      TQMPEQU.frng[k].Freq := 640.0;
-      TQMPEQU.frng[k].Width := 10.0;
+      TQMPEQU.frng[k].Freq := 160.0;
+      TQMPEQU.frng[k].Width := 6.0;
       TQMPEQU.frng[k].Rate := Data.Rates;
       for x := 0 to Data.Samples - 1 do begin
         v := TQMPEQU.fdsp.Data[k, x];
@@ -106,9 +106,7 @@ end;
 
 class function TQMPEQU.Update(const Info: PInfo; const Flags: Integer): Integer; cdecl;
 begin
-  TQMPEQU.finfo.Enabled := Info.Enabled;
-  TQMPEQU.finfo.Preamp := Info.Preamp;
-  TQMPEQU.finfo.Bands := Info.Bands;
+  TQMPEQU.finfo := Info^;
   Result := 1;
 end;
 

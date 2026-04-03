@@ -86,21 +86,21 @@ begin
   if (TQMPENH.finfo.Enabled) then begin
     TQMPENH.fdsp.Init(Data);
     for k := 0 to Data.Channels - 1 do begin
-      TQMPENH.fhrm[k].Amp := 5.0;
-      TQMPENH.fhrm[k].Freq := 70.0;
+      TQMPENH.fhrm[k].Amp := 7.5;
+      TQMPENH.fhrm[k].Freq := 50.0;
       TQMPENH.fhrm[k].Width := 1.0;
       TQMPENH.fhrm[k].Rate := Data.Rates;
-      TQMPENH.fdrm[k].Amp := 3.5;
+      TQMPENH.fdrm[k].Amp := 5.0;
       TQMPENH.fdrm[k].Freq := 150.0;
       TQMPENH.fdrm[k].Width := 1.0;
       TQMPENH.fdrm[k].Rate := Data.Rates;
       TQMPENH.ftrb[k].Amp := 12.0;
-      TQMPENH.ftrb[k].Freq := 2500.0;
+      TQMPENH.ftrb[k].Freq := 2000.0;
       TQMPENH.ftrb[k].Width := 1.0;
       TQMPENH.ftrb[k].Rate := Data.Rates;
       TQMPENH.frng[k].Amp := 20.0;
-      TQMPENH.frng[k].Freq := 640.0;
-      TQMPENH.frng[k].Width := 0.002;
+      TQMPENH.frng[k].Freq := 160.0;
+      TQMPENH.frng[k].Width := 0.129;
       TQMPENH.frng[k].Rate := Data.Rates;
       for x := 0 to Data.Samples - 1 do begin
         v := TQMPENH.fdsp.Data[k, x];
@@ -118,9 +118,7 @@ end;
 
 class function TQMPENH.Update(const Info: PInfo; const Flags: Integer): Integer; cdecl;
 begin
-  TQMPENH.finfo.Enabled := Info.Enabled;
-  TQMPENH.finfo.Preamp := Info.Preamp;
-  TQMPENH.finfo.Bands := Info.Bands;
+  TQMPENH.finfo := Info^;
   Result := 1;
 end;
 
