@@ -43,16 +43,16 @@ INT QMPENH::modify(const PDATA data, const PINT latency, const INT flags) {
     if (QMPENH::info.enabled) {
         QMPENH::dsp.init(data);
         for (INT k = 0; k != data->channels; k += 1) {
-            QMPENH::hrm[k].setAmp(7.5);
-            QMPENH::hrm[k].setFreq(50.0);
+            QMPENH::hrm[k].setAmp(5.0);
+            QMPENH::hrm[k].setFreq(150.0);
             QMPENH::hrm[k].setWidth(1.0);
             QMPENH::hrm[k].setRate(data->rates);
-            QMPENH::drm[k].setAmp(5.0);
-            QMPENH::drm[k].setFreq(150.0);
+            QMPENH::drm[k].setAmp(7.5);
+            QMPENH::drm[k].setFreq(50.0);
             QMPENH::drm[k].setWidth(1.0);
             QMPENH::drm[k].setRate(data->rates);
             QMPENH::trb[k].setAmp(12.0);
-            QMPENH::trb[k].setFreq(2000.0);
+            QMPENH::trb[k].setFreq(2500.0);
             QMPENH::trb[k].setWidth(1.0);
             QMPENH::trb[k].setRate(data->rates);
             QMPENH::nrm[k].setAmp(20.0);
