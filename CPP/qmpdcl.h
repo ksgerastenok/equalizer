@@ -29,20 +29,20 @@ struct PLUGIN {
 public:
     DWORD size;
     DWORD version;
-    PCWCHAR description;
-    CDECL INT(*service)(const INT, const PVOID, const INT, const INT);
+    LPCWSTR description;
+    CDECL INT(*service)(INT code, PVOID buffer, INT value, INT flags);
     PVOID reserved1[4];
-    CDECL INT(*init)(const INT);
-    CDECL VOID(*quit)(const INT);
-    CDECL INT(*open)(const PCWCHAR, const PVOID, const INT);
-    CDECL VOID(*stop)(const INT);
-    CDECL VOID(*flush)(const INT);
-    CDECL INT(*modify)(const PDATA, const PINT, const INT);
-    CDECL INT(*update)(const PINFO, const INT);
-    CDECL INT(*volume)(const PINT, const PINT, const INT);
-    CDECL INT(*event)(const INT, const INT);
-    CDECL VOID(*config)(const INT);
-    CDECL VOID(*about)(const INT);
+    CDECL INT(*init)(INT flags);
+    CDECL VOID(*quit)(INT flags);
+    CDECL INT(*open)(LPCWSTR media, PVOID format, INT flags);
+    CDECL VOID(*stop)(INT flags);
+    CDECL VOID(*flush)(INT flags);
+    CDECL INT(*modify)(PDATA data, PINT latency, INT flags);
+    CDECL INT(*update)(PINFO info, INT flags);
+    CDECL INT(*volume)(PINT volume, PINT balance, INT flags);
+    CDECL INT(*event)(INT event, INT flags);
+    CDECL VOID(*config)(INT flags);
+    CDECL VOID(*about)(INT flags);
     PVOID reserved2[4];
 };
 typedef PLUGIN* PPLUGIN;
@@ -50,8 +50,8 @@ typedef PLUGIN* PPLUGIN;
 struct MODULE {
 public:
     INT version;
-    CDECL INT(*service)(const INT, const PVOID, const INT, const INT);
+    CDECL INT(*service)(INT code, PVOID buffer, INT value, INT flags);
     INT instance;
-    CDECL PPLUGIN(*plugin)(const INT);
+    CDECL PPLUGIN(*plugin)(INT which);
 };
 typedef MODULE* PMODULE;

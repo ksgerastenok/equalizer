@@ -1,13 +1,34 @@
 #pragma once
 #include "qmpdcl.h"
+#include "qmpequ.h"
+#include "qmpenh.h"
 #include "windows.h"
 
 using namespace std;
 
 struct QMPMOD {
 private:
-    static CDECL PPLUGIN plugin(INT which);
+    static CDECL PPLUGIN plugin(INT which) {
+        switch (which) {
+        case 0:
+            return QMPEQU::plugin();
+            break;
+        case 1:
+            return QMPENH::plugin();
+            break;
+        default:
+            return NULL;
+            break;
+        };
+
+        return NULL;
+    };
 public:
-    static CDECL PMODULE module();
+    static CDECL PMODULE module() {
+        PMODULE result = new MODULE();
+
+        result->plugin = QMPMOD::plugin;
+
+        return result;
+    };
 };
-typedef QMPMOD* PQMPMOD;
