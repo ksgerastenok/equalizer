@@ -16,31 +16,29 @@ type
     function getBand(): TBand;
     function getFilter(): TFilter;
     function getTransform(): TTransform;
-    function getAmp(): Double;
-    procedure setAmp(const Value: Double);
-    function getFreq(): Double;
-    procedure setFreq(const Value: Double);
-    function getRate(): Double;
-    procedure setRate(const Value: Double);
-    function getWidth(): Double;
-    procedure setWidth(const Value: Double);
     function getValue(): Double;
-    function calcAmp(): Double;
-    function calcValue(): Double;
-    procedure addSample(const Value: Double);
+    function getAmp(): Double;
+    procedure setAmp(const Data: Double);
+    function getFreq(): Double;
+    procedure setFreq(const Data: Double);
+    function getRate(): Double;
+    procedure setRate(const Data: Double);
+    function getWidth(): Double;
+    procedure setWidth(const Data: Double);
+    procedure addSample(const Data: Double);
   public
     procedure Init(const Transform: TTransform; const Filter: TFilter; const Band: TBand; const Gain: TGain);
     procedure Done();
-    function Process(const Value: Double): Double;
+    function Process(const Data: Double): Double;
     property Gain: TGain read getGain;
     property Band: TBand read getBand;
     property Filter: TFilter read getFilter;
     property Transform: TTransform read getTransform;
+    property Value: Double read getValue;
     property Amp: Double read getAmp write setAmp;
     property Freq: Double read getFreq write setFreq;
     property Rate: Double read getRate write setRate;
     property Width: Double read getWidth write setWidth;
-    property Value: Double read getValue;
   end;
 
 implementation
@@ -80,12 +78,22 @@ end;
 
 function TWMPRNG.getAmp(): Double;
 begin
-  Result := self.fbqf.Amp;
+  case (self.fbqf.Gain) of
+    gtDb: begin
+      Result := Log10(self.getValue()) * 20.0;
+    end;
+    gtAmp: begin
+      Result := self.getValue();
+    end;
+    else begin
+      Result := 0.0;
+    end;
+  end;
 end;
 
-procedure TWMPRNG.setAmp(const Value: Double);
+procedure TWMPRNG.setAmp(const Data: Double);
 begin
-  self.fbqf.Amp := Value;
+  self.fbqf.Amp := Data;
 end;
 
 function TWMPRNG.getFreq(): Double;
@@ -93,9 +101,9 @@ begin
   Result := self.fbqf.Freq;
 end;
 
-procedure TWMPRNG.setFreq(const Value: Double);
+procedure TWMPRNG.setFreq(const Data: Double);
 begin
-  self.fbqf.Freq := Value;
+  self.fbqf.Freq := Data;
 end;
 
 function TWMPRNG.getRate(): Double;
@@ -103,9 +111,9 @@ begin
   Result := self.fbqf.Rate;
 end;
 
-procedure TWMPRNG.setRate(const Value: Double);
+procedure TWMPRNG.setRate(const Data: Double);
 begin
-  self.fbqf.Rate := Value;
+  self.fbqf.Rate := Data;
 end;
 
 function TWMPRNG.getWidth(): Double;
@@ -113,61 +121,31 @@ begin
   Result := self.fbqf.Width;
 end;
 
-procedure TWMPRNG.setWidth(const Value: Double);
+procedure TWMPRNG.setWidth(const Data: Double);
 begin
-  self.fbqf.Width := Value;
+  self.fbqf.Width := Data;
 end;
 
 function TWMPRNG.getValue(): Double;
 begin
-  case (self.fbqf.Gain) of
-    gtDb: begin
-      Result := 20.0 * Log10(self.calcValue());
-    end;
-    gtAmp: begin
-      Result := self.calcValue();
-    end;
-    else begin
-      Result := 0.0;
-    end;
-  end;
+  Result := Min(Max(1.0 / self.fbqf.Value, 1.0 / (self.favg + 3.0 * Sqrt(self.fsqr - Sqr(self.favg)))), 1.0 * self.fbqf.Value);
 end;
 
-function TWMPRNG.calcAmp(): Double;
+procedure TWMPRNG.addSample(const Data: Double);
 begin
-  case (self.fbqf.Gain) of
-    gtDb: begin
-      Result := Power(10.0, self.fbqf.Amp / 20.0);
-    end;
-    gtAmp: begin
-      Result := self.fbqf.Amp;
-    end;
-    else begin
-      Result := 0.0;
-    end;
-  end;
-end;
-
-function TWMPRNG.calcValue(): Double;
-begin
-  Result := Min(Max(1.0 / self.calcAmp(), 1.0 / (self.favg + 3.0 * Sqrt(self.fsqr - Sqr(self.favg)))), self.calcAmp());
-end;
-
-procedure TWMPRNG.addSample(const Value: Double);
-begin
-  if (self.calcValue() * Abs(Value) < 1.0) then begin
-    self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / (5.0 * self.fbqf.Rate);
-    self.favg := self.favg - (self.favg - Abs(Value)) / (5.0 * self.fbqf.Rate);
+  if (self.getValue() * Abs(Data) < 1.0) then begin
+    self.fsqr := self.fsqr - (self.fsqr - Sqr(Data)) / (5.0 * self.fbqf.Rate);
+    self.favg := self.favg - (self.favg - Abs(Data)) / (5.0 * self.fbqf.Rate);
   end                                     else begin
-    self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / (0.5 * self.fbqf.Rate);
-    self.favg := self.favg - (self.favg - Abs(Value)) / (0.5 * self.fbqf.Rate);
+    self.fsqr := self.fsqr - (self.fsqr - Sqr(Data)) / (0.5 * self.fbqf.Rate);
+    self.favg := self.favg - (self.favg - Abs(Data)) / (0.5 * self.fbqf.Rate);
   end;
 end;
 
-function TWMPRNG.Process(const Value: Double): Double;
+function TWMPRNG.Process(const Data: Double): Double;
 begin
-  self.addSample(self.fbqf.Process(Value));
-  Result := self.calcValue() * Value;
+  self.addSample(self.fbqf.Process(Data));
+  Result := self.getValue() * Data;
 end;
 
 begin

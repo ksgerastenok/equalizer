@@ -112,7 +112,7 @@ begin
         v := TWMPENH.frng[k].Process(v);
         TWMPENH.fdsp.Data[k, x] := v;
       end;
-      TWMPENH.ffrm.Info.Size := Round(TWMPENH.ffrm.Info.Size - (TWMPENH.ffrm.Info.Size - 10 * TWMPENH.frng[k].Value) / (k + 1));
+      TWMPENH.ffrm.Info.Size := Round(TWMPENH.ffrm.Info.Size - (TWMPENH.ffrm.Info.Size - 10 * TWMPENH.frng[k].Amp) / (k + 1));
     end;
     TWMPENH.ffrm.Refresh();
     TWMPENH.fdsp.Done();
