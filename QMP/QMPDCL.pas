@@ -41,7 +41,7 @@ type
     var Modify: function(const Data: PData; const Latency: PInteger; const Flags: Integer): Integer; cdecl;
     var Update: function(const Info: PInfo; const Flags: Integer): Integer; cdecl;
     var Volume: function(const Volume: PInteger; const Balance: PInteger; const Flags: Integer): Integer; cdecl;
-    var Event: function(const Flags: Integer; const Value: Integer): Integer; cdecl;
+    var Event: function(const Event: Integer; const Flags: Integer): Integer; cdecl;
     var Config: procedure(const Flags: Integer); cdecl;
     var About: procedure(const Flags: Integer); cdecl;
     var Reserved2: array[0..3] of Pointer;

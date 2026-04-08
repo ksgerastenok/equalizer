@@ -5,6 +5,7 @@ interface
 
 uses
   QMPBQF,
+  QMPRNG,
   QMPDSP,
   QMPDCL;
 
@@ -16,7 +17,7 @@ type
     class var fhrm: array[0..4] of TQMPBQF;
     class var fdrm: array[0..4] of TQMPBQF;
     class var ftrb: array[0..4] of TQMPBQF;
-    class var frng: array[0..4] of TQMPBQF;
+    class var frng: array[0..4] of TQMPRNG;
     class function Init(const Flags: Integer): Integer; cdecl; static;
     class procedure Quit(const Flags: Integer); cdecl; static;
     class function Modify(const Data: PData; const Latency: PInteger; const Flags: Integer): Integer; cdecl; static;
