@@ -102,7 +102,7 @@ begin
         v := TWMPEQU.frng[k].Process(v);
         TWMPEQU.fdsp.Data[k, x] := v;
       end;
-      TWMPEQU.ffrm.Info.Size := Round(TWMPEQU.ffrm.Info.Size - (TWMPEQU.ffrm.Info.Size - 10 * TWMPEQU.frng[k].Value) / (k + 1));
+      TWMPEQU.ffrm.Info.Size := Round(TWMPEQU.ffrm.Info.Size - (TWMPEQU.ffrm.Info.Size - 10 * TWMPEQU.frng[k].Amp) / (k + 1));
     end;
     TWMPEQU.ffrm.Refresh();
     TWMPEQU.fdsp.Done();
