@@ -3,6 +3,8 @@
 
 using namespace std;
 
+struct DATA;
+typedef DATA* PDATA;
 struct DATA {
 public:
     PVOID data;
@@ -14,8 +16,9 @@ public:
     DWORD start;
     DWORD finish;
 };
-typedef DATA* PDATA;
 
+struct INFO;
+typedef INFO* PINFO;
 struct INFO {
 public:
     DWORD size;
@@ -23,18 +26,19 @@ public:
     CHAR preamp;
     CHAR bands[10];
 };
-typedef INFO* PINFO;
 
+struct PLUGIN;
+typedef PLUGIN* PPLUGIN;
 struct PLUGIN {
 public:
     DWORD size;
     DWORD version;
-    LPCWSTR description;
+    PCWSTR description;
     CDECL INT(*service)(INT code, PVOID buffer, INT value, INT flags);
     PVOID reserved1[4];
     CDECL INT(*init)(INT flags);
     CDECL VOID(*quit)(INT flags);
-    CDECL INT(*open)(LPCWSTR media, PVOID format, INT flags);
+    CDECL INT(*open)(PCWSTR media, PVOID format, INT flags);
     CDECL VOID(*stop)(INT flags);
     CDECL VOID(*flush)(INT flags);
     CDECL INT(*modify)(PDATA data, PINT latency, INT flags);
@@ -45,8 +49,9 @@ public:
     CDECL VOID(*about)(INT flags);
     PVOID reserved2[4];
 };
-typedef PLUGIN* PPLUGIN;
 
+struct MODULE;
+typedef MODULE* PMODULE;
 struct MODULE {
 public:
     INT version;
@@ -54,4 +59,3 @@ public:
     INT instance;
     CDECL PPLUGIN(*plugin)(INT which);
 };
-typedef MODULE* PMODULE;
