@@ -6,6 +6,8 @@
 
 using namespace std;
 
+EXPORT PMODULE QDSPModule();
+
 EXPORT PMODULE QDSPModule() {
     return QMPMOD::module();
 };

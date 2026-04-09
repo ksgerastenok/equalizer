@@ -9,6 +9,9 @@
 
 using namespace std;
 
+struct QMPENH;
+typedef QMPENH* PQMPENH;
+
 struct QMPENH {
 private:
 	static inline INFO info;

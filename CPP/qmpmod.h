@@ -6,6 +6,9 @@
 
 using namespace std;
 
+struct QMPMOD;
+typedef QMPMOD* PQMPMOD;
+
 struct QMPMOD {
 private:
     static CDECL PPLUGIN plugin(INT which) {

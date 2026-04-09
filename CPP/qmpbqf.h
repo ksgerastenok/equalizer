@@ -6,6 +6,14 @@
 
 using namespace std;
 
+enum BAND;
+enum GAIN;
+enum FILTER;
+enum TRANSFORM;
+
+struct QMPBQF;
+typedef QMPBQF* PQMPBQF;
+
 enum BAND {
     btQ,
     btSlope,
@@ -47,11 +55,11 @@ private:
     DOUBLE freq;
     DOUBLE rate;
     DOUBLE width;
-    
+
     DOUBLE calcOmega() {
         return 2.0 * numbers::pi * this->freq / this->rate;
     };
-    
+
     DOUBLE calcAlpha() {
         switch (this->band) {
         case btQ:
@@ -68,7 +76,7 @@ private:
             break;
         };
     };
-    
+
     VOID calcConfig() {
         switch (this->transform) {
         case ptLAT:

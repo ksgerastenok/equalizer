@@ -7,6 +7,9 @@
 
 using namespace std;
 
+struct QMPNRM;
+typedef QMPNRM* PQMPNRM;
+
 struct QMPNRM {
 private:
 	QMPBQF bqf;

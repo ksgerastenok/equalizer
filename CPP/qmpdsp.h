@@ -5,6 +5,9 @@
 
 using namespace std;
 
+struct QMPDSP;
+typedef QMPDSP* PQMPDSP;
+
 struct QMPDSP {
 private:
     DATA data;

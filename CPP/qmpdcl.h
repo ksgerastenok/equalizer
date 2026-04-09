@@ -5,6 +5,16 @@ using namespace std;
 
 struct DATA;
 typedef DATA* PDATA;
+
+struct INFO;
+typedef INFO* PINFO;
+
+struct PLUGIN;
+typedef PLUGIN* PPLUGIN;
+
+struct MODULE;
+typedef MODULE* PMODULE;
+
 struct DATA {
 public:
     PVOID data;
@@ -17,8 +27,6 @@ public:
     DWORD finish;
 };
 
-struct INFO;
-typedef INFO* PINFO;
 struct INFO {
 public:
     DWORD size;
@@ -27,8 +35,6 @@ public:
     CHAR bands[10];
 };
 
-struct PLUGIN;
-typedef PLUGIN* PPLUGIN;
 struct PLUGIN {
 public:
     DWORD size;
@@ -50,8 +56,6 @@ public:
     PVOID reserved2[4];
 };
 
-struct MODULE;
-typedef MODULE* PMODULE;
 struct MODULE {
 public:
     INT version;
