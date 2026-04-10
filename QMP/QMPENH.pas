@@ -87,11 +87,11 @@ begin
   if (TQMPENH.finfo.Enabled) then begin
     TQMPENH.fdsp.Init(Data);
     for k := 0 to Data.Channels - 1 do begin
-      TQMPENH.fhrm[k].Amp := 5.0;
+      TQMPENH.fhrm[k].Amp := 3.5;
       TQMPENH.fhrm[k].Freq := 150.0;
       TQMPENH.fhrm[k].Width := 1.0;
       TQMPENH.fhrm[k].Rate := Data.Rates;
-      TQMPENH.fdrm[k].Amp := 7.5;
+      TQMPENH.fdrm[k].Amp := 5.0;
       TQMPENH.fdrm[k].Freq := 50.0;
       TQMPENH.fdrm[k].Width := 1.0;
       TQMPENH.fdrm[k].Rate := Data.Rates;
