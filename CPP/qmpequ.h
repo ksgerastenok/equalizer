@@ -47,8 +47,8 @@ private:
                     QMPEQU::equ[k][i].setRate(data->rates);
                 };
                 QMPEQU::nrm[k].setAmp(20.0);
-                QMPEQU::nrm[k].setFreq(160.0);
-                QMPEQU::nrm[k].setWidth(6.0);
+                QMPEQU::nrm[k].setFreq(320.0);
+                QMPEQU::nrm[k].setWidth(8.0);
                 QMPEQU::nrm[k].setRate(data->rates);
                 for (INT x = 0; x != data->samples; x += 1) {
                     DOUBLE v = QMPEQU::dsp.getData(k, x);

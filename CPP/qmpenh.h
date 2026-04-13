@@ -46,11 +46,11 @@ private:
 		if (QMPENH::info.enabled) {
 			QMPENH::dsp.init(data);
 			for (INT k = 0; k != data->channels; k += 1) {
-				QMPENH::hrm[k].setAmp(5.0);
+				QMPENH::hrm[k].setAmp(3.5);
 				QMPENH::hrm[k].setFreq(150.0);
 				QMPENH::hrm[k].setWidth(1.0);
 				QMPENH::hrm[k].setRate(data->rates);
-				QMPENH::drm[k].setAmp(7.5);
+				QMPENH::drm[k].setAmp(5.0);
 				QMPENH::drm[k].setFreq(50.0);
 				QMPENH::drm[k].setWidth(1.0);
 				QMPENH::drm[k].setRate(data->rates);
@@ -59,8 +59,8 @@ private:
 				QMPENH::trb[k].setWidth(1.0);
 				QMPENH::trb[k].setRate(data->rates);
 				QMPENH::nrm[k].setAmp(20.0);
-				QMPENH::nrm[k].setFreq(160.0);
-				QMPENH::nrm[k].setWidth(0.129);
+				QMPENH::nrm[k].setFreq(320.0);
+				QMPENH::nrm[k].setWidth(0.007874);
 				QMPENH::nrm[k].setRate(data->rates);
 				for (INT x = 0; x != data->samples; x += 1) {
 					DOUBLE v = QMPENH::dsp.getData(k, x);

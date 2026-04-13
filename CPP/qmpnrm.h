@@ -61,8 +61,6 @@ public:
         default:
             return 0.0;
         };
-
-        return this->bqf.getAmp();
     };
 
     VOID setAmp(DOUBLE value) {
