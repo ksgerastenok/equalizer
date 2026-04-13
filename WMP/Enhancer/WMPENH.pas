@@ -101,8 +101,8 @@ begin
       TWMPENH.ftrb[k].Width := TWMPENH.ffrm.Treble.Width;
       TWMPENH.ftrb[k].Rate := Rates;
       TWMPENH.frng[k].Amp := TWMPENH.ffrm.Info.Preamp / 10;
-      TWMPENH.frng[k].Freq := 160.0;
-      TWMPENH.frng[k].Width := 0.129;
+      TWMPENH.frng[k].Freq := 320.0;
+      TWMPENH.frng[k].Width := 0.007874;
       TWMPENH.frng[k].Rate := Rates;
       for x := 0 to Samples - 1 do begin
         v := TWMPENH.fdsp.Data[k, x];
