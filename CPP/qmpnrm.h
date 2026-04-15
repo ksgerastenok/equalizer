@@ -15,9 +15,31 @@ private:
 	QMPBQF bqf;
 	DOUBLE sqr;
 	DOUBLE avg;
+    DOUBLE amp;
+
+    DOUBLE calcAmp() {
+        switch (this->bqf.getGain()) {
+            case gtDb: {
+                return pow(10.0, this->amp / 20.0);
+            };
+            break;
+            case gtAmp: {
+                return this->amp;
+            };
+            break;
+            default: {
+                return 0.0;
+            };
+            break;
+        };
+    };
+
+    DOUBLE calcValue() {
+        return fmin(fmax(1.0 / this->calcAmp(), 1.0 / (this->avg + 3.0 * sqrt(this->sqr - pow(this->avg, 2.0)))), 1.0 * this->calcAmp());
+    };
 
     VOID addSample(DOUBLE value) {
-        if (this->getValue() * abs(value) < 1.0) {
+        if (this->calcValue() * abs(value) < 1.0) {
             this->sqr -= (this->sqr - pow(value, 2.0)) / (5.0 * this->bqf.getRate());
             this->avg -= (this->avg - abs(value)) / (5.0 * this->bqf.getRate());
         }
@@ -33,7 +55,7 @@ public:
 
     DOUBLE process(DOUBLE value) {
         this->addSample(this->bqf.process(value));
-        return this->getValue() * value;
+        return this->calcValue() * value;
     };
 
     BAND getBand() {
@@ -48,23 +70,25 @@ public:
         return this->bqf.getFilter();
     };
 
-    DOUBLE getValue() {
-        return fmin(fmax(1.0 / this->bqf.getValue(), 1.0 / (this->avg + 3.0 * sqrt(this->sqr - pow(this->avg, 2.0)))), this->bqf.getValue());
-    };
-
     DOUBLE getAmp() {
         switch (this->bqf.getGain()) {
-        case gtDb:
-            return log10(this->getValue()) * 20.0;
-        case gtAmp:
-            return this->getValue();
-        default:
-            return 0.0;
+            case gtDb: {
+                return log10(this->calcValue()) * 20.0;
+            };
+            break;
+            case gtAmp: {
+                return this->calcValue();
+            };
+            break;
+            default: {
+                return 0.0;
+            };
+            break;
         };
     };
 
     VOID setAmp(DOUBLE value) {
-        this->bqf.setAmp(value);
+        this->amp = value;
     };
 
     DOUBLE getFreq() {
