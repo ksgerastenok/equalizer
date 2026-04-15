@@ -59,21 +59,15 @@ type
     procedure TrackBarSave(const Sender: TObject);
   private
     var finfo: TInfo;
-    var fbass: TFilter;
-    var fdrum: TFilter;
-    var ftrbl: TFilter;
+    var fconfig: array[0..2] of TFilter;
     function getInfo(): PInfo;
-    function getBass(): PFilter;
-    function getDrum(): PFilter;
-    function getTreble(): PFilter;
+    function getConfig(const Index: LongWord): PFilter;
   public
     constructor Create(); reintroduce;
     destructor Destroy(); override;
     procedure Refresh();
     property Info: PInfo read getInfo;
-    property Bass: PFilter read getBass;
-    property Drum: PFilter read getDrum;
-    property Treble: PFilter read getTreble;
+    property Config[const Index: LongWord]: PFilter read getConfig;
   end;
 
 implementation
@@ -105,9 +99,7 @@ begin
         System.Assign(f, 'enhancer.cfg');
         System.ReSet(f, 1);
         System.BlockRead(f, self.finfo, SizeOf(TInfo) * 1);
-        System.BlockRead(f, self.fbass, SizeOf(TFilter) * 1);
-        System.BlockRead(f, self.fdrum, SizeOf(TFilter) * 1);
-        System.BlockRead(f, self.ftrbl, SizeOf(TFilter) * 1);
+        System.BlockRead(f, self.fconfig, SizeOf(TFilter) * 3);
         System.Close(f)
       except
       end;
@@ -127,9 +119,7 @@ begin
         System.Assign(f, 'enhancer.cfg');
         System.ReWrite(f, 1);
         System.BlockWrite(f, self.finfo, SizeOf(TInfo) * 1);
-        System.BlockWrite(f, self.fbass, SizeOf(TFilter) * 1);
-        System.BlockWrite(f, self.fdrum, SizeOf(TFilter) * 1);
-        System.BlockWrite(f, self.ftrbl, SizeOf(TFilter) * 1);
+        System.BlockWrite(f, self.fconfig, SizeOf(TFilter) * 3);
         System.Close(f);
       except
       end;
@@ -189,43 +179,42 @@ begin
           Hint := Format('Value: %f dB', [self.finfo.Size / 10]);
         end;
         21: begin
-          Position := Round(self.fbass.Amp * 10.0);
-          Hint := Format('Amp: %f dB', [self.fbass.Amp]);
+          Position := Round(self.fconfig[0].Amp * 10.0);
+          Hint := Format('Amp: %f dB', [self.fconfig[0].Amp]);
         end;
         22: begin
-          Position := Round(self.fbass.Freq / 10.0);
-          Hint := Format('Freq: %f Hz', [self.fbass.Freq]);
+          Position := Round(self.fconfig[0].Freq / 10.0);
+          Hint := Format('Freq: %f Hz', [self.fconfig[0].Freq]);
         end;
         23: begin
-          Position := Round(self.fbass.Width * 10.0);
-          Hint := Format('Width: %f Slope', [self.fbass.Width]);
+          Position := Round(self.fconfig[0].Width * 10.0);
+          Hint := Format('Width: %f Slope', [self.fconfig[0].Width]);
         end;
         31: begin
-          Position := Round(self.fdrum.Amp * 10.0);
-          Hint := Format('Amp: %f dB', [self.fdrum.Amp]);
+          Position := Round(self.fconfig[1].Amp * 10.0);
+          Hint := Format('Amp: %f dB', [self.fconfig[1].Amp]);
         end;
         32: begin
-          Position := Round(self.fdrum.Freq / 10.0);
-          Hint := Format('Freq: %f Hz', [self.fdrum.Freq]);
+          Position := Round(self.fconfig[1].Freq / 10.0);
+          Hint := Format('Freq: %f Hz', [self.fconfig[1].Freq]);
         end;
         33: begin
-          Position := Round(self.fdrum.Width * 10.0);
-          Hint := Format('Width: %f Slope', [self.fdrum.Width]);
+          Position := Round(self.fconfig[1].Width * 10.0);
+          Hint := Format('Width: %f Slope', [self.fconfig[1].Width]);
         end;
         41: begin
-          Position := Round(self.ftrbl.Amp * 10.0);
-          Hint := Format('Amp: %f dB', [self.ftrbl.Amp]);
+          Position := Round(self.fconfig[2].Amp * 10.0);
+          Hint := Format('Amp: %f dB', [self.fconfig[2].Amp]);
         end;
         42: begin
-          Position := Round(self.ftrbl.Freq / 100.0);
-          Hint := Format('Freq: %f Hz', [self.ftrbl.Freq]);
+          Position := Round(self.fconfig[2].Freq / 100.0);
+          Hint := Format('Freq: %f Hz', [self.fconfig[2].Freq]);
         end;
         43: begin
-          Position := Round(self.ftrbl.Width * 10.0);
-          Hint := Format('Width: %f Slope', [self.ftrbl.Width]);
+          Position := Round(self.fconfig[2].Width * 10.0);
+          Hint := Format('Width: %f Slope', [self.fconfig[2].Width]);
         end;
         else begin
-          Position := 0;
           Hint := Format('Unknown: %f None', [0.0]);
         end;
       end;
@@ -247,53 +236,42 @@ begin
           Hint := Format('Value: %f dB', [self.finfo.Size / 10]);
         end;
         21: begin
-          self.fbass.Amp := Position / 10.0;
-          Hint := Format('Amp: %f dB', [self.fbass.Amp]);
+          self.fconfig[0].Amp := Position / 10.0;
+          Hint := Format('Amp: %f dB', [self.fconfig[0].Amp]);
         end;
         22: begin
-          self.fbass.Freq := Position * 10.0;
-          Hint := Format('Freq: %f Hz', [self.fbass.Freq]);
+          self.fconfig[0].Freq := Position * 10.0;
+          Hint := Format('Freq: %f Hz', [self.fconfig[0].Freq]);
         end;
         23: begin
-          self.fbass.Width := Position / 10.0;
-          Hint := Format('Width: %f Slope', [self.fbass.Width]);
+          self.fconfig[0].Width := Position / 10.0;
+          Hint := Format('Width: %f Slope', [self.fconfig[0].Width]);
         end;
         31: begin
-          self.fdrum.Amp := Position / 10.0;
-          Hint := Format('Amp: %f dB', [self.fdrum.Amp]);
+          self.fconfig[1].Amp := Position / 10.0;
+          Hint := Format('Amp: %f dB', [self.fconfig[1].Amp]);
         end;
         32: begin
-          self.fdrum.Freq := Position * 10.0;
-          Hint := Format('Freq: %f Hz', [self.fdrum.Freq]);
+          self.fconfig[1].Freq := Position * 10.0;
+          Hint := Format('Freq: %f Hz', [self.fconfig[1].Freq]);
         end;
         33: begin
-          self.fdrum.Width := Position / 10.0;
-          Hint := Format('Width: %f Slope', [self.fdrum.Width]);
+          self.fconfig[1].Width := Position / 10.0;
+          Hint := Format('Width: %f Slope', [self.fconfig[1].Width]);
         end;
         41: begin
-          self.ftrbl.Amp := Position / 10.0;
-          Hint := Format('Amp: %f dB', [self.ftrbl.Amp]);
+          self.fconfig[2].Amp := Position / 10.0;
+          Hint := Format('Amp: %f dB', [self.fconfig[2].Amp]);
         end;
         42: begin
-          self.ftrbl.Freq := Position * 100.0;
-          Hint := Format('Freq: %f Hz', [self.ftrbl.Freq]);
+          self.fconfig[2].Freq := Position * 100.0;
+          Hint := Format('Freq: %f Hz', [self.fconfig[2].Freq]);
         end;
         43: begin
-          self.ftrbl.Width := Position / 10.0;
-          Hint := Format('Width: %f Slope', [self.ftrbl.Width]);
+          self.fconfig[2].Width := Position / 10.0;
+          Hint := Format('Width: %f Slope', [self.fconfig[2].Width]);
         end;
         else begin
-          self.finfo.Preamp := 0;
-          self.finfo.Size := 0;
-          self.fbass.Amp := 0.0;
-          self.fbass.Freq := 0.0;
-          self.fbass.Width := 0.0;
-          self.fdrum.Amp := 0.0;
-          self.fdrum.Freq := 0.0;
-          self.fdrum.Width := 0.0;
-          self.ftrbl.Amp := 0.0;
-          self.ftrbl.Freq := 0.0;
-          self.ftrbl.Width := 0.0;
           Hint := Format('Unknown: %f None', [0.0]);
         end;
       end;
@@ -311,19 +289,9 @@ begin
   Result := Addr(self.finfo);
 end;
 
-function TWMPFRM.getBass(): PFilter;
+function TWMPFRM.getConfig(const Index: LongWord): PFilter;
 begin
-  Result := Addr(self.fbass);
-end;
-
-function TWMPFRM.getDrum(): PFilter;
-begin
-  Result := Addr(self.fdrum);
-end;
-
-function TWMPFRM.getTreble(): PFilter;
-begin
-  Result := Addr(self.ftrbl);
+  Result := Addr(self.fconfig[Index]);
 end;
 
 begin
