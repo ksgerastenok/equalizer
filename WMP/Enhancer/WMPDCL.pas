@@ -31,10 +31,10 @@ type
     var Description: PAnsiChar;
     var Parent: LongWord;
     var Instance: LongWord;
-    var Config: procedure(const Module: PPlugin); cdecl;
-    var Init: function(const Module: PPlugin): Integer; cdecl;
-    var Modify: function(const Module: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl;
-    var Quit: procedure(const Module: PPlugin); cdecl;
+    var Config: procedure(const Plugin: PPlugin); cdecl;
+    var Init: function(const Plugin: PPlugin): Integer; cdecl;
+    var Modify: function(const Plugin: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl;
+    var Quit: procedure(const Plugin: PPlugin); cdecl;
     var Data: Pointer;
   end;
 

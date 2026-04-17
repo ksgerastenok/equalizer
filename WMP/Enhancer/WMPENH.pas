@@ -17,10 +17,10 @@ type
     class var fdsp: TWMPDSP;
     class var fenh: array[0..4] of array[0..2] of TWMPBQF;
     class var frng: array[0..4] of TWMPRNG;
-    class function Init(const Module: PPlugin): Integer; cdecl; static;
-    class procedure Quit(const Module: PPlugin); cdecl; static;
-    class function Modify(const Module: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl; static;
-    class procedure Config(const Module: PPlugin); cdecl; static;
+    class function Init(const Plugin: PPlugin): Integer; cdecl; static;
+    class procedure Quit(const Plugin: PPlugin); cdecl; static;
+    class function Modify(const Plugin: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl; static;
+    class procedure Config(const Plugin: PPlugin); cdecl; static;
   public
     class function Plugin(): PPlugin; cdecl; static;
   end;
@@ -37,7 +37,7 @@ begin
   Result.Config := TWMPENH.Config;
 end;
 
-class function TWMPENH.Init(const Module: PPlugin): Integer; cdecl;
+class function TWMPENH.Init(const Plugin: PPlugin): Integer; cdecl;
 var
   k: LongWord;
 begin
@@ -53,7 +53,7 @@ begin
   Result := 0;
 end;
 
-class procedure TWMPENH.Quit(const Module: PPlugin); cdecl;
+class procedure TWMPENH.Quit(const Plugin: PPlugin); cdecl;
 var
   k: LongWord;
 begin
@@ -68,7 +68,7 @@ begin
   TWMPENH.ffrm.Destroy();
 end;
 
-class function TWMPENH.Modify(const Module: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl;
+class function TWMPENH.Modify(const Plugin: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl;
 var
   k: LongWord;
   i: LongWord;
@@ -105,7 +105,7 @@ begin
   Result := Samples;
 end;
 
-class procedure TWMPENH.Config(const Module: PPlugin); cdecl;
+class procedure TWMPENH.Config(const Plugin: PPlugin); cdecl;
 begin
   TWMPENH.ffrm.Show();
 end;
