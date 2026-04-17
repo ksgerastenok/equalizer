@@ -105,8 +105,9 @@ object WMPFRM: TWMPFRM
       Height = 20
       Top = 25
       Width = 400
-      Max = 100
-      Position = 0
+      Max = 35
+      Min = 12
+      Position = 12
       TickMarks = tmBoth
       TickStyle = tsNone
       OnChange = TrackBarSave
@@ -183,8 +184,9 @@ object WMPFRM: TWMPFRM
       Height = 20
       Top = 25
       Width = 400
-      Max = 100
-      Position = 0
+      Max = 25
+      Min = 5
+      Position = 5
       TickMarks = tmBoth
       TickStyle = tsNone
       OnChange = TrackBarSave

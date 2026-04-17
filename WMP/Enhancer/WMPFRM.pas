@@ -195,7 +195,7 @@ begin
           Hint := Format('Amp: %f dB', [self.fconfig[1].Amp]);
         end;
         32: begin
-          Position := Round(self.fconfig[1].Freq / 10.0);
+          Position := Round(self.fconfig[1].Freq / 5.0);
           Hint := Format('Freq: %f Hz', [self.fconfig[1].Freq]);
         end;
         33: begin
@@ -252,7 +252,7 @@ begin
           Hint := Format('Amp: %f dB', [self.fconfig[1].Amp]);
         end;
         32: begin
-          self.fconfig[1].Freq := Position * 10.0;
+          self.fconfig[1].Freq := Position * 5.0;
           Hint := Format('Freq: %f Hz', [self.fconfig[1].Freq]);
         end;
         33: begin
