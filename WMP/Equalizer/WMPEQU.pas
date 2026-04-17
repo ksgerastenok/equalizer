@@ -5,9 +5,9 @@ interface
 
 uses
   WMPDCL,
+  WMPDSP,
   WMPBQF,
   WMPRNG,
-  WMPDSP,
   WMPFRM;
 
 type
@@ -17,10 +17,10 @@ type
     class var fdsp: TWMPDSP;
     class var fequ: array[0..4] of array[0..19] of TWMPBQF;
     class var frng: array[0..4] of TWMPRNG;
-    class function Init(const Module: PPlugin): Integer; cdecl; static;
-    class procedure Quit(const Module: PPlugin); cdecl; static;
-    class function Modify(const Module: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl; static;
-    class procedure Config(const Module: PPlugin); cdecl; static;
+    class function Init(const Plugin: PPlugin): Integer; cdecl; static;
+    class procedure Quit(const Plugin: PPlugin); cdecl; static;
+    class function Modify(const Plugin: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl; static;
+    class procedure Config(const Plugin: PPlugin); cdecl; static;
   public
     class function Plugin(): PPlugin; cdecl; static;
   end;
@@ -40,7 +40,7 @@ begin
   Result.Config := TWMPEQU.Config;
 end;
 
-class function TWMPEQU.Init(const Module: PPlugin): Integer; cdecl;
+class function TWMPEQU.Init(const Plugin: PPlugin): Integer; cdecl;
 var
   k: LongWord;
   i: LongWord;
@@ -57,7 +57,7 @@ begin
   Result := 0;
 end;
 
-class procedure TWMPEQU.Quit(const Module: PPlugin); cdecl;
+class procedure TWMPEQU.Quit(const Plugin: PPlugin); cdecl;
 var
   k: LongWord;
   i: LongWord;
@@ -73,7 +73,7 @@ begin
   TWMPEQU.ffrm.Destroy();
 end;
 
-class function TWMPEQU.Modify(const Module: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl;
+class function TWMPEQU.Modify(const Plugin: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl;
 var
   k: LongWord;
   i: LongWord;
@@ -84,7 +84,7 @@ begin
     TWMPEQU.fdsp.Init(Data, Bits, Rates, Samples, Channels);
     TWMPEQU.ffrm.Info.Size := 0;
     for k := 0 to Channels - 1 do begin
-      for i := 0 to Length(TWMPEQU.ffrm.Info.Bands) - 1 do begin
+      for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
         TWMPEQU.fequ[k, i].Amp := (TWMPEQU.ffrm.Info.Preamp + TWMPEQU.ffrm.Info.Bands[i]) / 10.0;
         TWMPEQU.fequ[k, i].Freq := 20.0 * Power(2.0, 0.5 * (i + 0.5));
         TWMPEQU.fequ[k, i].Width := 0.5;
@@ -96,7 +96,7 @@ begin
       TWMPEQU.frng[k].Rate := Rates;
       for x := 0 to Samples - 1 do begin
         v := TWMPEQU.fdsp.Data[k, x];
-        for i := 0 to Length(TWMPEQU.ffrm.Info.Bands) - 1 do begin
+        for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
           v := TWMPEQU.fequ[k, i].Process(v);
         end;
         v := TWMPEQU.frng[k].Process(v);
@@ -110,7 +110,7 @@ begin
   Result := Samples;
 end;
 
-class procedure TWMPEQU.Config(const Module: PPlugin); cdecl;
+class procedure TWMPEQU.Config(const Plugin: PPlugin); cdecl;
 begin
   TWMPEQU.ffrm.Show();
 end;
