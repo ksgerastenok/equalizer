@@ -14,9 +14,7 @@ type
   private
     class var finfo: TInfo;
     class var fdsp: TQMPDSP;
-    class var fhrm: array[0..4] of TQMPBQF;
-    class var fdrm: array[0..4] of TQMPBQF;
-    class var ftrb: array[0..4] of TQMPBQF;
+    class var fenh: array[0..4] of array[0..2] of TQMPBQF;
     class var frng: array[0..4] of TQMPRNG;
     class function Init(const Flags: Integer): Integer; cdecl; static;
     class procedure Quit(const Flags: Integer); cdecl; static;
@@ -45,17 +43,13 @@ class function TQMPENH.Init(const Flags: Integer): Integer; cdecl;
 var
   k: LongWord;
 begin
-  for k := 0 to Length(TQMPENH.fhrm) - 1 do begin
-    TQMPENH.fhrm[k].Init(ptLAT, ftBass, btSlope, gtDb);
-  end;
-  for k := 0 to Length(TQMPENH.fdrm) - 1 do begin
-    TQMPENH.fdrm[k].Init(ptLAT, ftBass, btSlope, gtDb);
-  end;
-  for k := 0 to Length(TQMPENH.ftrb) - 1 do begin
-    TQMPENH.ftrb[k].Init(ptLAT, ftTreble, btSlope, gtDb);
+  for k := 0 to Length(TQMPENH.fenh) - 1 do begin
+    TQMPENH.fenh[k][0].Init(ptLAT, ftBass, btSlope, gtDb);
+    TQMPENH.fenh[k][1].Init(ptLAT, ftBass, btSlope, gtDb);
+    TQMPENH.fenh[k][2].Init(ptLAT, ftTreble, btSlope, gtDb);
   end;
   for k := 0 to Length(TQMPENH.frng) - 1 do begin
-    TQMPENH.frng[k].Init(ptLAT, ftBand, btSlope, gtDb);
+    TQMPENH.frng[k].Init(ptLAT, ftBand, btOctave, gtDb);
   end;
   Result := 1;
 end;
@@ -64,14 +58,10 @@ class procedure TQMPENH.Quit(const Flags: Integer); cdecl;
 var
   k: LongWord;
 begin
-  for k := 0 to Length(TQMPENH.fhrm) - 1 do begin
-    TQMPENH.fhrm[k].Done();
-  end;
-  for k := 0 to Length(TQMPENH.fdrm) - 1 do begin
-    TQMPENH.fdrm[k].Done();
-  end;
-  for k := 0 to Length(TQMPENH.ftrb) - 1 do begin
-    TQMPENH.ftrb[k].Done();
+  for k := 0 to Length(TQMPENH.fenh) - 1 do begin
+    TQMPENH.fenh[k][0].Done();
+    TQMPENH.fenh[k][1].Done();
+    TQMPENH.fenh[k][2].Done();
   end;
   for k := 0 to Length(TQMPENH.frng) - 1 do begin
     TQMPENH.frng[k].Done();
@@ -81,33 +71,34 @@ end;
 class function TQMPENH.Modify(const Data: PData; const Latency: PInteger; const Flags: Integer): Integer; cdecl;
 var
   k: LongWord;
+  i: LongWord;
   x: LongWord;
   v: Double;
 begin
   if (TQMPENH.finfo.Enabled) then begin
     TQMPENH.fdsp.Init(Data);
     for k := 0 to Data.Channels - 1 do begin
-      TQMPENH.fhrm[k].Amp := 3.5;
-      TQMPENH.fhrm[k].Freq := 150.0;
-      TQMPENH.fhrm[k].Width := 1.0;
-      TQMPENH.fhrm[k].Rate := Data.Rates;
-      TQMPENH.fdrm[k].Amp := 5.0;
-      TQMPENH.fdrm[k].Freq := 50.0;
-      TQMPENH.fdrm[k].Width := 1.0;
-      TQMPENH.fdrm[k].Rate := Data.Rates;
-      TQMPENH.ftrb[k].Amp := 12.0;
-      TQMPENH.ftrb[k].Freq := 2500.0;
-      TQMPENH.ftrb[k].Width := 1.0;
-      TQMPENH.ftrb[k].Rate := Data.Rates;
+      TQMPENH.fenh[k][0].Amp := 3.5;
+      TQMPENH.fenh[k][0].Freq := 150.0;
+      TQMPENH.fenh[k][0].Width := 1.0;
+      TQMPENH.fenh[k][0].Rate := Data.Rates;
+      TQMPENH.fenh[k][1].Amp := 5.0;
+      TQMPENH.fenh[k][1].Freq := 50.0;
+      TQMPENH.fenh[k][1].Width := 1.0;
+      TQMPENH.fenh[k][1].Rate := Data.Rates;
+      TQMPENH.fenh[k][2].Amp := 12.0;
+      TQMPENH.fenh[k][2].Freq := 2500.0;
+      TQMPENH.fenh[k][2].Width := 1.0;
+      TQMPENH.fenh[k][2].Rate := Data.Rates;
       TQMPENH.frng[k].Amp := 20.0;
       TQMPENH.frng[k].Freq := 320.0;
-      TQMPENH.frng[k].Width := 0.007874;
+      TQMPENH.frng[k].Width := 8.0;
       TQMPENH.frng[k].Rate := Data.Rates;
       for x := 0 to Data.Samples - 1 do begin
         v := TQMPENH.fdsp.Data[k, x];
-        v := TQMPENH.fhrm[k].Process(v);
-        v := TQMPENH.fdrm[k].Process(v);
-        v := TQMPENH.ftrb[k].Process(v);
+        for i := 0 to Length(TQMPENH.fenh[k]) - 1 do begin
+          v := TQMPENH.fenh[k, i].Process(v);
+        end;
         v := TQMPENH.frng[k].Process(v);
         TQMPENH.fdsp.Data[k, x] := v;
       end;
