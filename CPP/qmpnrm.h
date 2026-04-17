@@ -12,9 +12,9 @@ typedef QMPNRM* PQMPNRM;
 
 struct QMPNRM {
 private:
-	QMPBQF bqf;
-	DOUBLE sqr;
-	DOUBLE avg;
+    QMPBQF bqf;
+    DOUBLE sqr;
+    DOUBLE avg;
     DOUBLE amp;
 
     DOUBLE calcAmp() {
