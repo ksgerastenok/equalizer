@@ -82,11 +82,11 @@ begin
       TQMPENH.fenh[k][0].Freq := 150.0;
       TQMPENH.fenh[k][0].Width := 1.0;
       TQMPENH.fenh[k][0].Rate := Data.Rates;
-      TQMPENH.fenh[k][1].Amp := 5.0;
-      TQMPENH.fenh[k][1].Freq := 50.0;
+      TQMPENH.fenh[k][1].Amp := 3.5;
+      TQMPENH.fenh[k][1].Freq := 75.0;
       TQMPENH.fenh[k][1].Width := 1.0;
       TQMPENH.fenh[k][1].Rate := Data.Rates;
-      TQMPENH.fenh[k][2].Amp := 12.0;
+      TQMPENH.fenh[k][2].Amp := 10.0;
       TQMPENH.fenh[k][2].Freq := 2500.0;
       TQMPENH.fenh[k][2].Width := 1.0;
       TQMPENH.fenh[k][2].Rate := Data.Rates;

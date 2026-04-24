@@ -152,7 +152,7 @@ begin
   if (self.calcValue() * Abs(Value) < 1.0) then begin
     self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / (5.0 * self.fbqf.Rate);
     self.favg := self.favg - (self.favg - Abs(Value)) / (5.0 * self.fbqf.Rate);
-  end                                     else begin
+  end                                      else begin
     self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / (0.5 * self.fbqf.Rate);
     self.favg := self.favg - (self.favg - Abs(Value)) / (0.5 * self.fbqf.Rate);
   end;
