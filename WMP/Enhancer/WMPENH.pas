@@ -43,12 +43,12 @@ var
 begin
   TWMPENH.ffrm := TWMPFRM.Create();
   for k := 0 to Length(TWMPENH.fenh) - 1 do begin
-    TWMPENH.fenh[k][0].Init(ptLAT, ftBass, btSlope, gtDb);
-    TWMPENH.fenh[k][1].Init(ptLAT, ftBass, btSlope, gtDb);
-    TWMPENH.fenh[k][2].Init(ptLAT, ftTreble, btSlope, gtDb);
+    TWMPENH.fenh[k][0].Init(ttZDF, ftBass, btSlope, gtDb);
+    TWMPENH.fenh[k][1].Init(ttZDF, ftBass, btSlope, gtDb);
+    TWMPENH.fenh[k][2].Init(ttZDF, ftTreble, btSlope, gtDb);
   end;
   for k := 0 to Length(TWMPENH.frng) - 1 do begin
-    TWMPENH.frng[k].Init(ptLAT, ftBand, btOctave, gtDb);
+    TWMPENH.frng[k].Init(ttZDF, ftBand, btOctave, gtDb);
   end;
   Result := 0;
 end;
@@ -85,7 +85,7 @@ begin
         TWMPENH.fenh[k][i].Width := TWMPENH.ffrm.Config[i].Width;
         TWMPENH.fenh[k][i].Rate := Rates;
       end;
-      TWMPENH.frng[k].Amp := TWMPENH.ffrm.Info.Preamp / 10;
+      TWMPENH.frng[k].Amp := TWMPENH.ffrm.Info.Preamp / 10.0;
       TWMPENH.frng[k].Freq := 320.0;
       TWMPENH.frng[k].Width := 8.0;
       TWMPENH.frng[k].Rate := Rates;
@@ -97,7 +97,7 @@ begin
         v := TWMPENH.frng[k].Process(v);
         TWMPENH.fdsp.Data[k, x] := v;
       end;
-      TWMPENH.ffrm.Info.Size := Round(TWMPENH.ffrm.Info.Size - (TWMPENH.ffrm.Info.Size - 10 * TWMPENH.frng[k].Amp) / (k + 1));
+      TWMPENH.ffrm.Info.Size := Round(TWMPENH.ffrm.Info.Size - (TWMPENH.ffrm.Info.Size - 10.0 * TWMPENH.frng[k].Amp) / (k + 1));
     end;
     TWMPENH.ffrm.Refresh();
     TWMPENH.fdsp.Done();
