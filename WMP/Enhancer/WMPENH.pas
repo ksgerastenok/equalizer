@@ -74,11 +74,10 @@ var
   i: LongWord;
   x: LongWord;
   v: Double;
+  s: Double;
 begin
   if (TWMPENH.ffrm.Info.Enabled) then begin
-    TWMPENH.fdsp.Init(Data, Bits, Rates, Samples, Channels);
-    TWMPENH.ffrm.Info.Size := 0;
-    for k := 0 to Channels - 1 do begin
+    for k := 0 to Length(TWMPENH.fenh) - 1 do begin
       for i := 0 to Length(TWMPENH.fenh[k]) - 1 do begin
         TWMPENH.fenh[k][i].Amp := TWMPENH.ffrm.Config[i].Amp;
         TWMPENH.fenh[k][i].Freq := TWMPENH.ffrm.Config[i].Freq;
@@ -89,18 +88,30 @@ begin
       TWMPENH.frng[k].Freq := 320.0;
       TWMPENH.frng[k].Width := 8.0;
       TWMPENH.frng[k].Rate := Rates;
-      for x := 0 to Samples - 1 do begin
+    end;
+    TWMPENH.fdsp.Init(Data, Bits, Rates, Samples, Channels);
+    for x := 0 to Samples - 1 do begin
+      s := 0.0;
+      for k := 0 to Channels - 1 do begin
+        s := s - (s - TWMPENH.fdsp.Data[k, x]) / (k + 1);
+      end;
+      for k := 0 to Channels - 1 do begin
         v := TWMPENH.fdsp.Data[k, x];
+        v := v * 1.5 + s * (1.0 - 1.5);
         for i := 0 to Length(TWMPENH.fenh[k]) - 1 do begin
           v := TWMPENH.fenh[k][i].Process(v);
         end;
         v := TWMPENH.frng[k].Process(v);
         TWMPENH.fdsp.Data[k, x] := v;
       end;
-      TWMPENH.ffrm.Info.Size := Round(TWMPENH.ffrm.Info.Size - (TWMPENH.ffrm.Info.Size - 10.0 * TWMPENH.frng[k].Amp) / (k + 1));
     end;
-    TWMPENH.ffrm.Refresh();
     TWMPENH.fdsp.Done();
+    s := 0.0;
+    for k := 0 to Channels - 1 do begin
+      s := s - (s - TWMPENH.frng[k].Amp) / (k + 1);
+    end;
+    TWMPENH.ffrm.Info.Size := Round(s * 10.0);
+    TWMPENH.ffrm.Refresh();
   end;
   Result := Samples;
 end;
