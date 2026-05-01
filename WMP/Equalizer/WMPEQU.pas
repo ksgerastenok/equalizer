@@ -79,11 +79,10 @@ var
   i: LongWord;
   x: LongWord;
   v: Double;
+  s: Double;
 begin
   if (TWMPEQU.ffrm.Info.Enabled) then begin
-    TWMPEQU.fdsp.Init(Data, Bits, Rates, Samples, Channels);
-    TWMPEQU.ffrm.Info.Size := 0;
-    for k := 0 to Channels - 1 do begin
+    for k := 0 to Length(TWMPEQU.fequ) - 1 do begin
       for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
         TWMPEQU.fequ[k, i].Amp := (TWMPEQU.ffrm.Info.Preamp + TWMPEQU.ffrm.Info.Bands[i]) / 10.0;
         TWMPEQU.fequ[k, i].Freq := 20.0 * Power(2.0, 0.5 * (i + 0.5));
@@ -94,18 +93,30 @@ begin
       TWMPEQU.frng[k].Freq := 320.0;
       TWMPEQU.frng[k].Width := 8.0;
       TWMPEQU.frng[k].Rate := Rates;
-      for x := 0 to Samples - 1 do begin
+    end;
+    TWMPEQU.fdsp.Init(Data, Bits, Rates, Samples, Channels);
+    for x := 0 to Samples - 1 do begin
+      s := 0.0;
+      for k := 0 to Channels - 1 do begin
+        s := s - (s - TWMPEQU.fdsp.Data[k, x]) / (k + 1);
+      end;
+      for k := 0 to Channels - 1 do begin
         v := TWMPEQU.fdsp.Data[k, x];
+        v := v * 1.5 + s * (1.0 - 1.5);
         for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
           v := TWMPEQU.fequ[k, i].Process(v);
         end;
         v := TWMPEQU.frng[k].Process(v);
         TWMPEQU.fdsp.Data[k, x] := v;
       end;
-      TWMPEQU.ffrm.Info.Size := Round(TWMPEQU.ffrm.Info.Size - (TWMPEQU.ffrm.Info.Size - 10 * TWMPEQU.frng[k].Amp) / (k + 1));
     end;
-    TWMPEQU.ffrm.Refresh();
     TWMPEQU.fdsp.Done();
+    s := 0.0;
+    for k := 0 to Channels - 1 do begin
+      s := s - (s - TWMPEQU.frng[k].Amp) / (k + 1);
+    end;
+    TWMPEQU.ffrm.Info.Size := Round(s * 10.0);
+    TWMPEQU.ffrm.Refresh();
   end;
   Result := Samples;
 end;
