@@ -76,11 +76,11 @@ var
   i: LongWord;
   x: LongWord;
   v: Double;
+  s: Double;
 begin
   if (TQMPEQU.finfo.Enabled) then begin
-    TQMPEQU.fdsp.Init(Data);
-    for k := 0 to Data.Channels - 1 do begin
-      for i := 0 to Length(TQMPEQU.finfo.Bands) - 1 do begin
+    for k := 0 to Length(TQMPEQU.fequ) - 1 do begin
+      for i := 0 to Length(TQMPEQU.fequ[k]) - 1 do begin
         TQMPEQU.fequ[k, i].Amp := (TQMPEQU.finfo.Preamp + TQMPEQU.finfo.Bands[i]) / 10.0;
         TQMPEQU.fequ[k, i].Freq := 20.0 * Power(2.0, 1.0 * (i + 0.5));
         TQMPEQU.fequ[k, i].Width := 1.0;
@@ -90,9 +90,17 @@ begin
       TQMPEQU.frng[k].Freq := 320.0;
       TQMPEQU.frng[k].Width := 8.0;
       TQMPEQU.frng[k].Rate := Data.Rates;
-      for x := 0 to Data.Samples - 1 do begin
+    end;
+    TQMPEQU.fdsp.Init(Data);
+    for x := 0 to Data.Samples - 1 do begin
+      s := 0.0;
+      for k := 0 to Data.Channels - 1 do begin
+        s := s - (s - TQMPEQU.fdsp.Data[k, x]) / (k + 1);
+      end;
+      for k := 0 to Data.Channels - 1 do begin
         v := TQMPEQU.fdsp.Data[k, x];
-        for i := 0 to Length(TQMPEQU.finfo.Bands) - 1 do begin
+        v := v * 1.25 + s * (1.0 - 1.25);
+        for i := 0 to Length(TQMPEQU.fequ[k]) - 1 do begin
           v := TQMPEQU.fequ[k, i].Process(v);
         end;
         v := TQMPEQU.frng[k].Process(v);
