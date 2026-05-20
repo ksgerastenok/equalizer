@@ -16,30 +16,10 @@ private:
     DOUBLE sqr;
     DOUBLE avg;
     DOUBLE amp;
-
-    DOUBLE calcAmp() {
-        switch (this->bqf.getGain()) {
-            case gtDb: {
-                return pow(10.0, this->amp / 20.0);
-            };
-            break;
-            case gtAmp: {
-                return this->amp;
-            };
-            break;
-            default: {
-                return 0.0;
-            };
-            break;
-        };
-    };
-
-    DOUBLE calcValue() {
-        return fmin(fmax(1.0 / this->calcAmp(), 1.0 / (this->avg + 3.0 * sqrt(this->sqr - pow(this->avg, 2.0)))), 1.0 * this->calcAmp());
-    };
+    DOUBLE val;
 
     VOID addSample(DOUBLE value) {
-        if (this->calcValue() * abs(value) < 1.0) {
+        if (this->val * abs(value) < 1.0) {
             this->sqr -= (this->sqr - pow(value, 2.0)) / (5.0 * this->bqf.getRate());
             this->avg -= (this->avg - abs(value)) / (5.0 * this->bqf.getRate());
         }
@@ -47,6 +27,7 @@ private:
             this->sqr -= (this->sqr - pow(value, 2.0)) / (0.5 * this->bqf.getRate());
             this->avg -= (this->avg - abs(value)) / (0.5 * this->bqf.getRate());
         };
+        this->val = fmin(fmax(1.0 / this->calcAmp(), 1.0 / (this->avg + 3.0 * sqrt(this->sqr - pow(this->avg, 2.0)))), 1.0 * this->calcAmp());
     };
 public:
     VOID init(TRANSFORM transform, FILTER filter, BAND band, GAIN gain) {
@@ -55,7 +36,7 @@ public:
 
     DOUBLE process(DOUBLE value) {
         this->addSample(this->bqf.process(value));
-        return this->calcValue() * value;
+        return this->val * value;
     };
 
     BAND getBand() {
@@ -73,11 +54,11 @@ public:
     DOUBLE getAmp() {
         switch (this->bqf.getGain()) {
             case gtDb: {
-                return log10(this->calcValue()) * 20.0;
+                return log10(this->val) * 20.0;
             };
             break;
             case gtAmp: {
-                return this->calcValue();
+                return this->val;
             };
             break;
             default: {
@@ -88,7 +69,20 @@ public:
     };
 
     VOID setAmp(DOUBLE value) {
-        this->amp = value;
+        switch (this->bqf.getGain()) {
+            case gtDb: {
+                this->amp = pow(10.0, value / 20.0);
+            };
+            break;
+            case gtAmp: {
+                this->amp = value;
+            };
+            break;
+            default: {
+                this->amp = 0.0;
+            };
+            break;
+        };
     };
 
     DOUBLE getFreq() {
