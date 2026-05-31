@@ -46,11 +46,11 @@ var
 begin
   for k := 0 to Length(TQMPEQU.fequ) - 1 do begin
     for i := 0 to Length(TQMPEQU.fequ[k]) - 1 do begin
-      TQMPEQU.fequ[k, i].Init(ttSVF, ftEqu, btOctave, gtDb);
+      TQMPEQU.fequ[k, i].Init(ttTDI, ftEqu, btOctave, gtDb);
     end;
   end;
   for k := 0 to Length(TQMPEQU.frng) - 1 do begin
-    TQMPEQU.frng[k].Init(ttSVF, ftBand, btOctave, gtDb);
+    TQMPEQU.frng[k].Init(ttTDI, ftBand, btOctave, gtDb);
   end;
   Result := 1;
 end;
@@ -99,7 +99,7 @@ begin
       end;
       for k := 0 to Data.Channels - 1 do begin
         v := TQMPEQU.fdsp.Data[k, x];
-        v := v * 1.25 + s * (1.0 - 1.25);
+        v := s - 1.25 * (s - v);
         for i := 0 to Length(TQMPEQU.fequ[k]) - 1 do begin
           v := TQMPEQU.fequ[k, i].Process(v);
         end;
