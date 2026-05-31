@@ -14,6 +14,7 @@ type
     var favg: Double;
     var famp: Double;
     var fval: Double;
+    var fcnt: Double;
     function getGain(): TGain;
     function getBand(): TBand;
     function getFilter(): TFilter;
@@ -138,13 +139,9 @@ end;
 
 procedure TWMPRNG.addSample(const Value: Double);
 begin
-  if (self.fval * Abs(Value) < 1.0) then begin
-    self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / (5.0 * self.fbqf.Rate);
-    self.favg := self.favg - (self.favg - Abs(Value)) / (5.0 * self.fbqf.Rate);
-  end                               else begin
-    self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / (0.5 * self.fbqf.Rate);
-    self.favg := self.favg - (self.favg - Abs(Value)) / (0.5 * self.fbqf.Rate);
-  end;
+  self.fcnt := IfThen(self.fcnt < 3000.0, self.fcnt + 1.0, self.fbqf.Rate * IfThen(self.fval * Abs(Value) < 1.0, 5.0, 0.5));
+  self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / self.fcnt;
+  self.favg := self.favg - (self.favg - Abs(Value)) / self.fcnt;
   self.fval := Min(Max(1.0 / self.famp, 1.0 / (self.favg + 3.0 * Sqrt(self.fsqr - Sqr(self.favg)))), 1.0 * self.famp);
 end;
 

@@ -48,11 +48,11 @@ begin
   TWMPEQU.ffrm := TWMPFRM.Create();
   for k := 0 to Length(TWMPEQU.fequ) - 1 do begin
     for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
-      TWMPEQU.fequ[k, i].Init(ttSVF, ftEqu, btOctave, gtDb);
+      TWMPEQU.fequ[k, i].Init(ttTDI, ftEqu, btOctave, gtDb);
     end;
   end;
   for k := 0 to Length(TWMPEQU.frng) - 1 do begin
-    TWMPEQU.frng[k].Init(ttSVF, ftBand, btOctave, gtDb);
+    TWMPEQU.frng[k].Init(ttTDI, ftBand, btOctave, gtDb);
   end;
   Result := 0;
 end;
@@ -102,7 +102,7 @@ begin
       end;
       for k := 0 to Channels - 1 do begin
         v := TWMPEQU.fdsp.Data[k, x];
-        v := v * 1.5 + s * (1.0 - 1.5);
+        v := s - 1.5 * (s - v);
         for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
           v := TWMPEQU.fequ[k, i].Process(v);
         end;
