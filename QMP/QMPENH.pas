@@ -74,7 +74,6 @@ var
   i: LongWord;
   x: LongWord;
   v: Double;
-  s: Double;
 begin
   if (TQMPENH.finfo.Enabled) then begin
     for k := 0 to Length(TQMPENH.fenh) - 1 do begin
@@ -97,13 +96,8 @@ begin
     end;
     TQMPENH.fdsp.Init(Data);
     for x := 0 to Data.Samples - 1 do begin
-      s := 0.0;
-      for k := 0 to Data.Channels - 1 do begin
-        s := s - (s - TQMPENH.fdsp.Data[k, x]) / (k + 1);
-      end;
       for k := 0 to Data.Channels - 1 do begin
         v := TQMPENH.fdsp.Data[k, x];
-        v := s - 1.25 * (s - v);
         for i := 0 to Length(TQMPENH.fenh[k]) - 1 do begin
           v := TQMPENH.fenh[k, i].Process(v);
         end;
