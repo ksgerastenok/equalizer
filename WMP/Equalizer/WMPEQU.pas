@@ -48,11 +48,11 @@ begin
   TWMPEQU.ffrm := TWMPFRM.Create();
   for k := 0 to Length(TWMPEQU.fequ) - 1 do begin
     for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
-      TWMPEQU.fequ[k, i].Init(ttTDI, ftEqu, btOctave, gtDb);
+      TWMPEQU.fequ[k, i].Init(ttSVF, ftEqu, btOctave, gtDb);
     end;
   end;
   for k := 0 to Length(TWMPEQU.frng) - 1 do begin
-    TWMPEQU.frng[k].Init(ttTDI, ftBand, btOctave, gtDb);
+    TWMPEQU.frng[k].Init(ttSVF, ftBand, btOctave, gtDb);
   end;
   Result := 0;
 end;
@@ -84,7 +84,7 @@ begin
   if (TWMPEQU.ffrm.Info.Enabled) then begin
     for k := 0 to Length(TWMPEQU.fequ) - 1 do begin
       for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
-        TWMPEQU.fequ[k, i].Amp := (TWMPEQU.ffrm.Info.Preamp + TWMPEQU.ffrm.Info.Bands[i]) / 10.0;
+        TWMPEQU.fequ[k, i].Amp := TWMPEQU.ffrm.Info.Bands[i] / 10.0;
         TWMPEQU.fequ[k, i].Freq := 20.0 * Power(2.0, 0.5 * (i + 0.5));
         TWMPEQU.fequ[k, i].Width := 0.5;
         TWMPEQU.fequ[k, i].Rate := Rates;
@@ -96,17 +96,21 @@ begin
     end;
     TWMPEQU.fdsp.Init(Data, Bits, Rates, Samples, Channels);
     for x := 0 to Samples - 1 do begin
+      for k := 0 to Channels - 1 do begin
+        v := TWMPEQU.fdsp.Data[k, x];
+        for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
+          v := TWMPEQU.fequ[k, i].Process(v);
+        end;
+        v := TWMPEQU.frng[k].Process(v);
+        TWMPEQU.fdsp.Data[k, x] := v;
+      end;
       s := 0.0;
       for k := 0 to Channels - 1 do begin
         s := s - (s - TWMPEQU.fdsp.Data[k, x]) / (k + 1);
       end;
       for k := 0 to Channels - 1 do begin
         v := TWMPEQU.fdsp.Data[k, x];
-        v := s - 1.5 * (s - v);
-        for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
-          v := TWMPEQU.fequ[k, i].Process(v);
-        end;
-        v := TWMPEQU.frng[k].Process(v);
+        v := v - (v - s) * (TWMPEQU.ffrm.Info.Size / 10.0);
         TWMPEQU.fdsp.Data[k, x] := v;
       end;
     end;
@@ -115,7 +119,7 @@ begin
     for k := 0 to Channels - 1 do begin
       s := s - (s - TWMPEQU.frng[k].Amp) / (k + 1);
     end;
-    TWMPEQU.ffrm.Info.Size := Round(s * 10.0);
+    TWMPEQU.ffrm.Info.Preamp := Round(s * 10.0);
     TWMPEQU.ffrm.Refresh();
   end;
   Result := Samples;

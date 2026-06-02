@@ -42,25 +42,26 @@ object WMPFRM: TWMPFRM
       TickMarks = tmBoth
       TickStyle = tsNone
       OnChange = TrackBarSave
+      Enabled = False
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
     end
-    object ValueTrackBar: TTrackBar
+    object WidthTrackBar: TTrackBar
       Tag = 200
       Left = 22
       Height = 255
       Top = -10
       Width = 20
-      Max = 200
-      Min = -200
+      Max = 50
+      Min = -50
       Orientation = trVertical
       Position = 0
       Reversed = True
       TickMarks = tmBoth
       TickStyle = tsNone
-      Enabled = False
+      OnChange = TrackBarSave
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1

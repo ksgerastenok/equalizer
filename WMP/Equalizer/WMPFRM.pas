@@ -40,7 +40,7 @@ type
     var Band20Label: TLabel;
     var PreampGroupBox: TGroupBox;
     var PreampTrackBar: TTrackBar;
-    var ValueTrackBar: TTrackBar;
+    var WidthTrackBar: TTrackBar;
     var MinLabel: TLabel;
     var ZeroLabel: TLabel;
     var MaxLabel: TLabel;
@@ -141,7 +141,7 @@ begin
   if (Sender is TForm) then begin
     with (Sender as TForm) do begin
       self.TrackBarLoad(self.PreampTrackBar);
-      self.TrackBarLoad(self.ValueTrackBar);
+      self.TrackBarLoad(self.WidthTrackBar);
       self.TrackBarLoad(self.Band01TrackBar);
       self.TrackBarLoad(self.Band02TrackBar);
       self.TrackBarLoad(self.Band03TrackBar);
@@ -171,7 +171,7 @@ begin
   if (Sender is TForm) then begin
     with (Sender as TForm) do begin
       self.TrackBarSave(self.PreampTrackBar);
-      self.TrackBarSave(self.ValueTrackBar);
+      self.TrackBarSave(self.WidthTrackBar);
       self.TrackBarSave(self.Band01TrackBar);
       self.TrackBarSave(self.Band02TrackBar);
       self.TrackBarSave(self.Band03TrackBar);
@@ -201,17 +201,17 @@ begin
   if (Sender is TTrackBar) then begin
     with (Sender as TTrackBar) do begin
       case (Tag) of
-        200: begin
-          Position := self.finfo.Size;
-          Hint := Format('Value: %f dB', [self.finfo.Size / 10]);
-        end;
         100: begin
           Position := self.finfo.Preamp;
-          Hint := Format('Preamp: %f dB', [self.finfo.Preamp / 10]);
+          Hint := Format('Preamp: %f dB', [Position / 10.0]);
+        end;
+        200: begin
+          Position := self.finfo.Size;
+          Hint := Format('Width: %fx', [Position / 10.0]);
         end;
         else begin
           Position := self.finfo.Bands[Tag];
-          Hint := Format('Band %d: %f dB', [Tag + 1, self.finfo.Bands[Tag] / 10]);
+          Hint := Format('Band %d: %f dB', [Tag + 1, Position / 10.0]);
         end;
       end;
     end;
@@ -223,17 +223,17 @@ begin
   if (Sender is TTrackBar) then begin
     with (Sender as TTrackBar) do begin
       case (Tag) of
-        200: begin
-          self.finfo.Size := Position;
-          Hint := Format('Value: %f dB', [self.finfo.Size / 10]);
-        end;
         100: begin
           self.finfo.Preamp := Position;
-          Hint := Format('Preamp: %f dB', [self.finfo.Preamp / 10]);
+          Hint := Format('Preamp: %f dB', [Position / 10.0]);
+        end;
+        200: begin
+          self.finfo.Size := Position;
+          Hint := Format('Width: %fx', [Position / 10.0]);
         end;
         else begin
           self.finfo.Bands[Tag] := Position;
-          Hint := Format('Band %d: %f dB', [Tag + 1, self.finfo.Bands[Tag] / 10]);
+          Hint := Format('Band %d: %f dB', [Tag + 1, Position / 10.0]);
         end;
       end;
     end;
