@@ -233,7 +233,7 @@ begin
         end;
         12: begin
           self.finfo.Size := Position;
-          Hint := Format('Width: %f dB', [Position / 10.0]);
+          Hint := Format('Width: %fx', [Position / 10.0]);
         end;
         21: begin
           self.fconfig[0].Amp := Position / 10.0;
@@ -245,7 +245,7 @@ begin
         end;
         23: begin
           self.fconfig[0].Width := Position / 10.0;
-          Hint := Format('Width: %f Slope', [Position / 10.0]);
+          Hint := Format('Width: %fs', [Position / 10.0]);
         end;
         31: begin
           self.fconfig[1].Amp := Position / 10.0;
@@ -257,7 +257,7 @@ begin
         end;
         33: begin
           self.fconfig[1].Width := Position / 10.0;
-          Hint := Format('Width: %f Slope', [Position / 10.0]);
+          Hint := Format('Width: %fs', [Position / 10.0]);
         end;
         41: begin
           self.fconfig[2].Amp := Position / 10.0;
@@ -269,7 +269,7 @@ begin
         end;
         43: begin
           self.fconfig[2].Width := Position / 10.0;
-          Hint := Format('Width: %f Slope', [Position / 10.0]);
+          Hint := Format('Width: %fs', [Position / 10.0]);
         end;
         else begin
           Hint := Format('Unknown: %f None', [0.0]);
