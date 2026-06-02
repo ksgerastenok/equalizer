@@ -26,10 +26,10 @@ type
   TWMPFRM = class(TForm)
   published
     var AMPGroupBox: TGroupBox;
-    var AMPLimitLabel: TLabel;
-    var AMPLimitTrackBar: TTrackBar;
-    var AMPValueLabel: TLabel;
-    var AMPValueTrackBar: TTrackBar;
+    var AMPGainLabel: TLabel;
+    var AMPGainTrackBar: TTrackBar;
+    var AMPWidthLabel: TLabel;
+    var AMPWidthTrackBar: TTrackBar;
     var HRMGroupBox: TGroupBox;
     var HRMAmpLabel: TLabel;
     var HRMAmpTrackBar: TTrackBar;
@@ -131,8 +131,8 @@ procedure TWMPFRM.FormShow(const Sender: TObject);
 begin
   if (Sender is TForm) then begin
     with (Sender as TForm) do begin
-      self.TrackBarLoad(self.AMPLimitTrackBar);
-      self.TrackBarLoad(self.AMPValueTrackBar);
+      self.TrackBarLoad(self.AMPGainTrackBar);
+      self.TrackBarLoad(self.AMPWidthTrackBar);
       self.TrackBarLoad(self.HRMAmpTrackBar);
       self.TrackBarLoad(self.HRMFreqTrackBar);
       self.TrackBarLoad(self.HRMWidthTrackBar);
@@ -150,8 +150,8 @@ procedure TWMPFRM.FormHide(const Sender: TObject);
 begin
   if (Sender is TForm) then begin
     with (Sender as TForm) do begin
-      self.TrackBarSave(self.AMPLimitTrackBar);
-      self.TrackBarSave(self.AMPValueTrackBar);
+      self.TrackBarSave(self.AMPGainTrackBar);
+      self.TrackBarSave(self.AMPWidthTrackBar);
       self.TrackBarSave(self.HRMAmpTrackBar);
       self.TrackBarSave(self.HRMFreqTrackBar);
       self.TrackBarSave(self.HRMWidthTrackBar);
@@ -172,47 +172,47 @@ begin
       case (Tag) of
         11: begin
           Position := self.finfo.Preamp;
-          Hint := Format('Limit: %f dB', [self.finfo.Preamp / 10]);
+          Hint := Format('Gain: %f dB', [Position / 10.0]);
         end;
         12: begin
           Position := self.finfo.Size;
-          Hint := Format('Value: %f dB', [self.finfo.Size / 10]);
+          Hint := Format('Width: %fx', [Position / 10.0]);
         end;
         21: begin
           Position := Round(self.fconfig[0].Amp * 10.0);
-          Hint := Format('Amp: %f dB', [self.fconfig[0].Amp]);
+          Hint := Format('Amp: %f dB', [Position / 10.0]);
         end;
         22: begin
           Position := Round(self.fconfig[0].Freq / 10.0);
-          Hint := Format('Freq: %f Hz', [self.fconfig[0].Freq]);
+          Hint := Format('Freq: %f Hz', [Position * 10.0]);
         end;
         23: begin
           Position := Round(self.fconfig[0].Width * 10.0);
-          Hint := Format('Width: %f Slope', [self.fconfig[0].Width]);
+          Hint := Format('Width: %fs', [Position / 10.0]);
         end;
         31: begin
           Position := Round(self.fconfig[1].Amp * 10.0);
-          Hint := Format('Amp: %f dB', [self.fconfig[1].Amp]);
+          Hint := Format('Amp: %f dB', [Position / 10.0]);
         end;
         32: begin
           Position := Round(self.fconfig[1].Freq / 5.0);
-          Hint := Format('Freq: %f Hz', [self.fconfig[1].Freq]);
+          Hint := Format('Freq: %f Hz', [Position * 5.0]);
         end;
         33: begin
           Position := Round(self.fconfig[1].Width * 10.0);
-          Hint := Format('Width: %f Slope', [self.fconfig[1].Width]);
+          Hint := Format('Width: %fs', [Position / 10.0]);
         end;
         41: begin
           Position := Round(self.fconfig[2].Amp * 10.0);
-          Hint := Format('Amp: %f dB', [self.fconfig[2].Amp]);
+          Hint := Format('Amp: %f dB', [Position / 10.0]);
         end;
         42: begin
           Position := Round(self.fconfig[2].Freq / 100.0);
-          Hint := Format('Freq: %f Hz', [self.fconfig[2].Freq]);
+          Hint := Format('Freq: %f Hz', [Position * 100.0]);
         end;
         43: begin
           Position := Round(self.fconfig[2].Width * 10.0);
-          Hint := Format('Width: %f Slope', [self.fconfig[2].Width]);
+          Hint := Format('Width: %fs', [Position / 10.0]);
         end;
         else begin
           Hint := Format('Unknown: %f None', [0.0]);
@@ -229,47 +229,47 @@ begin
       case (Tag) of
         11: begin
           self.finfo.Preamp := Position;
-          Hint := Format('Limit: %f dB', [self.finfo.Preamp / 10]);
+          Hint := Format('Preamp: %f dB', [Position / 10.0]);
         end;
         12: begin
           self.finfo.Size := Position;
-          Hint := Format('Value: %f dB', [self.finfo.Size / 10]);
+          Hint := Format('Width: %f dB', [Position / 10.0]);
         end;
         21: begin
           self.fconfig[0].Amp := Position / 10.0;
-          Hint := Format('Amp: %f dB', [self.fconfig[0].Amp]);
+          Hint := Format('Amp: %f dB', [Position / 10.0]);
         end;
         22: begin
           self.fconfig[0].Freq := Position * 10.0;
-          Hint := Format('Freq: %f Hz', [self.fconfig[0].Freq]);
+          Hint := Format('Freq: %f Hz', [Position * 10.0]);
         end;
         23: begin
           self.fconfig[0].Width := Position / 10.0;
-          Hint := Format('Width: %f Slope', [self.fconfig[0].Width]);
+          Hint := Format('Width: %f Slope', [Position / 10.0]);
         end;
         31: begin
           self.fconfig[1].Amp := Position / 10.0;
-          Hint := Format('Amp: %f dB', [self.fconfig[1].Amp]);
+          Hint := Format('Amp: %f dB', [Position / 10.0]);
         end;
         32: begin
           self.fconfig[1].Freq := Position * 5.0;
-          Hint := Format('Freq: %f Hz', [self.fconfig[1].Freq]);
+          Hint := Format('Freq: %f Hz', [Position * 5.0]);
         end;
         33: begin
           self.fconfig[1].Width := Position / 10.0;
-          Hint := Format('Width: %f Slope', [self.fconfig[1].Width]);
+          Hint := Format('Width: %f Slope', [Position / 10.0]);
         end;
         41: begin
           self.fconfig[2].Amp := Position / 10.0;
-          Hint := Format('Amp: %f dB', [self.fconfig[2].Amp]);
+          Hint := Format('Amp: %f dB', [Position / 10.0]);
         end;
         42: begin
           self.fconfig[2].Freq := Position * 100.0;
-          Hint := Format('Freq: %f Hz', [self.fconfig[2].Freq]);
+          Hint := Format('Freq: %f Hz', [Position * 100.0]);
         end;
         43: begin
           self.fconfig[2].Width := Position / 10.0;
-          Hint := Format('Width: %f Slope', [self.fconfig[2].Width]);
+          Hint := Format('Width: %f Slope', [Position / 10.0]);
         end;
         else begin
           Hint := Format('Unknown: %f None', [0.0]);
