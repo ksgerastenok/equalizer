@@ -10,5 +10,6 @@ This repository contains:
 - Enhancer Quintessential Player plugin written in C++ (C20 standard)
 - Dynamic Volume Normalizer Quintessential Player plugin written in C++ (C20 standard)
 
+The Enhancer plugin has similar functional as Enhancer v0.17 by Iosif Adryan.
 The Equalizer and Enhancer are based on BiQuad IIR Filter (Peaking EQ and Bass/Treble Shelf).
 More information can be found in files Audio-EQ-Cookbook.txt and Audio-EQ-Zoelzer.txt.
