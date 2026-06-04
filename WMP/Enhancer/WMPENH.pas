@@ -43,12 +43,12 @@ var
 begin
   TWMPENH.ffrm := TWMPFRM.Create();
   for k := 0 to Length(TWMPENH.fenh) - 1 do begin
-    TWMPENH.fenh[k][0].Init(ttSVF, ftBass, btSlope, gtDb);
-    TWMPENH.fenh[k][1].Init(ttSVF, ftBass, btSlope, gtDb);
-    TWMPENH.fenh[k][2].Init(ttSVF, ftTreble, btSlope, gtDb);
+    TWMPENH.fenh[k][0].Init(ttTDI, ftBass, btSlope, gtDb);
+    TWMPENH.fenh[k][1].Init(ttTDI, ftBass, btSlope, gtDb);
+    TWMPENH.fenh[k][2].Init(ttTDI, ftTreble, btSlope, gtDb);
   end;
   for k := 0 to Length(TWMPENH.frng) - 1 do begin
-    TWMPENH.frng[k].Init(ttSVF, ftBand, btOctave, gtDb);
+    TWMPENH.frng[k].Init(ttTDI, ftBand, btOctave, gtDb);
   end;
   Result := 0;
 end;
