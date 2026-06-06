@@ -78,7 +78,7 @@ begin
   if (TQMPENH.finfo.Enabled) then begin
     for k := 0 to Length(TQMPENH.fenh) - 1 do begin
       TQMPENH.fenh[k][0].Amp := 3.5;
-      TQMPENH.fenh[k][0].Freq := 100.0;
+      TQMPENH.fenh[k][0].Freq := 70.0;
       TQMPENH.fenh[k][0].Width := 1.0;
       TQMPENH.fenh[k][0].Rate := Data.Rates;
       TQMPENH.fenh[k][1].Amp := 3.5;
