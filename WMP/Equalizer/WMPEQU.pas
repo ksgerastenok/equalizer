@@ -89,6 +89,8 @@ begin
         TWMPEQU.fequ[k, i].Width := 0.5;
         TWMPEQU.fequ[k, i].Rate := Rates;
       end;
+    end;
+    for k := 0 to Length(TWMPEQU.frng) - 1 do begin
       TWMPEQU.frng[k].Amp := 20.0;
       TWMPEQU.frng[k].Freq := 320.0;
       TWMPEQU.frng[k].Width := 8.0;
@@ -96,14 +98,6 @@ begin
     end;
     TWMPEQU.fdsp.Init(Data, Bits, Rates, Samples, Channels);
     for x := 0 to Samples - 1 do begin
-      for k := 0 to Channels - 1 do begin
-        v := TWMPEQU.fdsp.Data[k, x];
-        for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
-          v := TWMPEQU.fequ[k, i].Process(v);
-        end;
-        v := TWMPEQU.frng[k].Process(v);
-        TWMPEQU.fdsp.Data[k, x] := v;
-      end;
       s := 0.0;
       for k := 0 to Channels - 1 do begin
         s := s - (s - TWMPEQU.fdsp.Data[k, x]) / (k + 1);
@@ -111,6 +105,10 @@ begin
       for k := 0 to Channels - 1 do begin
         v := TWMPEQU.fdsp.Data[k, x];
         v := v - (v - s) * (TWMPEQU.ffrm.Info.Size / 10.0);
+        for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
+          v := TWMPEQU.fequ[k, i].Process(v);
+        end;
+        v := TWMPEQU.frng[k].Process(v);
         TWMPEQU.fdsp.Data[k, x] := v;
       end;
     end;
