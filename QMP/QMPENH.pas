@@ -89,6 +89,8 @@ begin
       TQMPENH.fenh[k][2].Freq := 2500.0;
       TQMPENH.fenh[k][2].Width := 1.0;
       TQMPENH.fenh[k][2].Rate := Data.Rates;
+    end;
+    for k := 0 to Length(TQMPENH.frng) - 1 do begin
       TQMPENH.frng[k].Amp := 20.0;
       TQMPENH.frng[k].Freq := 320.0;
       TQMPENH.frng[k].Width := 8.0;
