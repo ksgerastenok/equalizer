@@ -84,6 +84,8 @@ begin
         TWMPENH.fenh[k][i].Width := TWMPENH.ffrm.Config[i].Width;
         TWMPENH.fenh[k][i].Rate := Rates;
       end;
+    end;
+    for k := 0 to Length(TWMPENH.frng) - 1 do begin
       TWMPENH.frng[k].Amp := 20.0;
       TWMPENH.frng[k].Freq := 320.0;
       TWMPENH.frng[k].Width := 8.0;
@@ -91,14 +93,6 @@ begin
     end;
     TWMPENH.fdsp.Init(Data, Bits, Rates, Samples, Channels);
     for x := 0 to Samples - 1 do begin
-      for k := 0 to Channels - 1 do begin
-        v := TWMPENH.fdsp.Data[k, x];
-        for i := 0 to Length(TWMPENH.fenh[k]) - 1 do begin
-          v := TWMPENH.fenh[k][i].Process(v);
-        end;
-        v := TWMPENH.frng[k].Process(v);
-        TWMPENH.fdsp.Data[k, x] := v;
-      end;
       s := 0.0;
       for k := 0 to Channels - 1 do begin
         s := s - (s - TWMPENH.fdsp.Data[k, x]) / (k + 1);
@@ -106,6 +100,10 @@ begin
       for k := 0 to Channels - 1 do begin
         v := TWMPENH.fdsp.Data[k, x];
         v := v - (v - s) * (TWMPENH.ffrm.Info.Size / 10.0);
+        for i := 0 to Length(TWMPENH.fenh[k]) - 1 do begin
+          v := TWMPENH.fenh[k][i].Process(v);
+        end;
+        v := TWMPENH.frng[k].Process(v);
         TWMPENH.fdsp.Data[k, x] := v;
       end;
     end;
