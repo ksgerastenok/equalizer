@@ -14,7 +14,7 @@ type
     var favg: Double;
     var famp: Double;
     var fval: Double;
-    var fcnt: Double;
+    var fcnt: Integer;
     function getGain(): TGain;
     function getBand(): TBand;
     function getFilter(): TFilter;
@@ -139,7 +139,7 @@ end;
 
 procedure TQMPRNG.addSample(const Value: Double);
 begin
-  self.fcnt := IfThen(self.fcnt < 3000.0, self.fcnt + 1.0, self.fbqf.Rate * IfThen(self.fval * Abs(Value) < 1.0, 5.0, 0.5));
+  self.fcnt := Round(IfThen(self.fcnt < 3000, self.fcnt + 1, self.fbqf.Rate * IfThen(self.fval * Abs(Value) < 1.0, 5.0, 0.5)));
   self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / self.fcnt;
   self.favg := self.favg - (self.favg - Abs(Value)) / self.fcnt;
   self.fval := Min(Max(1.0 / self.famp, 1.0 / (self.favg + 3.0 * Sqrt(self.fsqr - Sqr(self.favg)))), 1.0 * self.famp);

@@ -76,7 +76,6 @@ var
   i: LongWord;
   x: LongWord;
   v: Double;
-  s: Double;
 begin
   if (TQMPEQU.finfo.Enabled) then begin
     for k := 0 to Length(TQMPEQU.fequ) - 1 do begin
