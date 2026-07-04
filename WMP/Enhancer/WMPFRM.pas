@@ -172,47 +172,47 @@ begin
       case (Tag) of
         11: begin
           Position := self.finfo.Preamp;
-          Hint := Format('Gain: %f dB', [Position / 10.0]);
+          Hint := Format('Gain: %f dB', [self.finfo.Preamp / 10.0]);
         end;
         12: begin
           Position := self.finfo.Size;
-          Hint := Format('Width: %fx', [Position / 10.0]);
+          Hint := Format('Width: %fx', [self.finfo.Size / 10.0]);
         end;
         21: begin
           Position := Round(self.fconfig[0].Amp * 10.0);
-          Hint := Format('Amp: %f dB', [Position / 10.0]);
+          Hint := Format('Amp: %f dB', [self.fconfig[0].Amp]);
         end;
         22: begin
           Position := Round(self.fconfig[0].Freq / 10.0);
-          Hint := Format('Freq: %f Hz', [Position * 10.0]);
+          Hint := Format('Freq: %f Hz', [self.fconfig[0].Freq]);
         end;
         23: begin
           Position := Round(self.fconfig[0].Width * 10.0);
-          Hint := Format('Width: %fs', [Position / 10.0]);
+          Hint := Format('Width: %fs', [self.fconfig[0].Width]);
         end;
         31: begin
           Position := Round(self.fconfig[1].Amp * 10.0);
-          Hint := Format('Amp: %f dB', [Position / 10.0]);
+          Hint := Format('Amp: %f dB', [self.fconfig[1].Amp]);
         end;
         32: begin
           Position := Round(self.fconfig[1].Freq / 5.0);
-          Hint := Format('Freq: %f Hz', [Position * 5.0]);
+          Hint := Format('Freq: %f Hz', [self.fconfig[1].Freq]);
         end;
         33: begin
           Position := Round(self.fconfig[1].Width * 10.0);
-          Hint := Format('Width: %fs', [Position / 10.0]);
+          Hint := Format('Width: %fs', [self.fconfig[1].Width]);
         end;
         41: begin
           Position := Round(self.fconfig[2].Amp * 10.0);
-          Hint := Format('Amp: %f dB', [Position / 10.0]);
+          Hint := Format('Amp: %f dB', [self.fconfig[2].Amp]);
         end;
         42: begin
           Position := Round(self.fconfig[2].Freq / 100.0);
-          Hint := Format('Freq: %f Hz', [Position * 100.0]);
+          Hint := Format('Freq: %f Hz', [self.fconfig[2].Freq]);
         end;
         43: begin
           Position := Round(self.fconfig[2].Width * 10.0);
-          Hint := Format('Width: %fs', [Position / 10.0]);
+          Hint := Format('Width: %fs', [self.fconfig[2].Width]);
         end;
         else begin
           Hint := Format('Unknown: %f None', [0.0]);
@@ -229,47 +229,47 @@ begin
       case (Tag) of
         11: begin
           self.finfo.Preamp := Position;
-          Hint := Format('Preamp: %f dB', [Position / 10.0]);
+          Hint := Format('Preamp: %f dB', [self.finfo.Preamp / 10.0]);
         end;
         12: begin
           self.finfo.Size := Position;
-          Hint := Format('Width: %fx', [Position / 10.0]);
+          Hint := Format('Width: %fx', [self.finfo.Size / 10.0]);
         end;
         21: begin
           self.fconfig[0].Amp := Position / 10.0;
-          Hint := Format('Amp: %f dB', [Position / 10.0]);
+          Hint := Format('Amp: %f dB', [self.fconfig[0].Amp]);
         end;
         22: begin
           self.fconfig[0].Freq := Position * 10.0;
-          Hint := Format('Freq: %f Hz', [Position * 10.0]);
+          Hint := Format('Freq: %f Hz', [self.fconfig[0].Freq]);
         end;
         23: begin
           self.fconfig[0].Width := Position / 10.0;
-          Hint := Format('Width: %fs', [Position / 10.0]);
+          Hint := Format('Width: %fs', [self.fconfig[0].Width]);
         end;
         31: begin
           self.fconfig[1].Amp := Position / 10.0;
-          Hint := Format('Amp: %f dB', [Position / 10.0]);
+          Hint := Format('Amp: %f dB', [self.fconfig[1].Amp]);
         end;
         32: begin
           self.fconfig[1].Freq := Position * 5.0;
-          Hint := Format('Freq: %f Hz', [Position * 5.0]);
+          Hint := Format('Freq: %f Hz', [self.fconfig[1].Freq]);
         end;
         33: begin
           self.fconfig[1].Width := Position / 10.0;
-          Hint := Format('Width: %fs', [Position / 10.0]);
+          Hint := Format('Width: %fs', [self.fconfig[1].Width]);
         end;
         41: begin
           self.fconfig[2].Amp := Position / 10.0;
-          Hint := Format('Amp: %f dB', [Position / 10.0]);
+          Hint := Format('Amp: %f dB', [self.fconfig[2].Amp]);
         end;
         42: begin
           self.fconfig[2].Freq := Position * 100.0;
-          Hint := Format('Freq: %f Hz', [Position * 100.0]);
+          Hint := Format('Freq: %f Hz', [self.fconfig[2].Freq]);
         end;
         43: begin
           self.fconfig[2].Width := Position / 10.0;
-          Hint := Format('Width: %fs', [Position / 10.0]);
+          Hint := Format('Width: %fs', [self.fconfig[2].Width]);
         end;
         else begin
           Hint := Format('Unknown: %f None', [0.0]);
