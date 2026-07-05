@@ -86,7 +86,7 @@ begin
       TQMPENH.fenh[k][1].Width := 1.5;
       TQMPENH.fenh[k][1].Rate := Data.Rates;
       TQMPENH.fenh[k][2].Amp := 10.0;
-      TQMPENH.fenh[k][2].Freq := 2500.0;
+      TQMPENH.fenh[k][2].Freq := 2000.0;
       TQMPENH.fenh[k][2].Width := 1.5;
       TQMPENH.fenh[k][2].Rate := Data.Rates;
     end;
