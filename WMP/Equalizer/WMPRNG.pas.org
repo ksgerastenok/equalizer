@@ -15,7 +15,6 @@ type
     var famp: Double;
     var fval: Double;
     var fcnt: Integer;
-    var frng: array of Double;
     function getGain(): TGain;
     function getBand(): TBand;
     function getFilter(): TFilter;
@@ -51,12 +50,10 @@ uses
 procedure TWMPRNG.Init(const Transform: TTransform; const Filter: TFilter; const Band: TBand; const Gain: TGain);
 begin
   self.fbqf.Init(Transform, Filter, Band, Gain);
-  SetLength(self.frng, 500000);
 end;
 
 procedure TWMPRNG.Done();
 begin
-  SetLength(self.frng, 0);
   self.fbqf.Done();
 end;
 
@@ -141,17 +138,10 @@ begin
 end;
 
 procedure TWMPRNG.addSample(const Value: Double);
-var
-  i: Integer;
 begin
-  for i := 1 to IfThen(self.fval * Abs(Value) < 1.0, 1, 10) do begin
-    self.fsqr := self.fsqr + (self.fsqr - Sqr(self.frng[self.fcnt])) / (Length(self.frng) - 1);
-    self.favg := self.favg + (self.favg - Abs(self.frng[self.fcnt])) / (Length(self.frng) - 1);
-    self.frng[self.fcnt] := Value;
-    self.fsqr := self.fsqr - (self.fsqr - Sqr(self.frng[self.fcnt])) / Length(self.frng);
-    self.favg := self.favg - (self.favg - Abs(self.frng[self.fcnt])) / Length(self.frng);
-    self.fcnt := (self.fcnt + 1) mod Length(self.frng);
-  end;
+  self.fcnt := Round(IfThen(self.fcnt < 3000, self.fcnt + 1, self.fbqf.Rate * IfThen(self.fval * Abs(Value) < 1.0, 5.0, 0.5)));
+  self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / self.fcnt;
+  self.favg := self.favg - (self.favg - Abs(Value)) / self.fcnt;
   self.fval := Min(Max(1.0 / self.famp, 1.0 / (self.favg + 3.0 * Sqrt(self.fsqr - Sqr(self.favg)))), 1.0 * self.famp);
 end;
 
