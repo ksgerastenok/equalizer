@@ -10,11 +10,8 @@ type
   TWMPRNG = record
   private
     var fbqf: TWMPBQF;
-    var fsqr: Double;
-    var favg: Double;
     var famp: Double;
     var fval: Double;
-    var fcnt: Integer;
     function getGain(): TGain;
     function getBand(): TBand;
     function getFilter(): TFilter;
@@ -50,10 +47,12 @@ uses
 procedure TWMPRNG.Init(const Transform: TTransform; const Filter: TFilter; const Band: TBand; const Gain: TGain);
 begin
   self.fbqf.Init(Transform, Filter, Band, Gain);
+  self.fval := 1.0;
 end;
 
 procedure TWMPRNG.Done();
 begin
+  self.fval := 1.0;
   self.fbqf.Done();
 end;
 
@@ -139,10 +138,7 @@ end;
 
 procedure TWMPRNG.addSample(const Value: Double);
 begin
-  self.fcnt := Round(IfThen(self.fcnt < 3000, self.fcnt + 1, self.fbqf.Rate * IfThen(self.fval * Abs(Value) < 1.0, 5.0, 0.5)));
-  self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / self.fcnt;
-  self.favg := self.favg - (self.favg - Abs(Value)) / self.fcnt;
-  self.fval := Min(Max(1.0 / self.famp, 1.0 / (self.favg + 3.0 * Sqrt(self.fsqr - Sqr(self.favg)))), 1.0 * self.famp);
+  self.fval := Min(Max(1.0 / self.famp, self.fval / Sqrt(1.0 - (1.0 - Sqr(3.0 * self.fval * Value)) / IfThen(Abs(self.fval * Value) < 1.0, 5.0 * self.fbqf.Rate, 0.5 * self.fbqf.Rate))), 1.0 * self.famp);
 end;
 
 function TWMPRNG.Process(const Value: Double): Double;
