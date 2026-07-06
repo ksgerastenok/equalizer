@@ -92,8 +92,8 @@ begin
     end;
     for k := 0 to Length(TWMPEQU.frng) - 1 do begin
       TWMPEQU.frng[k].Amp := 20.0;
-      TWMPEQU.frng[k].Freq := 160.0;
-      TWMPEQU.frng[k].Width := 6.0;
+      TWMPEQU.frng[k].Freq := 320.0;
+      TWMPEQU.frng[k].Width := 8.0;
       TWMPEQU.frng[k].Rate := Rates;
     end;
     TWMPEQU.fdsp.Init(Data, Bits, Rates, Samples, Channels);
