@@ -47,12 +47,10 @@ uses
 procedure TWMPRNG.Init(const Transform: TTransform; const Filter: TFilter; const Band: TBand; const Gain: TGain);
 begin
   self.fbqf.Init(Transform, Filter, Band, Gain);
-  self.fval := 1.0;
 end;
 
 procedure TWMPRNG.Done();
 begin
-  self.fval := 1.0;
   self.fbqf.Done();
 end;
 
@@ -138,7 +136,7 @@ end;
 
 procedure TWMPRNG.addSample(const Value: Double);
 begin
-  self.fval := Min(Max(1.0 / self.famp, self.fval / Sqrt(1.0 - (1.0 - Sqr(3.0 * self.fval * Value)) / IfThen(Abs(self.fval * Value) < 1.0, 5.0 * self.fbqf.Rate, 0.5 * self.fbqf.Rate))), 1.0 * self.famp);
+  self.fval := IfThen(self.fval = 0.0, 1.0, Min(Max(1.0 / self.famp, self.fval / Sqrt(1.0 - (1.0 - Sqr(3.0 * self.fval * Value)) / IfThen(Abs(self.fval * Value) < 1.0, 5.0 * self.fbqf.Rate, 0.5 * self.fbqf.Rate))), 1.0 * self.famp));
 end;
 
 function TWMPRNG.Process(const Value: Double): Double;
