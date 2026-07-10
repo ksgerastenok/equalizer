@@ -43,7 +43,7 @@ var
   k: LongWord;
 begin
   for k := 0 to Length(TQMPSUR.frng) - 1 do begin
-    TQMPSUR.frng[k].Init(ttTDI, ftBand, btOctave, gtDb);
+    TQMPSUR.frng[k].Init(ttSVF, ftBand, btOctave, gtDb);
   end;
   Result := 1;
 end;

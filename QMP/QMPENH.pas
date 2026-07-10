@@ -44,12 +44,12 @@ var
   k: LongWord;
 begin
   for k := 0 to Length(TQMPENH.fenh) - 1 do begin
-    TQMPENH.fenh[k][0].Init(ttTDI, ftBass, btSlope, gtDb);
-    TQMPENH.fenh[k][1].Init(ttTDI, ftBass, btSlope, gtDb);
-    TQMPENH.fenh[k][2].Init(ttTDI, ftTreble, btSlope, gtDb);
+    TQMPENH.fenh[k][0].Init(ttSVF, ftBass, btSlope, gtDb);
+    TQMPENH.fenh[k][1].Init(ttSVF, ftBass, btSlope, gtDb);
+    TQMPENH.fenh[k][2].Init(ttSVF, ftTreble, btSlope, gtDb);
   end;
   for k := 0 to Length(TQMPENH.frng) - 1 do begin
-    TQMPENH.frng[k].Init(ttTDI, ftBand, btOctave, gtDb);
+    TQMPENH.frng[k].Init(ttSVF, ftBand, btOctave, gtDb);
   end;
   Result := 1;
 end;
@@ -86,7 +86,7 @@ begin
       TQMPENH.fenh[k][1].Width := 1.5;
       TQMPENH.fenh[k][1].Rate := Data.Rates;
       TQMPENH.fenh[k][2].Amp := 10.0;
-      TQMPENH.fenh[k][2].Freq := 2000.0;
+      TQMPENH.fenh[k][2].Freq := 3500.0;
       TQMPENH.fenh[k][2].Width := 1.5;
       TQMPENH.fenh[k][2].Rate := Data.Rates;
     end;
