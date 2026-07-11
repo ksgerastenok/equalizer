@@ -13,7 +13,7 @@ type
   TFilter = (ftLow, ftHigh, ftPeak, ftBand, ftNotch, ftAll, ftEqu, ftBass, ftTreble);
 
 type
-  TTransform = (ttTDI, ttSVF, ttZDF);
+  TTransform = (ttRBJ, ttZLB, ttZLC);
 
 type
   TQMPBQF = record
@@ -116,7 +116,7 @@ end;
 procedure TQMPBQF.calcConfig();
 begin
   case (self.ftransform) of
-    ttTDI: begin
+    ttRBJ: begin
       case (self.ffilter) of
         ftLow: begin
           self.fconfig[0, 2] :=  1.0 * 0.5 * (1.0 - Cos(self.calcOmega()));
@@ -200,7 +200,7 @@ begin
         end;
       end;
     end;
-    ttSVF: begin
+    ttZLB: begin
       case (self.ffilter) of
         ftLow: begin
           self.fconfig[0, 2] :=  (1.0 * Sqr(Tan(0.5 * self.calcOmega())));
@@ -284,7 +284,7 @@ begin
         end;
       end;
     end;
-    ttZDF: begin
+    ttZLC: begin
       case (self.ffilter) of
         ftLow: begin
           self.fconfig[0, 2] :=  (1.0 * Sqr(Tan(0.5 * self.calcOmega())));
