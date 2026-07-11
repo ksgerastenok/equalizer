@@ -13,7 +13,7 @@ object WMPFRM: TWMPFRM
   FormStyle = fsStayOnTop
   ParentBiDiMode = False
   Position = poScreenCenter
-  LCLVersion = '4.4.0.0'
+  LCLVersion = '4.8.0.0'
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnHide = FormHide
