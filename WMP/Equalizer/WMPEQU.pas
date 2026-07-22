@@ -104,11 +104,10 @@ begin
       end;
       for k := 0 to Channels - 1 do begin
         v := TWMPEQU.fdsp.Data[k, x];
-        v := IfThen(v < 0.0, Tanh(2.5 * 0.5 * v), 2.5 * (ArcTan(0.5 * v) + Sqrt(1.0 - Sqr(0.5 * v)) - 1.0));
+        v := v - (v - s) * (TWMPEQU.ffrm.Info.Size / 10.0);
         for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
           v := TWMPEQU.fequ[k, i].Process(v);
         end;
-        v := v - (v - s) * (TWMPEQU.ffrm.Info.Size / 10.0);
         v := TWMPEQU.frng[k].Process(v);
         TWMPEQU.fdsp.Data[k, x] := v;
       end;
