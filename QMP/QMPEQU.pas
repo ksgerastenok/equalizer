@@ -96,7 +96,6 @@ begin
     for x := 0 to Data.Samples - 1 do begin
       for k := 0 to Data.Channels - 1 do begin
         v := TQMPEQU.fdsp.Data[k, x];
-        v := IfThen(v < 0.0, Tanh(2.5 * 0.45 * v), 2.5 * (ArcTan(0.45 * v) + Sqrt(1.0 - Sqr(0.45 * v)) - 1.0));
         for i := 0 to Length(TQMPEQU.fequ[k]) - 1 do begin
           v := TQMPEQU.fequ[k, i].Process(v);
         end;
