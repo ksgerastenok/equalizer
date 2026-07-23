@@ -79,7 +79,7 @@ begin
       end;
       for k := 0 to Data.Channels - 1 do begin
         v := TQMPSUR.fdsp.Data[k, x];
-        v := v + 0.75 * (v - s);
+        v := v + (v - s) * 0.75;
         v := TQMPSUR.frng[k].Process(v);
         TQMPSUR.fdsp.Data[k, x] := v;
       end;
