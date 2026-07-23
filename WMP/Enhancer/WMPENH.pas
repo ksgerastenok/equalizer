@@ -102,7 +102,7 @@ begin
       end;
       for k := 0 to Channels - 1 do begin
         v := TWMPENH.fdsp.Data[k, x];
-        v := v - (v - s) * (TWMPENH.ffrm.Info.Size / 10.0);
+        v := v + (v - s) * (TWMPENH.ffrm.Info.Size / 10.0);
         for i := 0 to Length(TWMPENH.fenh[k]) - 1 do begin
           v := TWMPENH.fenh[k][i].Process(v);
         end;
