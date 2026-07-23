@@ -104,7 +104,7 @@ begin
       end;
       for k := 0 to Channels - 1 do begin
         v := TWMPEQU.fdsp.Data[k, x];
-        v := v - (v - s) * (TWMPEQU.ffrm.Info.Size / 10.0);
+        v := v + (v - s) * (TWMPEQU.ffrm.Info.Size / 10.0);
         for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
           v := TWMPEQU.fequ[k, i].Process(v);
         end;
