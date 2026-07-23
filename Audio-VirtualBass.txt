@@ -1,2 +1,0 @@
-fPW(x) := 2.5 * (arctan(0.9x) + sqrt(1.0 − sqr(0.9x)) − 1.0), if x ≥ 0
-	  tanh(2.5 * 0.9x), if x < 0 ,
