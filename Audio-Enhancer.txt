@@ -1,16 +1,18 @@
 --------------------------------------------------------
 mono = (L + R) / 2.0
-stereo = (L - R) * k
+stereo = (L - R) * w
 L = mono + stereo
 R = mono - stereo
 --------------------------------------------------------
-L = L - k * (L - mono)
-R = R - k * (R - mono)
+s = (L + R) / 2.0
+L = L - w * (L - s)
+R = R - w * (R - s)
 --------------------------------------------------------
-L = mono - (1 - k) * (mono - L)
-R = mono - (1 - k) * (mono - R)
+s = (L + R) / 2.0
+L = s - (1 - w) * (s - L)
+R = s - (1 - w) * (s - R)
 --------------------------------------------------------
-s = avg(channels)
-channels[i] = channels[i] -    k    * (channels[i] - s)
-channels[i] =       s     - (1 - k) * (s - channels[i])
+s = Avg(channels)
+channels[i] = channels[i] -    w    * (channels[i] - s)
+channels[i] =      s      - (1 - w) * (s - channels[i])
 --------------------------------------------------------
