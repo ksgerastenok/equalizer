@@ -137,7 +137,7 @@ end;
 procedure TQMPRNG.addSample(const Value: Double);
 begin
   self.fval := IfThen(self.fval <> 0.0, self.fval, 1.0);
-  self.fval := self.fval / (1.0 - (1.0 - Abs(2.5 * self.fval * Value)) * (1.0 - 1.0 / Exp(1.0 / IfThen(Abs(2.5 * self.fval * Value) < 1.0, 5.0 * self.fbqf.Rate, 0.5 * self.fbqf.Rate))));
+  self.fval := self.fval / Sqrt(1.0 - (1.0 - Sqr(2.0 * self.fval * Value)) * (1.0 - 1.0 / Exp(1.0 / IfThen(Sqr(2.0 * self.fval * Value) < 1.0, 5.0 * self.fbqf.Rate, 0.5 * self.fbqf.Rate))));
   self.fval := Min(Max(1.0 / self.famp, self.fval), 1.0 * self.famp);
 end;
 
