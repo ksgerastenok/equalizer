@@ -10,6 +10,8 @@ type
   TWMPRNG = record
   private
     var fbqf: TWMPBQF;
+    var fsqr: Double;
+    var favg: Double;
     var famp: Double;
     var fval: Double;
     function getGain(): TGain;
@@ -136,9 +138,9 @@ end;
 
 procedure TWMPRNG.addSample(const Value: Double);
 begin
-  self.fval := IfThen(self.fval <> 0.0, self.fval, 1.0);
-  self.fval := self.fval / Sqrt(1.0 - (1.0 - Sqr(3.0 * self.fval * Value)) / IfThen(Sqr(3.0 * self.fval * Value) < 10.0, 5.0 * self.fbqf.Rate, 0.5 * self.fbqf.Rate));
-  self.fval := Min(Max(1.0 / self.famp, self.fval), 1.0 * self.famp);
+  self.fsqr := self.fsqr - (self.fsqr - Sqr(Value)) / IfThen(Sqr(self.fval * Value) < 1.0, 5.0 * self.fbqf.Rate, 0.5 * self.fbqf.Rate);
+  self.favg := self.favg - (self.favg - Abs(Value)) / IfThen(Abs(self.fval * Value) < 1.0, 5.0 * self.fbqf.Rate, 0.5 * self.fbqf.Rate);
+  self.fval := Min(Max(1.0 / self.famp, 1.0 / (self.favg + 3.0 * Sqrt(self.fsqr - Sqr(self.favg)))), 1.0 * self.famp);
 end;
 
 function TWMPRNG.Process(const Value: Double): Double;
