@@ -88,8 +88,8 @@ begin
     end;
     for k := 0 to Length(TQMPEQU.frng) - 1 do begin
       TQMPEQU.frng[k].Amp := 20.0;
-      TQMPEQU.frng[k].Freq := 640.0;
-      TQMPEQU.frng[k].Width := 10.0;
+      TQMPEQU.frng[k].Freq := 320.0;
+      TQMPEQU.frng[k].Width := 8.0;
       TQMPEQU.frng[k].Rate := Data.Rates;
     end;
     TQMPEQU.fdsp.Init(Data);
