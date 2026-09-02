@@ -90,8 +90,8 @@ begin
     end;
     for k := 0 to Length(TWMPENH.frng) - 1 do begin
       TWMPENH.frng[k].Amp := 20.0;
-      TWMPENH.frng[k].Freq := 320.0;
-      TWMPENH.frng[k].Width := 8.0;
+      TWMPENH.frng[k].Freq := 640.0;
+      TWMPENH.frng[k].Width := 10.0;
       TWMPENH.frng[k].Rate := Rates;
     end;
     TWMPENH.fdsp.Init(Data, Bits, Rates, Samples, Channels);
