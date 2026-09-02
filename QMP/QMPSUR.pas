@@ -67,8 +67,8 @@ begin
   if (TQMPSUR.finfo.Enabled) then begin
     for k := 0 to Length(TQMPSUR.frng) - 1 do begin
       TQMPSUR.frng[k].Amp := 20.0;
-      TQMPSUR.frng[k].Freq := 320.0;
-      TQMPSUR.frng[k].Width := 8.0;
+      TQMPSUR.frng[k].Freq := 640.0;
+      TQMPSUR.frng[k].Width := 10.0;
       TQMPSUR.frng[k].Rate := Data.Rates;
     end;
     TQMPSUR.fdsp.Init(Data);

@@ -92,8 +92,8 @@ begin
     end;
     for k := 0 to Length(TQMPENH.frng) - 1 do begin
       TQMPENH.frng[k].Amp := 20.0;
-      TQMPENH.frng[k].Freq := 320.0;
-      TQMPENH.frng[k].Width := 8.0;
+      TQMPENH.frng[k].Freq := 640.0;
+      TQMPENH.frng[k].Width := 10.0;
       TQMPENH.frng[k].Rate := Data.Rates;
     end;
     TQMPENH.fdsp.Init(Data);
