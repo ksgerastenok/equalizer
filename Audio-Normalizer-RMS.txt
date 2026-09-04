@@ -1,0 +1,26 @@
+Let's try to make Dynamic Volume Normalizer via RMS (Root Mean Square) approach.
+Assume samples are at range [-1..+1] and can be interpreted as random value with normal distribution with average = 0.
+The recurrent formula is: rms(N + 1) = rms(N) - (rms(N) - x^2) / (N + 1):
+rms(N) = sum(x^2, N) / N; sum(x^2, N) = rms(N) * N;
+rms(N + 1) = sum(x^2, N + 1) / (N + 1); sum(x^2, N + 1) = sum(x^2, N) + x^2 = rms(N) * N + x^2;
+rms(N + 1) = (rms(N) * N + x^2) / (N + 1) = (rms(N) * (N + 1) - (rms(N) - x^2)) / (N + 1) = rms(N) - (rms(N) - x^2) / (N + 1);
+As large amount of samples are processed, the N will be large enough (standard audio file is about 180 seconds long and sample rate is 44100, so N = 180 * 44100 = 8000000).
+So N can be constant:
+rms(N + 1) = rms(N) - (rms(N) - x^2) / (N + 1)
+rms'(N + 1) = rms(N) - (rms(N) - x^2) / N
+Assume, |rms'(N + 1) - rms(N + 1)| <= 10^(-6):
+|(rms(N) - (rms(N) - x^2) / N) - (rms(N) - (rms(N) - x^2) / (N + 1))| <= 10^(-6)
+|(rms(N) - x^2) / N - (rms(N) - x^2) / (N + 1)| <= 10^(-6)
+|(rms(N) - x^2) / (N * (N + 1))| <= 10^(-6) 
+N * (N + 1) >= |rms(N) - x^2| * 10^6; max(|rms(N) - x^2|) = 1.0
+N * (N + 1) >= 10^6; N >= 10^3 = 1000;
+So, if N >= 1000, it is no matter if N or N + 1 will be used, delta <= 10^(-6).
+N = 1000 is the equivalent to 25ms (if sample rate is 44100: 44100 * 0.025 = 1000), so after 25ms a constant value (>= 1000) instead of N can be used.
+Assume N = 5.0 * srate for attack (increase volume level) and N = 0.5 * srate for release (reduce volume level), where srate = 44100. 
+gain(N) = 1.0 / (3.0 * sqrt(rms(N))) ("3-sigma" rule is used)
+If rms(N) < x^2, then rms(N + 1) > rms(N) and gain(N + 1) < gain(N), so release value for N will be used (attack otherwise).
+rms(N) = 1.0 / (3.0 * gain(N))^2
+1.0 / (3.0 * gain(N + 1))^2 = 1.0 / (3.0 * gain(N))^2 - (1.0 / (3.0 * gain(N))^2 - x^2) / N
+1.0 / (3.0 * gain(N + 1))^2 = 1.0 / (3.0 * gain(N))^2 * (1.0 - (1.0 - (3.0 * x * gain(N))^2) / N)
+gain(N + 1) = gain(N) / sqrt(1.0 - (1.0 - (3.0 * x * gain(N))^2) / N), gain(0) = 1.0
+If (3.0 * x * gain(N))^2 < 1.0, then attack N = 5.0 * srate, otherwise release N = 0.5 * srate
