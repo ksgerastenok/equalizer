@@ -2,7 +2,7 @@ Let's try to make Dynamic Volume Normalizer via ABS (Absolute value) approach.
 Assume samples are at range [-1..+1] and absolute value will be at range [0..1].
 The recurrent formula is: avg(N + 1) = avg(N) - (avg(N) - |x|) / (N + 1):
 avg(N) = sum(|x|, N) / N; sum(|x|, N) = avg(N) * N;
-avg(N + 1) = avg(|x|, N + 1) / (N + 1); sum(|x|, N + 1) = sum(|x|, N) + |x| = avg(N) * N + |x|;
+avg(N + 1) = sum(|x|, N + 1) / (N + 1); sum(|x|, N + 1) = sum(|x|, N) + |x| = avg(N) * N + |x|;
 avg(N + 1) = (avg(N) * N + |x|) / (N + 1) = (avg(N) * (N + 1) - (avg(N) - |x|)) / (N + 1) = avg(N) - (avg(N) - |x|) / (N + 1);
 As large amount of samples are processed, the N will be large enough (standard audio file is about 180 seconds long and sample rate is 44100, so N = 180 * 44100 = 8000000).
 So N can be constant:
