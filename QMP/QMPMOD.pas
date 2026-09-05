@@ -7,7 +7,7 @@ uses
   QMPDCL,
   QMPEQU,
   QMPENH,
-  QMPSUR;
+  QMPEXT;
 
 type
   TQMPMOD = record
@@ -29,7 +29,7 @@ begin
       Result := TQMPENH.Plugin();
     end;
     2: begin
-      Result := TQMPSUR.Plugin();
+      Result := TQMPEXT.Plugin();
     end;
     else begin
       Result := nil;

@@ -5,7 +5,7 @@ interface
 
 uses
   QMPBQF,
-  QMPRNG,
+  QMPNRM,
   QMPDSP,
   QMPDCL;
 
@@ -15,7 +15,7 @@ type
     class var finfo: TInfo;
     class var fdsp: TQMPDSP;
     class var fenh: array[0..4] of array[0..2] of TQMPBQF;
-    class var frng: array[0..4] of TQMPRNG;
+    class var fnrm: array[0..4] of TQMPNRM;
     class function Init(const Flags: Integer): Integer; cdecl; static;
     class procedure Quit(const Flags: Integer); cdecl; static;
     class function Modify(const Data: PData; const Latency: PInteger; const Flags: Integer): Integer; cdecl; static;
@@ -44,12 +44,12 @@ var
   k: LongWord;
 begin
   for k := 0 to Length(TQMPENH.fenh) - 1 do begin
-    TQMPENH.fenh[k][0].Init(ttRBJ, ftBass, btSlope, gtDb);
-    TQMPENH.fenh[k][1].Init(ttRBJ, ftBass, btSlope, gtDb);
-    TQMPENH.fenh[k][2].Init(ttRBJ, ftTreble, btSlope, gtDb);
+    TQMPENH.fenh[k][0].Init(QMPBQF.ttRBJ, QMPBQF.ftBass, QMPBQF.btSlope, QMPBQF.gtDb);
+    TQMPENH.fenh[k][1].Init(QMPBQF.ttRBJ, QMPBQF.ftBass, QMPBQF.btSlope, QMPBQF.gtDb);
+    TQMPENH.fenh[k][2].Init(QMPBQF.ttRBJ, QMPBQF.ftTreble, QMPBQF.btSlope, QMPBQF.gtDb);
   end;
-  for k := 0 to Length(TQMPENH.frng) - 1 do begin
-    TQMPENH.frng[k].Init(ttRBJ, ftBand, btOctave, gtDb);
+  for k := 0 to Length(TQMPENH.fnrm) - 1 do begin
+    TQMPENH.fnrm[k].Init(QMPNRM.ttABS, QMPNRM.gtDb);
   end;
   Result := 1;
 end;
@@ -63,8 +63,8 @@ begin
     TQMPENH.fenh[k][1].Done();
     TQMPENH.fenh[k][2].Done();
   end;
-  for k := 0 to Length(TQMPENH.frng) - 1 do begin
-    TQMPENH.frng[k].Done();
+  for k := 0 to Length(TQMPENH.fnrm) - 1 do begin
+    TQMPENH.fnrm[k].Done();
   end;
 end;
 
@@ -90,11 +90,11 @@ begin
       TQMPENH.fenh[k][2].Width := 1.0;
       TQMPENH.fenh[k][2].Rate := Data.Rates;
     end;
-    for k := 0 to Length(TQMPENH.frng) - 1 do begin
-      TQMPENH.frng[k].Amp := 20.0;
-      TQMPENH.frng[k].Freq := 640.0;
-      TQMPENH.frng[k].Width := 10.0;
-      TQMPENH.frng[k].Rate := Data.Rates;
+    for k := 0 to Length(TQMPENH.fnrm) - 1 do begin
+      TQMPENH.fnrm[k].Amp := 20.0;
+      TQMPENH.fnrm[k].Attack := 5.0;
+      TQMPENH.fnrm[k].Release := 0.5;
+      TQMPENH.fnrm[k].Rate := Data.Rates;
     end;
     TQMPENH.fdsp.Init(Data);
     for x := 0 to Data.Samples - 1 do begin
@@ -103,7 +103,7 @@ begin
         for i := 0 to Length(TQMPENH.fenh[k]) - 1 do begin
           v := TQMPENH.fenh[k, i].Process(v);
         end;
-        v := TQMPENH.frng[k].Process(v);
+        v := TQMPENH.fnrm[k].Process(v);
         TQMPENH.fdsp.Data[k, x] := v;
       end;
     end;
