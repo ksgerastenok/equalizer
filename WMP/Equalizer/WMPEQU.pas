@@ -7,7 +7,7 @@ uses
   WMPDCL,
   WMPDSP,
   WMPBQF,
-  WMPRNG,
+  WMPNRM,
   WMPFRM;
 
 type
@@ -16,7 +16,7 @@ type
     class var ffrm: TWMPFRM;
     class var fdsp: TWMPDSP;
     class var fequ: array[0..4] of array[0..19] of TWMPBQF;
-    class var frng: array[0..4] of TWMPRNG;
+    class var fnrm: array[0..4] of TWMPNRM;
     class function Init(const Plugin: PPlugin): Integer; cdecl; static;
     class procedure Quit(const Plugin: PPlugin); cdecl; static;
     class function Modify(const Plugin: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl; static;
@@ -48,11 +48,11 @@ begin
   TWMPEQU.ffrm := TWMPFRM.Create();
   for k := 0 to Length(TWMPEQU.fequ) - 1 do begin
     for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
-      TWMPEQU.fequ[k, i].Init(ttZLB, ftEqu, btOctave, gtDb);
+      TWMPEQU.fequ[k, i].Init(WMPBQF.ttZLB, WMPBQF.ftEqu, WMPBQF.btOctave, WMPBQF.gtDb);
     end;
   end;
-  for k := 0 to Length(TWMPEQU.frng) - 1 do begin
-    TWMPEQU.frng[k].Init(ttZLB, ftBand, btOctave, gtDb);
+  for k := 0 to Length(TWMPEQU.fnrm) - 1 do begin
+    TWMPEQU.fnrm[k].Init(WMPNRM.ttABS, WMPNRM.gtDb);
   end;
   Result := 0;
 end;
@@ -67,8 +67,8 @@ begin
       TWMPEQU.fequ[k, i].Done();
     end;
   end;
-  for k := 0 to Length(TWMPEQU.frng) - 1 do begin
-    TWMPEQU.frng[k].Done();
+  for k := 0 to Length(TWMPEQU.fnrm) - 1 do begin
+    TWMPEQU.fnrm[k].Done();
   end;
   TWMPEQU.ffrm.Destroy();
 end;
@@ -90,17 +90,19 @@ begin
         TWMPEQU.fequ[k, i].Rate := Rates;
       end;
     end;
-    for k := 0 to Length(TWMPEQU.frng) - 1 do begin
-      TWMPEQU.frng[k].Amp := 20.0;
-      TWMPEQU.frng[k].Freq := 640.0;
-      TWMPEQU.frng[k].Width := 10.0;
-      TWMPEQU.frng[k].Rate := Rates;
+    for k := 0 to Length(TWMPEQU.fnrm) - 1 do begin
+      TWMPEQU.fnrm[k].Amp := 20.0;
+      TWMPEQU.fnrm[k].Attack := 5.0;
+      TWMPEQU.fnrm[k].Release := 0.5;
+      TWMPEQU.fnrm[k].Rate := Rates;
     end;
     TWMPEQU.fdsp.Init(Data, Bits, Rates, Samples, Channels);
     for x := 0 to Samples - 1 do begin
       s := 0.0;
       for k := 0 to Channels - 1 do begin
-        s := s - (s - TWMPEQU.fdsp.Data[k, x]) / (k + 1);
+        v := TWMPEQU.fdsp.Data[k, x];
+        s := s - (s - v) / (k + 1);
+        TWMPEQU.fdsp.Data[k, x] := v;
       end;
       for k := 0 to Channels - 1 do begin
         v := TWMPEQU.fdsp.Data[k, x];
@@ -108,14 +110,16 @@ begin
         for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
           v := TWMPEQU.fequ[k, i].Process(v);
         end;
-        v := TWMPEQU.frng[k].Process(v);
+        v := TWMPEQU.fnrm[k].Process(v);
         TWMPEQU.fdsp.Data[k, x] := v;
       end;
     end;
     TWMPEQU.fdsp.Done();
     s := 0.0;
     for k := 0 to Channels - 1 do begin
-      s := s - (s - TWMPEQU.frng[k].Amp) / (k + 1);
+      v := TWMPEQU.fnrm[k].Amp;
+      s := s - (s - v) / (k + 1);
+      TWMPEQU.fnrm[k].Amp := v;
     end;
     TWMPEQU.ffrm.Info.Preamp := Round(s * 10.0);
     TWMPEQU.ffrm.Refresh();
