@@ -7,7 +7,7 @@ uses
   WMPDCL,
   WMPDSP,
   WMPBQF,
-  WMPRNG,
+  WMPNRM,
   WMPFRM;
 
 type
@@ -16,7 +16,7 @@ type
     class var ffrm: TWMPFRM;
     class var fdsp: TWMPDSP;
     class var fenh: array[0..4] of array[0..2] of TWMPBQF;
-    class var frng: array[0..4] of TWMPRNG;
+    class var fnrm: array[0..4] of TWMPNRM;
     class function Init(const Plugin: PPlugin): Integer; cdecl; static;
     class procedure Quit(const Plugin: PPlugin); cdecl; static;
     class function Modify(const Plugin: PPlugin; const Data: Pointer; const Samples: LongWord; const Bits: LongWord; const Channels: LongWord; const Rates: LongWord): Integer; cdecl; static;
@@ -46,12 +46,12 @@ var
 begin
   TWMPENH.ffrm := TWMPFRM.Create();
   for k := 0 to Length(TWMPENH.fenh) - 1 do begin
-    TWMPENH.fenh[k][0].Init(ttRBJ, ftBass, btSlope, gtDb);
-    TWMPENH.fenh[k][1].Init(ttRBJ, ftBass, btSlope, gtDb);
-    TWMPENH.fenh[k][2].Init(ttRBJ, ftTreble, btSlope, gtDb);
+    TWMPENH.fenh[k][0].Init(WMPBQF.ttRBJ, WMPBQF.ftBass, WMPBQF.btSlope, WMPBQF.gtDb);
+    TWMPENH.fenh[k][1].Init(WMPBQF.ttRBJ, WMPBQF.ftBass, WMPBQF.btSlope, WMPBQF.gtDb);
+    TWMPENH.fenh[k][2].Init(WMPBQF.ttRBJ, WMPBQF.ftTreble, WMPBQF.btSlope, WMPBQF.gtDb);
   end;
-  for k := 0 to Length(TWMPENH.frng) - 1 do begin
-    TWMPENH.frng[k].Init(ttRBJ, ftBand, btOctave, gtDb);
+  for k := 0 to Length(TWMPENH.fnrm) - 1 do begin
+    TWMPENH.fnrm[k].Init(WMPNRM.ttABS, WMPNRM.gtDb);
   end;
   Result := 0;
 end;
@@ -65,8 +65,8 @@ begin
     TWMPENH.fenh[k][1].Done();
     TWMPENH.fenh[k][2].Done();
   end;
-  for k := 0 to Length(TWMPENH.frng) - 1 do begin
-    TWMPENH.frng[k].Done();
+  for k := 0 to Length(TWMPENH.fnrm) - 1 do begin
+    TWMPENH.fnrm[k].Done();
   end;
   TWMPENH.ffrm.Destroy();
 end;
@@ -88,17 +88,19 @@ begin
         TWMPENH.fenh[k][i].Rate := Rates;
       end;
     end;
-    for k := 0 to Length(TWMPENH.frng) - 1 do begin
-      TWMPENH.frng[k].Amp := 20.0;
-      TWMPENH.frng[k].Freq := 640.0;
-      TWMPENH.frng[k].Width := 10.0;
-      TWMPENH.frng[k].Rate := Rates;
+    for k := 0 to Length(TWMPENH.fnrm) - 1 do begin
+      TWMPENH.fnrm[k].Amp := 20.0;
+      TWMPENH.fnrm[k].Attack := 5.0;
+      TWMPENH.fnrm[k].Release := 0.5;
+      TWMPENH.fnrm[k].Rate := Rates;
     end;
     TWMPENH.fdsp.Init(Data, Bits, Rates, Samples, Channels);
     for x := 0 to Samples - 1 do begin
       s := 0.0;
       for k := 0 to Channels - 1 do begin
-        s := s - (s - TWMPENH.fdsp.Data[k, x]) / (k + 1);
+        v := TWMPENH.fdsp.Data[k, x];
+        s := s - (s - v) / (k + 1);
+        TWMPENH.fdsp.Data[k, x] := v;
       end;
       for k := 0 to Channels - 1 do begin
         v := TWMPENH.fdsp.Data[k, x];
@@ -106,14 +108,16 @@ begin
         for i := 0 to Length(TWMPENH.fenh[k]) - 1 do begin
           v := TWMPENH.fenh[k][i].Process(v);
         end;
-        v := TWMPENH.frng[k].Process(v);
+        v := TWMPENH.fnrm[k].Process(v);
         TWMPENH.fdsp.Data[k, x] := v;
       end;
     end;
     TWMPENH.fdsp.Done();
     s := 0.0;
     for k := 0 to Channels - 1 do begin
-      s := s - (s - TWMPENH.frng[k].Amp) / (k + 1);
+      v := TWMPENH.fnrm[k].Amp;
+      s := s - (s - v) / (k + 1);
+      TWMPENH.fnrm[k].Amp := v;
     end;
     TWMPENH.ffrm.Info.Preamp := Round(s * 10.0);
     TWMPENH.ffrm.Refresh();
