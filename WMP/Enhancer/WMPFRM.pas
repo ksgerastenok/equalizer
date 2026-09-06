@@ -214,9 +214,6 @@ begin
           Position := Round(self.fconfig[2].Width * 10.0);
           Hint := Format('Width: %fs', [self.fconfig[2].Width]);
         end;
-        else begin
-          Hint := Format('Unknown: %f None', [0.0]);
-        end;
       end;
     end;
   end;
@@ -270,9 +267,6 @@ begin
         43: begin
           self.fconfig[2].Width := Position / 10.0;
           Hint := Format('Width: %fs', [self.fconfig[2].Width]);
-        end;
-        else begin
-          Hint := Format('Unknown: %f None', [0.0]);
         end;
       end;
     end;

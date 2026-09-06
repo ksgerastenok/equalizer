@@ -115,7 +115,7 @@ begin
     TWMPENH.fdsp.Done();
     s := 0.0;
     for k := 0 to Channels - 1 do begin
-      v := TWMPENH.fnrm[k].Amp;
+      v := TWMPENH.fnrm[k].Val;
       s := s - (s - v) / (k + 1);
       TWMPENH.fnrm[k].Amp := v;
     end;
