@@ -29,7 +29,7 @@ object WMPFRM: TWMPFRM
     ParentFont = False
     TabOrder = 0
     object PreampTrackBar: TTrackBar
-      Tag = 100
+      Tag = 20
       Left = 2
       Height = 255
       Top = -10
@@ -49,7 +49,7 @@ object WMPFRM: TWMPFRM
       TabOrder = 0
     end
     object WidthTrackBar: TTrackBar
-      Tag = 200
+      Tag = 21
       Left = 22
       Height = 255
       Top = -10

@@ -201,17 +201,17 @@ begin
   if (Sender is TTrackBar) then begin
     with (Sender as TTrackBar) do begin
       case (Tag) of
-        100: begin
+        0..19: begin
+          Position := self.finfo.Bands[Tag];
+          Hint := Format('Band %d: %f dB', [Tag + 1, Position / 10.0]);
+        end;
+        20: begin
           Position := self.finfo.Preamp;
           Hint := Format('Preamp: %f dB', [Position / 10.0]);
         end;
-        200: begin
+        21: begin
           Position := self.finfo.Size;
           Hint := Format('Width: %fx', [Position / 10.0]);
-        end;
-        else begin
-          Position := self.finfo.Bands[Tag];
-          Hint := Format('Band %d: %f dB', [Tag + 1, Position / 10.0]);
         end;
       end;
     end;
@@ -223,17 +223,17 @@ begin
   if (Sender is TTrackBar) then begin
     with (Sender as TTrackBar) do begin
       case (Tag) of
-        100: begin
+        0..19: begin
+          self.finfo.Bands[Tag] := Position;
+          Hint := Format('Band %d: %f dB', [Tag + 1, Position / 10.0]);
+        end;
+        20: begin
           self.finfo.Preamp := Position;
           Hint := Format('Preamp: %f dB', [Position / 10.0]);
         end;
-        200: begin
+        21: begin
           self.finfo.Size := Position;
           Hint := Format('Width: %fx', [Position / 10.0]);
-        end;
-        else begin
-          self.finfo.Bands[Tag] := Position;
-          Hint := Format('Band %d: %f dB', [Tag + 1, Position / 10.0]);
         end;
       end;
     end;

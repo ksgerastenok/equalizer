@@ -117,7 +117,7 @@ begin
     TWMPEQU.fdsp.Done();
     s := 0.0;
     for k := 0 to Channels - 1 do begin
-      v := TWMPEQU.fnrm[k].Amp;
+      v := TWMPEQU.fnrm[k].Val;
       s := s - (s - v) / (k + 1);
       TWMPEQU.fnrm[k].Amp := v;
     end;
