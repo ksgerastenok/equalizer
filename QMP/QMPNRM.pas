@@ -21,6 +21,7 @@ type
     var frelease: Double;
     function getGain(): TGain;
     function getTransform(): TTransform;
+    function getVal(): Double;
     function getAmp(): Double;
     procedure setAmp(const Value: Double);
     function getRate(): Double;
@@ -29,12 +30,15 @@ type
     procedure setAttack(const Value: Double);
     function getRelease(): Double;
     procedure setRelease(const Value: Double);
+    function calcAmp(): Double;
+    function calcVal(): Double;
   public
     procedure Init(const Transform: TTransform; const Gain: TGain);
     procedure Done();
     function Process(const Value: Double): Double;
     property Gain: TGain read getGain;
     property Transform: TTransform read getTransform;
+    property Val: Double read getVal;
     property Amp: Double read getAmp write setAmp;
     property Rate: Double read getRate write setRate;
     property Attack: Double read getAttack write setAttack;
@@ -66,7 +70,19 @@ begin
   Result := self.ftransform;
 end;
 
-function TQMPNRM.getAmp(): Double;
+function TQMPNRM.calcAmp(): Double;
+begin
+  case (self.fgain) of
+    gtDb: begin
+      Result := Power(10.0, self.famp / 20.0);
+    end;
+    gtAmp: begin
+      Result := self.famp;
+    end;
+  end;
+end;
+
+function TQMPNRM.calcVal(): Double;
 begin
   case (self.fgain) of
     gtDb: begin
@@ -75,25 +91,22 @@ begin
     gtAmp: begin
       Result := self.fval;
     end;
-    else begin
-      Result := 0.0;
-    end;
   end;
+end;
+
+function TQMPNRM.getVal(): Double;
+begin
+  Result := self.calcVal();
+end;
+
+function TQMPNRM.getAmp(): Double;
+begin
+  Result := self.famp;
 end;
 
 procedure TQMPNRM.setAmp(const Value: Double);
 begin
-  case (self.fgain) of
-    gtDb: begin
-      self.famp := Power(10.0, Value / 20.0);
-    end;
-    gtAmp: begin
-      self.famp := Value;
-    end;
-    else begin
-      self.famp := 0.0;
-    end;
-  end;
+  self.famp := Value;
 end;
 
 function TQMPNRM.getRate(): Double;
@@ -131,16 +144,13 @@ begin
   self.fval := IfThen(self.fval <> 0.0, self.fval, 1.0);
   case (self.ftransform) of
     ttABS: begin
-      self.fval := self.fval /     (1.0 - (1.0 - Abs(2.0 * self.fval * Value)) / IfThen(Abs(2.0 * self.fval * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+      self.fval := self.fval /  Abs(1.0 - (1.0 - Abs(2.0 * self.fval * Value)) / IfThen(Abs(2.0 * self.fval * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
     end;
     ttRMS: begin
       self.fval := self.fval / Sqrt(1.0 - (1.0 - Sqr(3.0 * self.fval * Value)) / IfThen(Sqr(3.0 * self.fval * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
     end;
-    else begin
-      self.fval := 0.0;
-    end;
   end;
-  self.fval := Min(Max(1.0 / self.famp, self.fval), 1.0 * self.famp);
+  self.fval := Min(Max(1.0 / self.calcAmp(), self.fval), 1.0 * self.calcAmp());
   Result := self.fval * Value;
 end;
 

@@ -75,11 +75,6 @@ procedure TQMPBQF.Done();
 begin
 end;
 
-function TQMPBQF.calcOmega(): Double;
-begin
-  Result := (2.0 * Pi * self.ffreq / self.frate);
-end;
-
 function TQMPBQF.calcAmp(): Double;
 begin
   case (self.fgain) of
@@ -88,9 +83,6 @@ begin
     end;
     gtAmp: begin
       Result := self.famp;
-    end;
-    else begin
-      Result := 0.0;
     end;
   end;
 end;
@@ -102,15 +94,17 @@ begin
       Result := 1.0 / self.fwidth;
     end;
     btOctave: begin
-      Result := 2.0 * Sinh((Ln(2.0) / 2.0) * self.fwidth / (Sin(self.calcOmega()) / self.calcOmega()));
+      Result := 2.0 * Sinh((Ln(2.0) / 2.0) * (self.fwidth / (Sin(self.calcOmega()) / self.calcOmega())));
     end;
     btSlope: begin
       Result := Sqrt(Sqrt(self.calcAmp()) * (1.0 / self.calcAmp() + 1.0) * (1.0 / self.fwidth - 1.0) + 2.0);
     end;
-    else begin
-      Result := 0.0;
-    end;
   end;
+end;
+
+function TQMPBQF.calcOmega(): Double;
+begin
+  Result := 2.0 * Pi * self.ffreq / self.frate;
 end;
 
 procedure TQMPBQF.calcConfig();
@@ -119,262 +113,230 @@ begin
     ttRBJ: begin
       case (self.ffilter) of
         ftLow: begin
-          self.fconfig[0, 2] :=  1.0 * 0.5 * (1.0 - Cos(self.calcOmega()));
-          self.fconfig[0, 1] := +2.0 * 0.5 * (1.0 - Cos(self.calcOmega()));
-          self.fconfig[0, 0] :=  1.0 * 0.5 * (1.0 - Cos(self.calcOmega()));
-          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
-          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(self.calcOmega());
-          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
+          self.fconfig[0, 2] :=  1.0 * 0.5 * (1.0 - Cos(1.0 * self.calcOmega()));
+          self.fconfig[0, 1] := +2.0 * 0.5 * (1.0 - Cos(1.0 * self.calcOmega()));
+          self.fconfig[0, 0] :=  1.0 * 0.5 * (1.0 - Cos(1.0 * self.calcOmega()));
+          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
+          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(1.0 * self.calcOmega());
+          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
         end;
         ftHigh: begin
-          self.fconfig[0, 2] :=  1.0 * 0.5 * (1.0 + Cos(self.calcOmega()));
-          self.fconfig[0, 1] := -2.0 * 0.5 * (1.0 + Cos(self.calcOmega()));
-          self.fconfig[0, 0] :=  1.0 * 0.5 * (1.0 + Cos(self.calcOmega()));
-          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
-          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(self.calcOmega());
-          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
+          self.fconfig[0, 2] :=  1.0 * 0.5 * (1.0 + Cos(1.0 * self.calcOmega()));
+          self.fconfig[0, 1] := -2.0 * 0.5 * (1.0 + Cos(1.0 * self.calcOmega()));
+          self.fconfig[0, 0] :=  1.0 * 0.5 * (1.0 + Cos(1.0 * self.calcOmega()));
+          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
+          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(1.0 * self.calcOmega());
+          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
         end;
         ftPeak: begin
-          self.fconfig[0, 2] :=  0.0 - 0.5 * Sin(self.calcOmega()) *       1.0       ;
+          self.fconfig[0, 2] :=  0.0 - 0.5 * Sin(1.0 * self.calcOmega()) *       1.0       ;
           self.fconfig[0, 1] :=  0.0;
-          self.fconfig[0, 0] :=  0.0 + 0.5 * Sin(self.calcOmega()) *       1.0       ;
-          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
-          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(self.calcOmega());
-          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
+          self.fconfig[0, 0] :=  0.0 + 0.5 * Sin(1.0 * self.calcOmega()) *       1.0       ;
+          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
+          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(1.0 * self.calcOmega());
+          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
         end;
         ftBand: begin
-          self.fconfig[0, 2] :=  0.0 - 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
+          self.fconfig[0, 2] :=  0.0 - 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
           self.fconfig[0, 1] :=  0.0;
-          self.fconfig[0, 0] :=  0.0 + 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
-          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
-          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(self.calcOmega());
-          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
+          self.fconfig[0, 0] :=  0.0 + 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
+          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
+          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(1.0 * self.calcOmega());
+          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
         end;
         ftNotch: begin
           self.fconfig[0, 2] :=  1.0;
-          self.fconfig[0, 1] := -2.0 * 1.0 * Cos(self.calcOmega());
+          self.fconfig[0, 1] := -2.0 * 1.0 * Cos(1.0 * self.calcOmega());
           self.fconfig[0, 0] :=  1.0;
-          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
-          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(self.calcOmega());
-          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
+          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
+          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(1.0 * self.calcOmega());
+          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
         end;
         ftAll: begin
-          self.fconfig[0, 2] :=  1.0 + 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
-          self.fconfig[0, 1] := -2.0 * 1.0 * Cos(self.calcOmega());
-          self.fconfig[0, 0] :=  1.0 - 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
-          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
-          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(self.calcOmega());
-          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(self.calcOmega()) * self.calcAlpha();
+          self.fconfig[0, 2] :=  1.0 + 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
+          self.fconfig[0, 1] := -2.0 * 1.0 * Cos(1.0 * self.calcOmega());
+          self.fconfig[0, 0] :=  1.0 - 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
+          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
+          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(1.0 * self.calcOmega());
+          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha();
         end;
         ftEqu: begin
-          self.fconfig[0, 2] :=  1.0 - 0.5 * Sin(self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp());
-          self.fconfig[0, 1] := -2.0 * 1.0 * Cos(self.calcOmega());
-          self.fconfig[0, 0] :=  1.0 + 0.5 * Sin(self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp());
-          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(self.calcOmega()) * self.calcAlpha() / Sqrt(self.calcAmp());
-          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(self.calcOmega());
-          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(self.calcOmega()) * self.calcAlpha() / Sqrt(self.calcAmp());
+          self.fconfig[0, 2] :=  1.0 - 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp());
+          self.fconfig[0, 1] := -2.0 * 1.0 * Cos(1.0 * self.calcOmega());
+          self.fconfig[0, 0] :=  1.0 + 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp());
+          self.fconfig[1, 2] :=  1.0 - 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha() / Sqrt(self.calcAmp());
+          self.fconfig[1, 1] := -2.0 * 1.0 * Cos(1.0 * self.calcOmega());
+          self.fconfig[1, 0] :=  1.0 + 0.5 * Sin(1.0 * self.calcOmega()) * self.calcAlpha() / Sqrt(self.calcAmp());
         end;
         ftBass: begin
-          self.fconfig[0, 2] :=  1.0 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1.0) - (Sqrt(self.calcAmp()) - 1.0) * Cos(self.calcOmega()) - Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
-          self.fconfig[0, 1] := +2.0 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) - 1.0) - (Sqrt(self.calcAmp()) + 1.0) * Cos(self.calcOmega()));
-          self.fconfig[0, 0] :=  1.0 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1.0) - (Sqrt(self.calcAmp()) - 1.0) * Cos(self.calcOmega()) + Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
-          self.fconfig[1, 2] :=  1.0 *          1.0         * ((Sqrt(self.calcAmp()) + 1.0) + (Sqrt(self.calcAmp()) - 1.0) * Cos(self.calcOmega()) - Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
-          self.fconfig[1, 1] := -2.0 *          1.0         * ((Sqrt(self.calcAmp()) - 1.0) + (Sqrt(self.calcAmp()) + 1.0) * Cos(self.calcOmega()));
-          self.fconfig[1, 0] :=  1.0 *          1.0         * ((Sqrt(self.calcAmp()) + 1.0) + (Sqrt(self.calcAmp()) - 1.0) * Cos(self.calcOmega()) + Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
+          self.fconfig[0, 2] :=  1.0 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1.0) - (Sqrt(self.calcAmp()) - 1.0) * Cos(1.0 * self.calcOmega()) - Sqrt(Sqrt(self.calcAmp())) * Sin(1.0 * self.calcOmega()) * self.calcAlpha());
+          self.fconfig[0, 1] := +2.0 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) - 1.0) - (Sqrt(self.calcAmp()) + 1.0) * Cos(1.0 * self.calcOmega()));
+          self.fconfig[0, 0] :=  1.0 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1.0) - (Sqrt(self.calcAmp()) - 1.0) * Cos(1.0 * self.calcOmega()) + Sqrt(Sqrt(self.calcAmp())) * Sin(1.0 * self.calcOmega()) * self.calcAlpha());
+          self.fconfig[1, 2] :=  1.0 *          1.0         * ((Sqrt(self.calcAmp()) + 1.0) + (Sqrt(self.calcAmp()) - 1.0) * Cos(1.0 * self.calcOmega()) - Sqrt(Sqrt(self.calcAmp())) * Sin(1.0 * self.calcOmega()) * self.calcAlpha());
+          self.fconfig[1, 1] := -2.0 *          1.0         * ((Sqrt(self.calcAmp()) - 1.0) + (Sqrt(self.calcAmp()) + 1.0) * Cos(1.0 * self.calcOmega()));
+          self.fconfig[1, 0] :=  1.0 *          1.0         * ((Sqrt(self.calcAmp()) + 1.0) + (Sqrt(self.calcAmp()) - 1.0) * Cos(1.0 * self.calcOmega()) + Sqrt(Sqrt(self.calcAmp())) * Sin(1.0 * self.calcOmega()) * self.calcAlpha());
         end;
         ftTreble: begin
-          self.fconfig[0, 2] :=  1.0 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1.0) + (Sqrt(self.calcAmp()) - 1.0) * Cos(self.calcOmega()) - Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
-          self.fconfig[0, 1] := -2.0 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) - 1.0) + (Sqrt(self.calcAmp()) + 1.0) * Cos(self.calcOmega()));
-          self.fconfig[0, 0] :=  1.0 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1.0) + (Sqrt(self.calcAmp()) - 1.0) * Cos(self.calcOmega()) + Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
-          self.fconfig[1, 2] :=  1.0 *          1.0         * ((Sqrt(self.calcAmp()) + 1.0) - (Sqrt(self.calcAmp()) - 1.0) * Cos(self.calcOmega()) - Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
-          self.fconfig[1, 1] := +2.0 *          1.0         * ((Sqrt(self.calcAmp()) - 1.0) - (Sqrt(self.calcAmp()) + 1.0) * Cos(self.calcOmega()));
-          self.fconfig[1, 0] :=  1.0 *          1.0         * ((Sqrt(self.calcAmp()) + 1.0) - (Sqrt(self.calcAmp()) - 1.0) * Cos(self.calcOmega()) + Sqrt(Sqrt(self.calcAmp())) * Sin(self.calcOmega()) * self.calcAlpha());
-        end;
-        else begin
-          self.fconfig[0, 2] := 0.0;
-          self.fconfig[0, 1] := 0.0;
-          self.fconfig[0, 0] := 0.0;
-          self.fconfig[1, 2] := 0.0;
-          self.fconfig[1, 1] := 0.0;
-          self.fconfig[1, 0] := 0.0;
+          self.fconfig[0, 2] :=  1.0 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1.0) + (Sqrt(self.calcAmp()) - 1.0) * Cos(1.0 * self.calcOmega()) - Sqrt(Sqrt(self.calcAmp())) * Sin(1.0 * self.calcOmega()) * self.calcAlpha());
+          self.fconfig[0, 1] := -2.0 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) - 1.0) + (Sqrt(self.calcAmp()) + 1.0) * Cos(1.0 * self.calcOmega()));
+          self.fconfig[0, 0] :=  1.0 * Sqrt(self.calcAmp()) * ((Sqrt(self.calcAmp()) + 1.0) + (Sqrt(self.calcAmp()) - 1.0) * Cos(1.0 * self.calcOmega()) + Sqrt(Sqrt(self.calcAmp())) * Sin(1.0 * self.calcOmega()) * self.calcAlpha());
+          self.fconfig[1, 2] :=  1.0 *          1.0         * ((Sqrt(self.calcAmp()) + 1.0) - (Sqrt(self.calcAmp()) - 1.0) * Cos(1.0 * self.calcOmega()) - Sqrt(Sqrt(self.calcAmp())) * Sin(1.0 * self.calcOmega()) * self.calcAlpha());
+          self.fconfig[1, 1] := +2.0 *          1.0         * ((Sqrt(self.calcAmp()) - 1.0) - (Sqrt(self.calcAmp()) + 1.0) * Cos(1.0 * self.calcOmega()));
+          self.fconfig[1, 0] :=  1.0 *          1.0         * ((Sqrt(self.calcAmp()) + 1.0) - (Sqrt(self.calcAmp()) - 1.0) * Cos(1.0 * self.calcOmega()) + Sqrt(Sqrt(self.calcAmp())) * Sin(1.0 * self.calcOmega()) * self.calcAlpha());
         end;
       end;
     end;
     ttZLB: begin
       case (self.ffilter) of
         ftLow: begin
-          self.fconfig[0, 2] :=  (1.0 * Sqr(Tan(0.5 * self.calcOmega())));
-          self.fconfig[0, 1] := +2.0 * Sqr(Tan(0.5 * self.calcOmega()));
-          self.fconfig[0, 0] :=  (1.0 * Sqr(Tan(0.5 * self.calcOmega())));
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 2] := (1.0 * Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 0.0);
+          self.fconfig[0, 0] := (1.0 * Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftHigh: begin
-          self.fconfig[0, 2] :=  (1.0);
+          self.fconfig[0, 2] := (1.0);
           self.fconfig[0, 1] := -2.0;
-          self.fconfig[0, 0] :=  (1.0);
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 0] := (1.0);
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftPeak: begin
-          self.fconfig[0, 2] :=  (0.0 - Tan(0.5 * self.calcOmega()) *       1.0       );
+          self.fconfig[0, 2] := (0.0 - Tan(0.5 * self.calcOmega()) *       1.0       );
           self.fconfig[0, 1] :=  0.0;
-          self.fconfig[0, 0] :=  (0.0 + Tan(0.5 * self.calcOmega()) *       1.0       );
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 0] := (0.0 + Tan(0.5 * self.calcOmega()) *       1.0       );
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftBand: begin
-          self.fconfig[0, 2] :=  (0.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha());
+          self.fconfig[0, 2] := (0.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha());
           self.fconfig[0, 1] :=  0.0;
-          self.fconfig[0, 0] :=  (0.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha());
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 0] := (0.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha());
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftNotch: begin
-          self.fconfig[0, 2] :=  (1.0 + (Sqr(Tan(0.5 * self.calcOmega()))));
+          self.fconfig[0, 2] := (1.0 + (Sqr(Tan(0.5 * self.calcOmega()))));
           self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[0, 0] :=  (1.0 + (Sqr(Tan(0.5 * self.calcOmega()))));
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 0] := (1.0 + (Sqr(Tan(0.5 * self.calcOmega()))));
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftAll: begin
-          self.fconfig[0, 2] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 2] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[0, 0] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 0] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftEqu: begin
-          self.fconfig[0, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() * self.calcAmp() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() * self.calcAmp() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[0, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() * self.calcAmp() + Sqr(Tan(0.5 * self.calcOmega())));
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() *      1.0       + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() * self.calcAmp() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() *      1.0       + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() *      1.0       + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() *      1.0       + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftBass: begin
-          self.fconfig[0, 2] :=  (      1.0      - Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega()))) /      1.0      ;
-          self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) -      1.0      ) /      1.0      ;
-          self.fconfig[0, 0] :=  (      1.0      + Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega()))) /      1.0      ;
-          self.fconfig[1, 2] :=  (self.calcAmp() - Tan(0.5 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega()))) / self.calcAmp();
-          self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - self.calcAmp()) / self.calcAmp();
-          self.fconfig[1, 0] :=  (self.calcAmp() + Tan(0.5 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega()))) / self.calcAmp();
+          self.fconfig[0, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())) /      1.0      );
+          self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) /      1.0       - 1.0);
+          self.fconfig[0, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())) /      1.0      );
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() / Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) / self.calcAmp());
+          self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) / self.calcAmp() - 1.0);
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() / Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) / self.calcAmp());
         end;
         ftTreble: begin
-          self.fconfig[0, 2] :=  (self.calcAmp() - Tan(0.5 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())));
-          self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - self.calcAmp());
-          self.fconfig[0, 0] :=  (self.calcAmp() + Tan(0.5 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())));
-          self.fconfig[1, 2] :=  (      1.0      - Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())));
-          self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) -      1.0      );
-          self.fconfig[1, 0] :=  (      1.0      + Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())));
-        end;
-        else begin
-          self.fconfig[0, 2] := 0.0;
-          self.fconfig[0, 1] := 0.0;
-          self.fconfig[0, 0] := 0.0;
-          self.fconfig[1, 2] := 0.0;
-          self.fconfig[1, 1] := 0.0;
-          self.fconfig[1, 0] := 0.0;
+          self.fconfig[0, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() / Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) / self.calcAmp()) * self.calcAmp();
+          self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) / self.calcAmp() - 1.0) * self.calcAmp();
+          self.fconfig[0, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() / Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) / self.calcAmp()) * self.calcAmp();
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() /         1.0          + Sqr(Tan(0.5 * self.calcOmega())) /      1.0      ) *      1.0      ;
+          self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) /      1.0       - 1.0) *      1.0      ;
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() /         1.0          + Sqr(Tan(0.5 * self.calcOmega())) /      1.0      ) *      1.0      ;
         end;
       end;
     end;
     ttZLC: begin
       case (self.ffilter) of
         ftLow: begin
-          self.fconfig[0, 2] :=  (1.0 * Sqr(Tan(0.5 * self.calcOmega())));
-          self.fconfig[0, 1] := +2.0 * Sqr(Tan(0.5 * self.calcOmega()));
-          self.fconfig[0, 0] :=  (1.0 * Sqr(Tan(0.5 * self.calcOmega())));
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 2] := (1.0 * Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 0.0);
+          self.fconfig[0, 0] := (1.0 * Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftHigh: begin
-          self.fconfig[0, 2] :=  (1.0);
+          self.fconfig[0, 2] := (1.0);
           self.fconfig[0, 1] := -2.0;
-          self.fconfig[0, 0] :=  (1.0);
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 0] := (1.0);
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftPeak: begin
-          self.fconfig[0, 2] :=  (0.0 - Tan(0.5 * self.calcOmega()) *       1.0       );
+          self.fconfig[0, 2] := (0.0 - Tan(0.5 * self.calcOmega()) *       1.0       );
           self.fconfig[0, 1] :=  0.0;
-          self.fconfig[0, 0] :=  (0.0 + Tan(0.5 * self.calcOmega()) *       1.0       );
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 0] := (0.0 + Tan(0.5 * self.calcOmega()) *       1.0       );
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftBand: begin
-          self.fconfig[0, 2] :=  (0.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha());
+          self.fconfig[0, 2] := (0.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha());
           self.fconfig[0, 1] :=  0.0;
-          self.fconfig[0, 0] :=  (0.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha());
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 0] := (0.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha());
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftNotch: begin
-          self.fconfig[0, 2] :=  (1.0 + (Sqr(Tan(0.5 * self.calcOmega()))));
+          self.fconfig[0, 2] := (1.0 + (Sqr(Tan(0.5 * self.calcOmega()))));
           self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[0, 0] :=  (1.0 + (Sqr(Tan(0.5 * self.calcOmega()))));
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 0] := (1.0 + (Sqr(Tan(0.5 * self.calcOmega()))));
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftAll: begin
-          self.fconfig[0, 2] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 2] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[0, 0] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 0] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftEqu: begin
-          self.fconfig[0, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() /      1.0       + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() /      1.0       + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[0, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() /      1.0       + Sqr(Tan(0.5 * self.calcOmega())));
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() / self.calcAmp() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[0, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() /      1.0       + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() / self.calcAmp() + Sqr(Tan(0.5 * self.calcOmega())));
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() / self.calcAmp() + Sqr(Tan(0.5 * self.calcOmega())));
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() / self.calcAmp() + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftBass: begin
-          self.fconfig[0, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) * self.calcAmp());
+          self.fconfig[0, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) * self.calcAmp());
           self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) * self.calcAmp() - 1.0);
-          self.fconfig[0, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) * self.calcAmp());
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())) *      1.0      );
+          self.fconfig[0, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) * self.calcAmp());
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())) *      1.0      );
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) *       1.0      - 1.0);
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())) *      1.0      );
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())) *      1.0      );
         end;
         ftTreble: begin
-          self.fconfig[0, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())) *      1.0      ) /      1.0      ;
+          self.fconfig[0, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())) *      1.0      ) /      1.0      ;
           self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) *       1.0      - 1.0) /      1.0      ;
-          self.fconfig[0, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())) *      1.0      ) /      1.0      ;
-          self.fconfig[1, 2] :=  (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) * self.calcAmp()) / self.calcAmp();
+          self.fconfig[0, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())) *      1.0      ) /      1.0      ;
+          self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) * self.calcAmp()) / self.calcAmp();
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) * self.calcAmp() - 1.0) / self.calcAmp();
-          self.fconfig[1, 0] :=  (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) * self.calcAmp()) / self.calcAmp();
-        end;
-        else begin
-          self.fconfig[0, 2] := 0.0;
-          self.fconfig[0, 1] := 0.0;
-          self.fconfig[0, 0] := 0.0;
-          self.fconfig[1, 2] := 0.0;
-          self.fconfig[1, 1] := 0.0;
-          self.fconfig[1, 0] := 0.0;
+          self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() * Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) * self.calcAmp()) / self.calcAmp();
         end;
       end;
-    end;
-    else begin
-      self.fconfig[0, 2] := 0.0;
-      self.fconfig[0, 1] := 0.0;
-      self.fconfig[0, 0] := 0.0;
-      self.fconfig[1, 2] := 0.0;
-      self.fconfig[1, 1] := 0.0;
-      self.fconfig[1, 0] := 0.0;
     end;
   end;
 end;
@@ -387,7 +349,6 @@ begin
   self.fsignal[1, 2] := self.fsignal[1, 1];
   self.fsignal[1, 1] := self.fsignal[1, 0];
   self.fsignal[1, 0] := ((self.fsignal[0, 0] * self.fconfig[0, 0] + self.fsignal[0, 1] * self.fconfig[0, 1] + self.fsignal[0, 2] * self.fconfig[0, 2]) - (self.fsignal[1, 1] * self.fconfig[1, 1] + self.fsignal[1, 2] * self.fconfig[1, 2])) / self.fconfig[1, 0];
-
   Result := self.fsignal[1, 0];
 end;
 
