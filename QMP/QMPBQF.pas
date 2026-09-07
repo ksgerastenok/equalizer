@@ -245,9 +245,9 @@ begin
           self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() *      1.0       + Sqr(Tan(0.5 * self.calcOmega())));
         end;
         ftBass: begin
-          self.fconfig[0, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())) /      1.0      );
+          self.fconfig[0, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() /         1.0          + Sqr(Tan(0.5 * self.calcOmega())) /      1.0      );
           self.fconfig[0, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) /      1.0       - 1.0);
-          self.fconfig[0, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() *         1.0          + Sqr(Tan(0.5 * self.calcOmega())) /      1.0      );
+          self.fconfig[0, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() /         1.0          + Sqr(Tan(0.5 * self.calcOmega())) /      1.0      );
           self.fconfig[1, 2] := (1.0 - Tan(0.5 * self.calcOmega()) * self.calcAlpha() / Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) / self.calcAmp());
           self.fconfig[1, 1] := +2.0 * (Sqr(Tan(0.5 * self.calcOmega())) / self.calcAmp() - 1.0);
           self.fconfig[1, 0] := (1.0 + Tan(0.5 * self.calcOmega()) * self.calcAlpha() / Sqrt(self.calcAmp()) + Sqr(Tan(0.5 * self.calcOmega())) / self.calcAmp());
