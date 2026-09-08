@@ -32,6 +32,8 @@ type
     procedure setRelease(const Value: Double);
     function calcAmp(): Double;
     function calcVal(): Double;
+    function calcGain(const Value: Double): Double;
+    procedure smoothVal(const Value: Double);
   public
     procedure Init(const Transform: TTransform; const Gain: TGain);
     procedure Done();
@@ -68,30 +70,6 @@ end;
 function TWMPNRM.getTransform(): TTransform;
 begin
   Result := self.ftransform;
-end;
-
-function TWMPNRM.calcAmp(): Double;
-begin
-  case (self.fgain) of
-    gtDb: begin
-      Result := Power(10.0, self.famp / 20.0);
-    end;
-    gtAmp: begin
-      Result := self.famp;
-    end;
-  end;
-end;
-
-function TWMPNRM.calcVal(): Double;
-begin
-  case (self.fgain) of
-    gtDb: begin
-      Result := Log10(self.fval) * 20.0;
-    end;
-    gtAmp: begin
-      Result := self.fval;
-    end;
-  end;
 end;
 
 function TWMPNRM.getVal(): Double;
@@ -139,18 +117,55 @@ begin
   self.frelease := Value;
 end;
 
-function TWMPNRM.Process(const Value: Double): Double;
+function TWMPNRM.calcAmp(): Double;
 begin
-  self.fval := IfThen(self.fval <> 0.0, self.fval, 1.0);
-  case (self.ftransform) of
-    ttABS: begin
-      self.fval := self.fval /  Abs(1.0 - (1.0 - Abs(2.0 * self.fval * Value)) / IfThen(Abs(2.0 * self.fval * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+  case (self.fgain) of
+    gtDb: begin
+      Result := Power(10.0, self.famp / 20.0);
     end;
-    ttRMS: begin
-      self.fval := self.fval / Sqrt(1.0 - (1.0 - Sqr(3.0 * self.fval * Value)) / IfThen(Sqr(3.0 * self.fval * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+    gtAmp: begin
+      Result := self.famp;
     end;
   end;
+end;
+
+function TWMPNRM.calcVal(): Double;
+begin
+  case (self.fgain) of
+    gtDb: begin
+      Result := Log10(self.fval) * 20.0;
+    end;
+    gtAmp: begin
+      Result := self.fval;
+    end;
+  end;
+end;
+
+function TWMPNRM.calcGain(const Value: Double): Double;
+const
+  gain: Double = 1.0;
+begin
+  case (self.ftransform) of
+    ttABS: begin
+      gain := gain /  Abs(1.0 - (1.0 - Abs(2.0 * gain * Value)) / IfThen(Abs(2.0 * gain * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+    end;
+    ttRMS: begin
+      gain := gain / Sqrt(1.0 - (1.0 - Sqr(3.0 * gain * Value)) / IfThen(Sqr(3.0 * gain * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+    end;
+  end;
+  Result := gain;
+end;
+
+procedure TWMPNRM.smoothVal(const Value: Double);
+begin
+  self.fval := IfThen(self.fval <> 0.0, self.fval, 1.0);
+  self.fval := self.fval - (self.fval - Value) / IfThen(self.fval < Value, self.fattack * self.frate, self.frelease * self.frate);
   self.fval := Min(Max(1.0 / self.calcAmp(), self.fval), 1.0 * self.calcAmp());
+end;
+
+function TWMPNRM.Process(const Value: Double): Double;
+begin
+  self.smoothVal(self.calcGain(Value));
   Result := self.fval * Value;
 end;
 
