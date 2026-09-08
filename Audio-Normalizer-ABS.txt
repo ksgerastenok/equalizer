@@ -1,4 +1,5 @@
 Let's try to make Dynamic Volume Normalizer via ABS (Absolute value) approach.
+
 Assume samples are at range [-1..+1] and absolute value will be at range [0..1].
 The recurrent formula is: avg(N + 1) = avg(N) - (avg(N) - |x|) / (N + 1):
 avg(N) = sum(|x|, N) / N; sum(|x|, N) = avg(N) * N;
@@ -24,3 +25,6 @@ avg(N) = 1.0 / (2.0 * gain(N))
 1.0 / (2.0 * gain(N + 1)) = 1.0 / (2.0 * gain(N)) * (1.0 - (1.0 - |2.0 * x * gain(N)|) / N)
 gain(N + 1) = gain(N) / (1.0 - (1.0 - |2.0 * x * gain(N)|) / N), gain(0) = 1.0
 If |2.0 * x * gain(N)| < 1.0, then attack N = 5.0 * srate, otherwise release N = 0.5 * srate
+
+And, of course, to make gain grows smoothly, let's apply recurrent avg formula:
+amp(N + 1) = amp(N) - (amp(N) - gain(N)) / N, N = 5.0 * srate for attack (increase volume level) and N = 0.5 * srate for release (reduce volume level), where srate = 44100. 
