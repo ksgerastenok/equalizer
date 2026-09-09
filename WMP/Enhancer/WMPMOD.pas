@@ -23,7 +23,7 @@ begin
     0: begin
       Result := TWMPENH.Plugin();
     end;
-    else begin
+    1: begin
       Result := nil;
     end;
   end;
