@@ -33,7 +33,6 @@ type
     function calcAmp(): Double;
     function calcVal(): Double;
     function calcGain(const Value: Double): Double;
-    procedure smoothVal(const Value: Double);
   public
     procedure Init(const Transform: TTransform; const Gain: TGain);
     procedure Done();
@@ -143,29 +142,26 @@ end;
 
 function TWMPNRM.calcGain(const Value: Double): Double;
 const
-  gain: Double = 1.0;
+  amp: Double = 1.0;
+  val: Double = 1.0;
 begin
-  case (self.ftransform) of
-    ttABS: begin
-      gain := gain /  Abs(1.0 - (1.0 - Abs(2.0 * gain * Value)) / IfThen(Abs(2.0 * gain * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+  if (not(Abs(Value) < 0.01)) then begin
+    case (self.ftransform) of
+      ttABS: begin
+        amp := amp /  Abs(1.0 - (1.0 - Abs(2.0 * amp * Value)) / IfThen(Abs(2.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+      end;
+      ttRMS: begin
+        amp := amp / Sqrt(1.0 - (1.0 - Sqr(3.0 * amp * Value)) / IfThen(Sqr(3.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+      end;
     end;
-    ttRMS: begin
-      gain := gain / Sqrt(1.0 - (1.0 - Sqr(3.0 * gain * Value)) / IfThen(Sqr(3.0 * gain * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
-    end;
+    val := val - (val - amp) / IfThen(val < amp, self.fattack * self.frate, self.frelease * self.frate);
   end;
-  Result := gain;
-end;
-
-procedure TWMPNRM.smoothVal(const Value: Double);
-begin
-  self.fval := IfThen(self.fval <> 0.0, self.fval, 1.0);
-  self.fval := self.fval - (self.fval - Value) / IfThen(self.fval < Value, self.fattack * self.frate, self.frelease * self.frate);
-  self.fval := Min(Max(1.0 / self.calcAmp(), self.fval), 1.0 * self.calcAmp());
+  Result := val;
 end;
 
 function TWMPNRM.Process(const Value: Double): Double;
 begin
-  self.smoothVal(self.calcGain(Value));
+  self.fval := Min(Max(1.0 / self.calcAmp(), self.calcGain(Value)), 1.0 * self.calcAmp());
   Result := self.fval * Value;
 end;
 

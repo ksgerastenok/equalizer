@@ -48,7 +48,7 @@ begin
   TWMPEQU.ffrm := TWMPFRM.Create();
   for k := 0 to Length(TWMPEQU.fequ) - 1 do begin
     for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
-      TWMPEQU.fequ[k, i].Init(WMPBQF.ttZLB, WMPBQF.ftEqu, WMPBQF.btOctave, WMPBQF.gtDb);
+      TWMPEQU.fequ[k][i].Init(WMPBQF.ttZLB, WMPBQF.ftEqu, WMPBQF.btOctave, WMPBQF.gtDb);
     end;
   end;
   for k := 0 to Length(TWMPEQU.fnrm) - 1 do begin
@@ -64,7 +64,7 @@ var
 begin
   for k := 0 to Length(TWMPEQU.fequ) - 1 do begin
     for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
-      TWMPEQU.fequ[k, i].Done();
+      TWMPEQU.fequ[k][i].Done();
     end;
   end;
   for k := 0 to Length(TWMPEQU.fnrm) - 1 do begin
@@ -84,10 +84,10 @@ begin
   if (TWMPEQU.ffrm.Info.Enabled) then begin
     for k := 0 to Length(TWMPEQU.fequ) - 1 do begin
       for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
-        TWMPEQU.fequ[k, i].Amp := TWMPEQU.ffrm.Info.Bands[i] / 10.0;
-        TWMPEQU.fequ[k, i].Freq := 20.0 * Power(2.0, 0.5 * (i + 0.5));
-        TWMPEQU.fequ[k, i].Width := 0.5;
-        TWMPEQU.fequ[k, i].Rate := Rates;
+        TWMPEQU.fequ[k][i].Amp := TWMPEQU.ffrm.Info.Bands[i] / 10.0;
+        TWMPEQU.fequ[k][i].Freq := 20.0 * Power(2.0, 0.5 * (i + 0.5));
+        TWMPEQU.fequ[k][i].Width := 0.5;
+        TWMPEQU.fequ[k][i].Rate := Rates;
       end;
     end;
     for k := 0 to Length(TWMPEQU.fnrm) - 1 do begin
@@ -108,7 +108,7 @@ begin
         v := TWMPEQU.fdsp.Data[k, x];
         v := v + (v - s) * (TWMPEQU.ffrm.Info.Size / 10.0);
         for i := 0 to Length(TWMPEQU.fequ[k]) - 1 do begin
-          v := TWMPEQU.fequ[k, i].Process(v);
+          v := TWMPEQU.fequ[k][i].Process(v);
         end;
         v := TWMPEQU.fnrm[k].Process(v);
         TWMPEQU.fdsp.Data[k, x] := v;

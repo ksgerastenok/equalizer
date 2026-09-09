@@ -23,7 +23,7 @@ begin
     0: begin
       Result := TWMPEQU.Plugin();
     end;
-    else begin
+    1: begin
       Result := nil;
     end;
   end;
