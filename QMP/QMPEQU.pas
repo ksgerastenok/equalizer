@@ -5,7 +5,6 @@ interface
 
 uses
   QMPBQF,
-  QMPNRM,
   QMPDSP,
   QMPDCL;
 
@@ -15,7 +14,6 @@ type
     class var finfo: TInfo;
     class var fdsp: TQMPDSP;
     class var fequ: array[0..4] of array[0..9] of TQMPBQF;
-    class var fnrm: array[0..4] of TQMPNRM;
     class function Init(const Flags: Integer): Integer; cdecl; static;
     class procedure Quit(const Flags: Integer); cdecl; static;
     class function Modify(const Data: PData; const Latency: PInteger; const Flags: Integer): Integer; cdecl; static;
@@ -46,11 +44,8 @@ var
 begin
   for k := 0 to Length(TQMPEQU.fequ) - 1 do begin
     for i := 0 to Length(TQMPEQU.fequ[k]) - 1 do begin
-      TQMPEQU.fequ[k, i].Init(QMPBQF.ttZLB, QMPBQF.ftEqu, QMPBQF.btOctave, QMPBQF.gtDb);
+      TQMPEQU.fequ[k][i].Init(QMPBQF.ttZLB, QMPBQF.ftEqu, QMPBQF.btOctave, QMPBQF.gtDb);
     end;
-  end;
-  for k := 0 to Length(TQMPEQU.fnrm) - 1 do begin
-    TQMPEQU.fnrm[k].Init(QMPNRM.ttABS, QMPNRM.gtDb);
   end;
   Result := 1;
 end;
@@ -62,11 +57,8 @@ var
 begin
   for k := 0 to Length(TQMPEQU.fequ) - 1 do begin
     for i := 0 to Length(TQMPEQU.fequ[k]) - 1 do begin
-      TQMPEQU.fequ[k, i].Done();
+      TQMPEQU.fequ[k][i].Done();
     end;
-  end;
-  for k := 0 to Length(TQMPEQU.fnrm) - 1 do begin
-    TQMPEQU.fnrm[k].Done();
   end;
 end;
 
@@ -80,26 +72,19 @@ begin
   if (TQMPEQU.finfo.Enabled) then begin
     for k := 0 to Length(TQMPEQU.fequ) - 1 do begin
       for i := 0 to Length(TQMPEQU.fequ[k]) - 1 do begin
-        TQMPEQU.fequ[k, i].Amp := (TQMPEQU.finfo.Preamp + TQMPEQU.finfo.Bands[i]) / 10.0;
-        TQMPEQU.fequ[k, i].Freq := 20.0 * Power(2.0, 1.0 * (i + 0.5));
-        TQMPEQU.fequ[k, i].Width := 1.0;
-        TQMPEQU.fequ[k, i].Rate := Data.Rates;
+        TQMPEQU.fequ[k][i].Amp := (TQMPEQU.finfo.Preamp + TQMPEQU.finfo.Bands[i]) / 10.0;
+        TQMPEQU.fequ[k][i].Freq := 20.0 * Power(2.0, 1.0 * (i + 0.5));
+        TQMPEQU.fequ[k][i].Width := 1.0;
+        TQMPEQU.fequ[k][i].Rate := Data.Rates;
       end;
-    end;
-    for k := 0 to Length(TQMPEQU.fnrm) - 1 do begin
-      TQMPEQU.fnrm[k].Amp := 20.0;
-      TQMPEQU.fnrm[k].Attack := 5.0;
-      TQMPEQU.fnrm[k].Release := 0.5;
-      TQMPEQU.fnrm[k].Rate := Data.Rates;
     end;
     TQMPEQU.fdsp.Init(Data);
     for x := 0 to Data.Samples - 1 do begin
       for k := 0 to Data.Channels - 1 do begin
         v := TQMPEQU.fdsp.Data[k, x];
         for i := 0 to Length(TQMPEQU.fequ[k]) - 1 do begin
-          v := TQMPEQU.fequ[k, i].Process(v);
+          v := TQMPEQU.fequ[k][i].Process(v);
         end;
-        v := TQMPEQU.fnrm[k].Process(v);
         TQMPEQU.fdsp.Data[k, x] := v;
       end;
     end;

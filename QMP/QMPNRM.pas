@@ -32,6 +32,7 @@ type
     procedure setRelease(const Value: Double);
     function calcAmp(): Double;
     function calcVal(): Double;
+    function calcGain(const Value: Double): Double;
   public
     procedure Init(const Transform: TTransform; const Gain: TGain);
     procedure Done();
@@ -68,30 +69,6 @@ end;
 function TQMPNRM.getTransform(): TTransform;
 begin
   Result := self.ftransform;
-end;
-
-function TQMPNRM.calcAmp(): Double;
-begin
-  case (self.fgain) of
-    gtDb: begin
-      Result := Power(10.0, self.famp / 20.0);
-    end;
-    gtAmp: begin
-      Result := self.famp;
-    end;
-  end;
-end;
-
-function TQMPNRM.calcVal(): Double;
-begin
-  case (self.fgain) of
-    gtDb: begin
-      Result := Log10(self.fval) * 20.0;
-    end;
-    gtAmp: begin
-      Result := self.fval;
-    end;
-  end;
 end;
 
 function TQMPNRM.getVal(): Double;
@@ -139,18 +116,52 @@ begin
   self.frelease := Value;
 end;
 
-function TQMPNRM.Process(const Value: Double): Double;
+function TQMPNRM.calcAmp(): Double;
 begin
-  self.fval := IfThen(self.fval <> 0.0, self.fval, 1.0);
-  case (self.ftransform) of
-    ttABS: begin
-      self.fval := self.fval /  Abs(1.0 - (1.0 - Abs(2.0 * self.fval * Value)) / IfThen(Abs(2.0 * self.fval * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+  case (self.fgain) of
+    gtDb: begin
+      Result := Power(10.0, self.famp / 20.0);
     end;
-    ttRMS: begin
-      self.fval := self.fval / Sqrt(1.0 - (1.0 - Sqr(3.0 * self.fval * Value)) / IfThen(Sqr(3.0 * self.fval * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+    gtAmp: begin
+      Result := self.famp;
     end;
   end;
-  self.fval := Min(Max(1.0 / self.calcAmp(), self.fval), 1.0 * self.calcAmp());
+end;
+
+function TQMPNRM.calcVal(): Double;
+begin
+  case (self.fgain) of
+    gtDb: begin
+      Result := Log10(self.fval) * 20.0;
+    end;
+    gtAmp: begin
+      Result := self.fval;
+    end;
+  end;
+end;
+
+function TQMPNRM.calcGain(const Value: Double): Double;
+const
+  amp: Double = 1.0;
+  val: Double = 1.0;
+begin
+  if (not(Abs(Value) < 0.01)) then begin
+    case (self.ftransform) of
+      ttABS: begin
+        amp := amp /  Abs(1.0 - (1.0 - Abs(2.0 * amp * Value)) / IfThen(Abs(2.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+      end;
+      ttRMS: begin
+        amp := amp / Sqrt(1.0 - (1.0 - Sqr(3.0 * amp * Value)) / IfThen(Sqr(3.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+      end;
+    end;
+    val := val - (val - amp) / IfThen(val < amp, self.fattack * self.frate, self.frelease * self.frate);
+  end;
+  Result := val;
+end;
+
+function TQMPNRM.Process(const Value: Double): Double;
+begin
+  self.fval := Min(Max(1.0 / self.calcAmp(), self.calcGain(Value)), 1.0 * self.calcAmp());
   Result := self.fval * Value;
 end;
 

@@ -74,18 +74,19 @@ var
   i: LongWord;
   x: LongWord;
   v: Double;
+  s: Double;
 begin
   if (TQMPENH.finfo.Enabled) then begin
     for k := 0 to Length(TQMPENH.fenh) - 1 do begin
-      TQMPENH.fenh[k][0].Amp := 3.0;
+      TQMPENH.fenh[k][0].Amp := 5.0;
       TQMPENH.fenh[k][0].Freq := 100.0;
       TQMPENH.fenh[k][0].Width := 1.0;
       TQMPENH.fenh[k][0].Rate := Data.Rates;
-      TQMPENH.fenh[k][1].Amp := 3.0;
-      TQMPENH.fenh[k][1].Freq := 300.0;
+      TQMPENH.fenh[k][1].Amp := 5.0;
+      TQMPENH.fenh[k][1].Freq := 350.0;
       TQMPENH.fenh[k][1].Width := 1.0;
       TQMPENH.fenh[k][1].Rate := Data.Rates;
-      TQMPENH.fenh[k][2].Amp := 9.0;
+      TQMPENH.fenh[k][2].Amp := 15.0;
       TQMPENH.fenh[k][2].Freq := 2100.0;
       TQMPENH.fenh[k][2].Width := 1.0;
       TQMPENH.fenh[k][2].Rate := Data.Rates;
@@ -98,10 +99,17 @@ begin
     end;
     TQMPENH.fdsp.Init(Data);
     for x := 0 to Data.Samples - 1 do begin
+      s := 0.0;
       for k := 0 to Data.Channels - 1 do begin
         v := TQMPENH.fdsp.Data[k, x];
+        s := s - (s - v) / (k + 1);
+        TQMPENH.fdsp.Data[k, x] := v;
+      end;
+      for k := 0 to Data.Channels - 1 do begin
+        v := TQMPENH.fdsp.Data[k, x];
+        v := v + (v - s) * 1.0;
         for i := 0 to Length(TQMPENH.fenh[k]) - 1 do begin
-          v := TQMPENH.fenh[k, i].Process(v);
+          v := TQMPENH.fenh[k][i].Process(v);
         end;
         v := TQMPENH.fnrm[k].Process(v);
         TQMPENH.fdsp.Data[k, x] := v;

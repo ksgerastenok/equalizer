@@ -6,8 +6,7 @@ interface
 uses
   QMPDCL,
   QMPEQU,
-  QMPENH,
-  QMPEXT;
+  QMPENH;
 
 type
   TQMPMOD = record
@@ -29,9 +28,6 @@ begin
       Result := TQMPENH.Plugin();
     end;
     2: begin
-      Result := TQMPEXT.Plugin();
-    end;
-    else begin
       Result := nil;
     end;
   end;
