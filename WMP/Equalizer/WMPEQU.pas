@@ -52,7 +52,7 @@ begin
     end;
   end;
   for k := 0 to Length(TWMPEQU.fnrm) - 1 do begin
-    TWMPEQU.fnrm[k].Init(WMPNRM.ttABS, WMPNRM.gtDb);
+    TWMPEQU.fnrm[k].Init(WMPNRM.gtDb);
   end;
   Result := 0;
 end;
