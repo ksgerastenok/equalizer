@@ -49,7 +49,7 @@ begin
     TQMPENH.fenh[k][2].Init(QMPBQF.ttRBJ, QMPBQF.ftTreble, QMPBQF.btSlope, QMPBQF.gtDb);
   end;
   for k := 0 to Length(TQMPENH.fnrm) - 1 do begin
-    TQMPENH.fnrm[k].Init(QMPNRM.ttABS, QMPNRM.gtDb);
+    TQMPENH.fnrm[k].Init(QMPNRM.gtDb);
   end;
   Result := 1;
 end;
