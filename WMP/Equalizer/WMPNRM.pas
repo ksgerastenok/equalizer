@@ -138,7 +138,7 @@ var
   cnt: Double;
 begin
   env := avg + 3.0 * Sqrt(rms - Sqr(avg));
-  cnt := IfThen(env < val, self.fattack * self.frate + 1.0, self.frelease * self.frate + 1.0);
+  cnt := IfThen(val > env, self.fattack * self.frate + 1.0, self.frelease * self.frate + 1.0);
   avg := avg - (avg - Abs(Value)) / cnt;
   rms := rms - (rms - Sqr(Value)) / cnt;
   val := val - (val - Abs( env )) / cnt;

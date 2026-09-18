@@ -32,7 +32,7 @@ type
     procedure setRelease(const Value: Double);
     function calcAmp(): Double;
     function calcVal(): Double;
-    function calcGain(const Value: Double): Double;
+    function calcMax(const Value: Double): Double;
   public
     procedure Init(const Transform: TTransform; const Gain: TGain);
     procedure Done();
@@ -140,28 +140,26 @@ begin
   end;
 end;
 
-function TWMPNRM.calcGain(const Value: Double): Double;
+function TWMPNRM.calcMax(const Value: Double): Double;
 const
   amp: Double = 1.0;
   val: Double = 1.0;
 begin
-  if (not(Abs(Value) < 0.01)) then begin
-    case (self.ftransform) of
-      ttABS: begin
-        amp := amp /  Abs(1.0 - (1.0 - Abs(2.0 * amp * Value)) / IfThen(Abs(2.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
-      end;
-      ttRMS: begin
-        amp := amp / Sqrt(1.0 - (1.0 - Sqr(3.0 * amp * Value)) / IfThen(Sqr(3.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
-      end;
+  case (self.ftransform) of
+    ttABS: begin
+      amp := amp /  Abs(1.0 - (1.0 - Abs(2.0 * amp * Value)) / IfThen(Abs(2.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
     end;
-    val := val - (val - amp) / IfThen(val < amp, self.fattack * self.frate, self.frelease * self.frate);
+    ttRMS: begin
+      amp := amp / Sqrt(1.0 - (1.0 - Sqr(3.0 * amp * Value)) / IfThen(Sqr(3.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+    end;
   end;
+  val := val / Abs(1.0 - (1.0 - Abs(1.0 * val * amp)) / IfThen(Abs(1.0 * val * amp) > 1.0, self.fattack * self.frate, self.frelease * self.frate));
   Result := val;
 end;
 
 function TWMPNRM.Process(const Value: Double): Double;
 begin
-  self.fval := Min(Max(1.0 / self.calcAmp(), self.calcGain(Value)), 1.0 * self.calcAmp());
+  self.fval := Min(Max(1.0 / self.calcAmp(), 1.0 / self.calcMax(Value)), 1.0 * self.calcAmp());
   Result := self.fval * Value;
 end;
 
