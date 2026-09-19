@@ -120,7 +120,7 @@ function TWMPNRM.calcVal(): Double;
 begin
   case (self.fgain) of
     gtDb: begin
-      Result := Log10(self.fval) * 20.0;
+      Result := LogN(10.0, self.fval) * 20.0;
     end;
     gtAmp: begin
       Result := self.fval;
