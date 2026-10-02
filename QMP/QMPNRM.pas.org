@@ -154,12 +154,12 @@ begin
     end;
   end;
   val := val / Abs(1.0 - (1.0 - Abs(1.0 * val * amp)) / IfThen(Abs(1.0 * val * amp) > 1.0, self.fattack * self.frate, self.frelease * self.frate));
-  Result := val;
+  Result := Min(Max(1.0 / self.calcAmp(), 1.0 / val), 1.0 * self.calcAmp());
 end;
 
 function TQMPNRM.Process(const Value: Double): Double;
 begin
-  self.fval := Min(Max(1.0 / self.calcAmp(), 1.0 / self.calcMax(Value)), 1.0 * self.calcAmp());
+  self.fval := self.calcMax(Value);
   Result := self.fval * Value;
 end;
 
