@@ -142,12 +142,12 @@ begin
   avg := avg - (avg - Abs(Value)) / cnt;
   rms := rms - (rms - Sqr(Value)) / cnt;
   val := val - (val - Abs( env )) / cnt;
-  Result := val;
+  Result := Min(Max(1.0 / self.calcAmp(), 1.0 / val), 1.0 * self.calcAmp());
 end;
 
 function TWMPNRM.Process(const Value: Double): Double;
 begin
-  self.fval := Min(Max(1.0 / self.calcAmp(), 1.0 / self.calcMax(Value)), 1.0 * self.calcAmp());
+  self.fval := self.calcMax(Value);
   Result := self.fval * Value;
 end;
 
