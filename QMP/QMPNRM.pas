@@ -30,7 +30,6 @@ type
     procedure setAttack(const Value: Double);
     function getRelease(): Double;
     procedure setRelease(const Value: Double);
-    function clip(const Value: Double): Double;
     function calcAmp(): Double;
     function calcVal(): Double;
     function calcMax(const Value: Double): Double;
@@ -117,11 +116,6 @@ begin
   self.frelease := Value;
 end;
 
-function TQMPNRM.clip(const Value: Double): Double;
-begin
-  Result := Min(Max(1.0 / self.calcAmp(), Value), 1.0 * self.calcAmp());
-end;
-
 function TQMPNRM.calcAmp(): Double;
 begin
   case (self.fgain) of
@@ -153,14 +147,14 @@ const
 begin
   case (self.ftransform) of
     ttABS: begin
-      amp := self.clip(amp /  Abs(1.0 - (1.0 - Abs(2.0 * amp * Value)) / IfThen(Abs(2.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate)));
+      amp := amp /  Abs(1.0 - (1.0 - Abs(2.0 * amp * Value)) / IfThen(Abs(2.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
     end;
     ttRMS: begin
-      amp := self.clip(amp / Sqrt(1.0 - (1.0 - Sqr(3.0 * amp * Value)) / IfThen(Sqr(3.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate)));
+      amp := amp / Sqrt(1.0 - (1.0 - Sqr(3.0 * amp * Value)) / IfThen(Sqr(3.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
     end;
   end;
-  val := self.clip(val / Abs(1.0 - (1.0 - Abs(1.0 * val * amp)) / IfThen(Abs(1.0 * val * amp) > 1.0, self.fattack * self.frate, self.frelease * self.frate)));
-  Result := 1.0 / val;
+  val := val / Abs(1.0 - (1.0 - Abs(1.0 * val * amp)) / IfThen(Abs(1.0 * val * amp) > 1.0, self.fattack * self.frate, self.frelease * self.frate));
+  Result := Min(Max(1.0 / self.calcAmp(), 1.0 / val), 1.0 * self.calcAmp());
 end;
 
 function TQMPNRM.Process(const Value: Double): Double;
