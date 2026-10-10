@@ -25,7 +25,6 @@ type
     procedure setAttack(const Value: Double);
     function getRelease(): Double;
     procedure setRelease(const Value: Double);
-    function clip(const Value: Double): Double;
     function calcAmp(): Double;
     function calcVal(): Double;
     function calcMax(const Value: Double): Double;
@@ -105,11 +104,6 @@ begin
   self.frelease := Value;
 end;
 
-function TWMPNRM.clip(const Value: Double): Double;
-begin
-  Result := Min(Max(1.0 / self.calcAmp(), Value), 1.0 * self.calcAmp());
-end;
-
 function TWMPNRM.calcAmp(): Double;
 begin
   case (self.fgain) of
@@ -137,16 +131,18 @@ end;
 function TWMPNRM.calcMax(const Value: Double): Double;
 const
   rms: Double = 0.0;
-  val: Double = 0.0;
   avg: Double = 0.0;
+  val: Double = 0.0;
 var
-  amp: Double;
+  cnt: Double;
+  env: Double;
 begin
-  avg := avg - (avg - Abs(Value)) / IfThen(Abs(1.0 * Value / val) < 1.0, self.fattack * self.frate, self.frelease * self.frate);
-  rms := rms - (rms - Sqr(Value)) / IfThen(Abs(1.0 * Value / val) < 1.0, self.fattack * self.frate, self.frelease * self.frate);
-  amp := self.clip(avg + 3.0 * Sqrt(rms - Sqr(avg)));
-  val := val - (val - Abs( amp )) / IfThen(Abs(1.0 *  amp  / val) < 1.0, self.fattack * self.frate, self.frelease * self.frate);
-  Result := 1.0 / val;
+  cnt := IfThen(val > Abs(Value), self.fattack * self.frate, self.frelease * self.frate);
+  avg := avg - (avg - Abs(Value)) / cnt;
+  rms := rms - (rms - Sqr(Value)) / cnt;
+  env := avg + 2.0 * Sqrt(rms - Sqr(avg));
+  val := val - (val - Abs( env )) / cnt;
+  Result := Min(Max(1.0 / self.calcAmp(), 1.0 / val), 1.0 * self.calcAmp());
 end;
 
 function TWMPNRM.Process(const Value: Double): Double;
