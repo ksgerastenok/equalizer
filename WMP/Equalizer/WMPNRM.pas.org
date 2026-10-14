@@ -131,8 +131,8 @@ end;
 function TWMPNRM.calcMax(const Value: Double): Double;
 const
   rms: Double = 0.0;
+  val: Double = 0.5;
   avg: Double = 0.0;
-  val: Double = 0.0;
 var
   cnt: Double;
   env: Double;
