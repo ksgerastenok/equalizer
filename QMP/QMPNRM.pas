@@ -150,7 +150,7 @@ begin
       amp := amp /  Abs(1.0 - (1.0 - Abs(2.0 * amp * Value)) / IfThen(Abs(2.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
     end;
     ttRMS: begin
-      amp := amp / Sqrt(1.0 - (1.0 - Sqr(3.0 * amp * Value)) / IfThen(Sqr(3.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
+      amp := amp / Sqrt(1.0 - (1.0 - Sqr(2.0 * amp * Value)) / IfThen(Sqr(2.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
     end;
   end;
   val := val / Abs(1.0 - (1.0 - Abs(1.0 * val * amp)) / IfThen(Abs(1.0 * val * amp) > 1.0, self.fattack * self.frate, self.frelease * self.frate));
