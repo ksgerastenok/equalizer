@@ -131,13 +131,12 @@ end;
 function TWMPNRM.calcMax(const Value: Double): Double;
 const
   rms: Double = 0.0;
-  val: Double = 0.5;
   avg: Double = 0.0;
-var
-  cnt: Double;
-  env: Double;
+  val: Double = 0.5;
+  cnt: Double = 0.0;
+  env: Double = 0.0;
 begin
-  cnt := IfThen(val > Abs(Value), self.fattack * self.frate, self.frelease * self.frate);
+  cnt := IfThen(cnt < 5000.0, cnt + 1.0, IfThen(val > Abs(Value), self.fattack * self.frate, self.frelease * self.frate));
   avg := avg - (avg - Abs(Value)) / cnt;
   rms := rms - (rms - Sqr(Value)) / cnt;
   env := avg + 2.0 * Sqrt(rms - Sqr(avg));
