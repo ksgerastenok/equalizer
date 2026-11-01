@@ -130,11 +130,11 @@ end;
 
 function TQMPNRM.calcMax(const Value: Double): Double;
 const
-  rms: Double = 0.0;
-  avg: Double = 0.0;
-  val: Double = 0.5;
   cnt: Double = 0.0;
+  avg: Double = 0.0;
+  rms: Double = 0.0;
   env: Double = 0.0;
+  val: Double = 0.0;
 begin
   cnt := IfThen(cnt < 5000.0, cnt + 1.0, IfThen(val > Abs(Value), self.fattack * self.frate, self.frelease * self.frate));
   avg := avg - (avg - Abs(Value)) / cnt;
