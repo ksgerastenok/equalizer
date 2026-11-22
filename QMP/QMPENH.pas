@@ -49,7 +49,7 @@ begin
     TQMPENH.fenh[k][2].Init(QMPBQF.ttRBJ, QMPBQF.ftTreble, QMPBQF.btSlope, QMPBQF.gtDb);
   end;
   for k := 0 to Length(TQMPENH.fnrm) - 1 do begin
-    TQMPENH.fnrm[k].Init(QMPNRM.ttABS, QMPNRM.gtDb);
+    TQMPENH.fnrm[k].Init(QMPNRM.gtDb);
   end;
   Result := 1;
 end;
@@ -79,11 +79,11 @@ begin
   if (TQMPENH.finfo.Enabled) then begin
     for k := 0 to Length(TQMPENH.fenh) - 1 do begin
       TQMPENH.fenh[k][0].Amp := 5.0;
-      TQMPENH.fenh[k][0].Freq := 100.0;
+      TQMPENH.fenh[k][0].Freq := 75.0;
       TQMPENH.fenh[k][0].Width := 1.0;
       TQMPENH.fenh[k][0].Rate := Data.Rates;
       TQMPENH.fenh[k][1].Amp := 5.0;
-      TQMPENH.fenh[k][1].Freq := 350.0;
+      TQMPENH.fenh[k][1].Freq := 150.0;
       TQMPENH.fenh[k][1].Width := 1.0;
       TQMPENH.fenh[k][1].Rate := Data.Rates;
       TQMPENH.fenh[k][2].Amp := 15.0;

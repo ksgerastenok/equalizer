@@ -7,20 +7,15 @@ type
   TGain = (gtDb, gtAmp);
 
 type
-  TTransform = (ttABS, ttRMS);
-
-type
   TQMPNRM = record
   private
     var fgain: TGain;
-    var ftransform: TTransform;
     var famp: Double;
     var fval: Double;
     var frate: Double;
     var fattack: Double;
     var frelease: Double;
     function getGain(): TGain;
-    function getTransform(): TTransform;
     function getVal(): Double;
     function getAmp(): Double;
     procedure setAmp(const Value: Double);
@@ -34,11 +29,10 @@ type
     function calcVal(): Double;
     function calcMax(const Value: Double): Double;
   public
-    procedure Init(const Transform: TTransform; const Gain: TGain);
+    procedure Init(const Gain: TGain);
     procedure Done();
     function Process(const Value: Double): Double;
     property Gain: TGain read getGain;
-    property Transform: TTransform read getTransform;
     property Val: Double read getVal;
     property Amp: Double read getAmp write setAmp;
     property Rate: Double read getRate write setRate;
@@ -51,10 +45,9 @@ implementation
 uses
   Math;
 
-procedure TQMPNRM.Init(const Transform: TTransform; const Gain: TGain);
+procedure TQMPNRM.Init(const Gain: TGain);
 begin
   self.fgain := Gain;
-  self.ftransform := Transform;
 end;
 
 procedure TQMPNRM.Done();
@@ -64,11 +57,6 @@ end;
 function TQMPNRM.getGain(): TGain;
 begin
   Result := self.fgain;
-end;
-
-function TQMPNRM.getTransform(): TTransform;
-begin
-  Result := self.ftransform;
 end;
 
 function TQMPNRM.getVal(): Double;
@@ -142,18 +130,17 @@ end;
 
 function TQMPNRM.calcMax(const Value: Double): Double;
 const
-  amp: Double = 1.0;
-  val: Double = 1.0;
+  cnt: Double = 0.0;
+  avg: Double = 0.0;
+  rms: Double = 0.0;
+  env: Double = 0.0;
+  val: Double = 0.0;
 begin
-  case (self.ftransform) of
-    ttABS: begin
-      amp := amp /  Abs(1.0 - (1.0 - Abs(2.0 * amp * Value)) / IfThen(Abs(2.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
-    end;
-    ttRMS: begin
-      amp := amp / Sqrt(1.0 - (1.0 - Sqr(2.0 * amp * Value)) / IfThen(Sqr(2.0 * amp * Value) < 1.0, self.fattack * self.frate, self.frelease * self.frate));
-    end;
-  end;
-  val := val / Abs(1.0 - (1.0 - Abs(1.0 * val * amp)) / IfThen(Abs(1.0 * val * amp) > 1.0, self.fattack * self.frate, self.frelease * self.frate));
+  cnt := IfThen(cnt < 5000.0, cnt + 1.0, IfThen(val > Abs(Value), self.fattack * self.frate, self.frelease * self.frate));
+  avg := avg - (avg - Abs(Value)) / cnt;
+  rms := rms - (rms - Sqr(Value)) / cnt;
+  env := avg + 2.0 * Sqrt(rms - Sqr(avg));
+  val := val - (val - Abs( env )) / cnt;
   Result := Min(Max(1.0 / self.calcAmp(), 1.0 / val), 1.0 * self.calcAmp());
 end;
 
