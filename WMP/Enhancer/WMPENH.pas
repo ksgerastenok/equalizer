@@ -51,7 +51,7 @@ begin
     TWMPENH.fenh[k][2].Init(WMPBQF.ttRBJ, WMPBQF.ftTreble, WMPBQF.btSlope, WMPBQF.gtDb);
   end;
   for k := 0 to Length(TWMPENH.fnrm) - 1 do begin
-    TWMPENH.fnrm[k].Init(WMPNRM.ttABS, WMPNRM.gtDb);
+    TWMPENH.fnrm[k].Init(WMPNRM.gtDb);
   end;
   Result := 0;
 end;
